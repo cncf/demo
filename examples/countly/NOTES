@@ -1,0 +1,2 @@
+Exposing the countly container(s) in AWS means an ELB endpoint is created for us.
+Need to glue a call to Route53 that somehow picks up on that.
