@@ -1,4 +1,4 @@
 #!/bin/sh
 
-wrk -s $script -d$DURATION -c1 -t1 --timeout 1s $URL
+wrk -s $SCRIPT -d$DURATION -c$CONNECTIONS -t$THREADS --timeout $TIMEOUT $URL
 
