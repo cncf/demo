@@ -1,0 +1,29 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: wrkr-deployment
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: wrkr
+    spec:
+      containers:
+      - name: wrkr
+        image: zilman/wrk
+        env:
+        - name: SCRIPT
+          value: "/wrk/post.lua"
+        - name: DURATION
+          value: "300"
+        - name: CONNECTIONS
+          value: "50"
+        - name: THREADS
+          value: "2"
+        - name: TIMEOUT
+          value: "10"
+        - name: URL
+          value: "http://countly.cncfdemo.io/i?begin_session=1&app_key=5b7661f0487577a1b6e3d9a9ddabbdd47c7134a2"
+
+
