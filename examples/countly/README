@@ -1,0 +1,12 @@
+With a bootstrapped cluster in the air:
+
+$ kubectl create -f countly-deploy.yaml --record
+
+$ python route53.py
+
+Shells out to get_ingress.sh as 'kubectl describe' is formatted for human readability and the service/LB Ingress endpoint is not available elsewhere programmatically yet. Creates appropriate Alias record in route53 so countly.cncfdemo.io points at the right thing. This is hackish, needs a bit of cleanup too. But works.
+
+$ kubectl create -f wrk/deploy.yaml --record
+
+Starts pods that benchmark Countly, can tweak and update with 'kubectl apply -f wrk/deploy.yaml'. 
+Lua scriptable, can send more sophisticated fake traffic if needed. TODO: add reporting of summary results to logging service.
