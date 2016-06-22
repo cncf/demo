@@ -10,3 +10,7 @@ $ kubectl create -f wrk/deploy.yaml --record
 
 Starts pods that benchmark Countly, can tweak and update with 'kubectl apply -f wrk/deploy.yaml'. 
 Lua scriptable, can send more sophisticated fake traffic if needed. TODO: add reporting of summary results to logging service.
+
+The Countly pod(s) and the benchmark wrk nodes should really not mix. The ability to have pods avoid each other is coming soon.
+
+"During the first half of 2016 we are rolling out a new mechanism, called affinity for controlling which nodes your pods wil be scheduled onto. Like nodeSelector, affinity is based on labels. But it allows you to write much more expressive rules." - [node selection](http://kubernetes.io/docs/user-guide/node-selection/).
