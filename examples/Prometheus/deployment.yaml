@@ -15,6 +15,8 @@ spec:
     protocol: TCP
     port: 9090
     nodePort: 30900
+  type: LoadBalancer
+
 ----
 apiVersion: extensions/v1beta1
 kind: Deployment
