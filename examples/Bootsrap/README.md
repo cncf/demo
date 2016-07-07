@@ -2,6 +2,6 @@ Bootsrapping of Kubernetes clusters is currently in flux [#23174](https://github
 
 ### For local Kubernetes clusters the way forward is: [minikube](https://github.com/kubernetes/minikube)
 
-This demo repository is meant to run on the main cloud providers, bare metal, and locally. Currently under heavy development.
+This demo repository is meant to run on the major cloud providers, bare metal, and locally. Currently under heavy development.
 
 
