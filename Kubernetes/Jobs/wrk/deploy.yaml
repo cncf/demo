@@ -1,9 +1,9 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: wrkr-deployment
+  name: wrkr
 spec:
-  replicas: 2
+  replicas: 16
   template:
     metadata:
       labels:
