@@ -1,13 +1,9 @@
-import sys
 import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-domain")
 parser.add_argument("-elb")
 args = parser.parse_args()
-
-print args.domain
-print args.elb
 
 import boto.ec2.elb
 import boto.route53
@@ -20,7 +16,7 @@ r53 = boto.route53.connect_to_region('us-west-2')
 Ingress = args.elb
 lb = elb.get_all_load_balancers(load_balancer_names=[Ingress.split('-')[0]])[0]
 
-HOSTED_ZONE = 'Z1Y5CE8LHZN61K'
+HOSTED_ZONE = 'Z1Y5CE8LHZN61K' # TODO: Infer this, final bit before anybody can this without modification
 DOMAIN_NAME = args.domain
 
 rrs = ResourceRecordSets(r53,HOSTED_ZONE) 
