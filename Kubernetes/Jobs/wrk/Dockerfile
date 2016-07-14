@@ -1,6 +1,10 @@
 FROM williamyeh/wrk:4.0.2
 
-ADD wrk/post.lua /wrk/
-ADD wrk/runner.sh /wrk/
+MAINTAINER Eugene Zilman <ezilman@gmail.com>
+
+RUN apk add --update curl --no-cache
+
+ADD runner.sh /wrk/
+ADD send_summary.lua /wrk/
 
 ENTRYPOINT ["/wrk/runner.sh"]

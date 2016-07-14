@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: wrkr
 spec:
-  replicas: 16
+  replicas: 1
   template:
     metadata:
       labels:
@@ -13,17 +13,15 @@ spec:
       - name: wrkr
         image: zilman/wrk
         env:
-        - name: SCRIPT
-          value: "/wrk/post.lua"
         - name: DURATION
-          value: "300"
+          value: "10"
         - name: CONNECTIONS
-          value: "50"
+          value: "4"
         - name: THREADS
           value: "2"
         - name: TIMEOUT
-          value: "10"
+          value: "3"
         - name: URL
-          value: "http://countly.cncfdemo.io/i?begin_session=1&app_key=5b7661f0487577a1b6e3d9a9ddabbdd47c7134a2"
+          value: ""
 
 
