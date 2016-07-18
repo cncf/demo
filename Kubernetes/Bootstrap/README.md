@@ -1,6 +1,23 @@
-Bootsrapping of Kubernetes clusters is currently in flux [#23174](https://github.com/kubernetes/kubernetes/issues/23174), [#123](https://github.com/kubernetes/kube-deploy/issues/123), updates are planned for 1.4, watch this space.
+# Creating a Cluster
 
-### For local Kubernetes clusters the way forward is: [minikube](https://github.com/kubernetes/minikube)
+This demo has currently pinned Kubernetes to 1.3.
+
+## Try demo on cloud provider
+
+- cd into 'Bootstrap/1.3'
+- git clone https://github.com/kubernetes/kubernetes.git && git checkout -b release-1.3
+- cd into kubernetes/cluster
+- export KUBERNETES_PROVIDER=aws;
+- run kube-up.sh
+
+The official kubernetes deployment scripts are under heavy development and this process will change in the future.
+
+## Try demo on bare metal
+
+- cd into Ansible
+- Follow instructions in README.md
+
+### For local Kubernetes clusters please try [minikube](https://github.com/kubernetes/minikube).
 
 This demo repository is meant to run on the major cloud providers, bare metal, and locally. Currently under heavy development.
 
