@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    name: countly
   name: countly
+  labels:
+    app: countly
 spec:
   selector:
     app: countly
@@ -20,6 +20,8 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: countly
+  labels:
+    app: countly
 spec:
   replicas: 1
   selector:
