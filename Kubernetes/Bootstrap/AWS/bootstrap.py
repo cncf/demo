@@ -18,17 +18,17 @@ def run(actions):
   
     except botocore.exceptions.ClientError as e:
       if e.response['Error']['Code'] == 'EntityAlreadyExists':
-          print e.response['Error']['Message']
+          log.info(e.response['Error']['Message'])
       elif e.response['Error']['Code'] == 'AlreadyExists':
-          print e.response['Error']['Message']
+          log.info(e.response['Error']['Message'])
       elif e.response['Error']['Code'] == 'LimitExceeded':
-          print e.response['Error']['Message']
+          log.info(e.response['Error']['Message'])
       elif e.response['Error']['Code'] == 'InvalidGroup.Duplicate':
-          print e.response['Error']['Message']
+          log.info(e.response['Error']['Message'])
       elif e.response['Error']['Code'] == 'InvalidPermission.Duplicate':
-          print e.response['Error']['Message']
+          log.info(e.response['Error']['Message'])
       else:
-  	print "Unexpected error: {}".format(e)
+  	log.error("Unexpected error: {}".format(e))
         sys.exit("Aborting..")
 
 if __name__ == "__main__":
@@ -68,14 +68,15 @@ if __name__ == "__main__":
   log.addHandler(log_handler)
   log.setLevel(level)
 
-  log.debug(cli)
+  log.info(cli)
 
   ASG = boto3.client('autoscaling',region_name=cli.region)
   IAM = boto3.client('iam',region_name=cli.region)
   EC2 = boto3.client('ec2',region_name=cli.region)
 
-  result = None
-  steps = []
+  AvailabilityZones = [z['ZoneName'] for z in EC2.describe_availability_zones()['AvailabilityZones']]
+
+  bootstrap = []
   if cli.create:
 
     try:
@@ -83,8 +84,7 @@ if __name__ == "__main__":
     except botocore.exceptions.ClientError as e:
       if e.response['Error']['Code'] == 'InvalidKeyPair.Duplicate':
         log.info(e.response['Error']['Message'])
-	# keyResponse = EC2.KeyPairInfo(cli.KeyName)
-	keyResponse = 'dont show key'
+	keyResponse = 'Not displaying the key..'
       elif e.response['Error']['Code'] == 'DryRunOperation':
         log.info(e.response['Error']['Message'])
       else:
@@ -93,38 +93,38 @@ if __name__ == "__main__":
 
       log.info(keyResponse)  # TODO: Not secure to print to stdout, need to log to file or something
 
-    steps.extend([(IAM,'create_instance_profile', {'InstanceProfileName': cli.InstanceProfile}),
+    bootstrap.extend([(IAM,'create_instance_profile', {'InstanceProfileName': cli.InstanceProfile}),
                     (IAM,'create_role', {'RoleName': cli.RoleName, 'AssumeRolePolicyDocument': json.dumps(TrustedPolicy)}),
                     (IAM,'add_role_to_instance_profile', {'RoleName': cli.RoleName, 'InstanceProfileName': cli.InstanceProfile})
                    ])
 
   if 'k-minions' in cli.SecurityGroups:
-    steps.append((EC2, 'create_security_group', {'GroupName':'k-minions', 'Description':'k-minions rule', 'VpcId':cli.vpc }))
-    steps.append((EC2, 'authorize_security_group_ingress', {'GroupName': 'k-minions', 'IpProtocol': '-1', 'CidrIp':'172.0.0.0/8', 'FromPort':-1, 'ToPort':-1 }))
-    steps.append((EC2, 'authorize_security_group_ingress', {'GroupName': 'k-minions', 'IpProtocol': 'tcp', 'CidrIp':'0.0.0.0/0', 'FromPort':22, 'ToPort':22 }))
+    bootstrap.extend([(EC2, 'create_security_group', {'GroupName':'k-minions', 'Description':'k-minions', 'VpcId':cli.vpc }),
+                      ((EC2, 'authorize_security_group_ingress', {'GroupName': 'k-minions', 'IpProtocol': '-1', \
+                                                                  'CidrIp':'172.0.0.0/8', 'FromPort':-1, 'ToPort':-1 })),
+                      ((EC2, 'authorize_security_group_ingress', {'GroupName': 'k-minions', 'IpProtocol': 'tcp', \
+                                                                  'CidrIp':'0.0.0.0/0', 'FromPort':22, 'ToPort':22 }))])
 
 
-  steps.append((ASG, 'create_launch_configuration', {'LaunchConfigurationName': cli.LaunchConfiguration,
-                                                       'ImageId': cli.ImageId,
-                                                       'KeyName': cli.KeyName,
-                                                       'SecurityGroups': cli.SecurityGroups,
-                                                       'InstanceType': cli.InstanceType,
-                                                       'InstanceMonitoring': {'Enabled': True},
-                                                       'IamInstanceProfile': cli.InstanceProfile
-                                                      })
-  )
-  
+  bootstrap.extend([(ASG, 'create_launch_configuration', {'LaunchConfigurationName': cli.LaunchConfiguration,
+                                                          'ImageId': cli.ImageId,
+                                                          'KeyName': cli.KeyName,
+                                                          'SecurityGroups': cli.SecurityGroups,
+                                                          'InstanceType': cli.InstanceType,
+                                                          'InstanceMonitoring': {'Enabled': True},
+                                                          'IamInstanceProfile': cli.InstanceProfile
+                                                         }),
+                  (ASG,'create_auto_scaling_group', {'AutoScalingGroupName':cli.AsgName,
+						        'LaunchConfigurationName':cli.LaunchConfiguration,
+						        'MinSize': 0,
+						        'MaxSize': 0,
+						        'DesiredCapacity': 0,
+						        'DefaultCooldown': 300,
+						        'AvailabilityZones': AvailabilityZones,
+						        'NewInstancesProtectedFromScaleIn': True 
+                                                       })
+                   ])
+						   
 
-  run(steps)
 
-  run([(ASG,'create_auto_scaling_group', 
-    {'AutoScalingGroupName':cli.AsgName,
-      'LaunchConfigurationName':cli.LaunchConfiguration,
-      'MinSize': 0,
-      'MaxSize': 0,
-      'DesiredCapacity': 0,
-      'DefaultCooldown': 300,
-      'AvailabilityZones': [z['ZoneName'] for z in EC2.describe_availability_zones()['AvailabilityZones']],  # Todo: add cli flag 
-      'NewInstancesProtectedFromScaleIn': True 
-    })]
-  )
+  run(bootstrap)
