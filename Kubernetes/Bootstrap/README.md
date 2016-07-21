@@ -4,12 +4,14 @@ This demo has currently pinned Kubernetes to 1.3.
 
 ## Try demo on cloud provider
 
-- git submodule update
-- cd into Bootstrap/1.3/kubernetes/cluster
-- export KUBERNETES_PROVIDER=aws;
-- run kube-up.sh
+Simply execute the relevant bootstrap python script. (Python and Boto3 are the only dependencies)
 
-The [official kubernetes deployment](hhttp://kubernetes.io/docs/getting-started-guides/aws/) scripts are under heavy development and this process will change in the future.
+> bootstrap_aws.py -vv
+
+Increase the verbosity to see exactly what's being created.
+
+If it is neccessary to use your own Role, SecurityGroup, Key, 'etc, everything is fully customizable via command line flags.
+
 
 ## Try demo on bare metal
 
