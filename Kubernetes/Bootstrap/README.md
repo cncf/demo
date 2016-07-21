@@ -4,13 +4,12 @@ This demo has currently pinned Kubernetes to 1.3.
 
 ## Try demo on cloud provider
 
-- cd into 'Bootstrap/1.3'
-- git clone https://github.com/kubernetes/kubernetes.git && git checkout -b release-1.3
-- cd into kubernetes/cluster
+- git submodule update
+- cd into Bootstrap/1.3/kubernetes/cluster
 - export KUBERNETES_PROVIDER=aws;
 - run kube-up.sh
 
-The official kubernetes deployment scripts are under heavy development and this process will change in the future.
+The [official kubernetes deployment](hhttp://kubernetes.io/docs/getting-started-guides/aws/) scripts are under heavy development and this process will change in the future.
 
 ## Try demo on bare metal
 

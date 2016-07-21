@@ -1,0 +1,5 @@
+weave_version: 1.6.0
+weave_url: "https://github.com/weaveworks/weave/releases/download/v{{ weave_version }}/weave"
+
+weave_launch_peers: "{% for host in groups['weave'] %}{% if host != inventory_hostname %}{{ hostvars[host].ansible_default_ipv4.address }} {% endif %}{% endfor %}"
+

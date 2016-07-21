@@ -1,0 +1,12 @@
+---
+- yum: state=present name={{ item }}
+  with_items:
+   - docker
+   - etcd
+   - kubernetes
+   - unzip
+
+- copy: src="{{ item.src }}" dest="{{ item.dest }}" mode=0777
+  with_items:
+    - src: asg_ips.sh
+      dest: /usr/bin/asg_ips
