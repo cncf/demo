@@ -25,12 +25,3 @@ Notes:
 ### Deploy
 
 ansible-playbook playbooks/setup/main.yml 
-
-~~~~~~~
-NOTES:
-
-etcd needs: --listen-client-urls=http://0.0.0.0:2379,http://0.0.0.0:4001
-
-currently added in env file:
-EnvironmentFile=-/etc/etcd/etcd.conf
-
