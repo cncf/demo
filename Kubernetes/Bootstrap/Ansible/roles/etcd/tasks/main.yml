@@ -1,0 +1,10 @@
+---
+- yum: state=present name=etcd
+- service: name=etcd enabled=yes
+
+- file: path=/etc/etcd state=directory mode=0755
+
+- copy: src=etcd.conf dest="/etc/etcd/etcd.conf" mode=0644
+  notify:
+    - reload systemd
+    - restart etcd

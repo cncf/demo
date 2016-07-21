@@ -1,0 +1,19 @@
+---
+- lineinfile: dest=/etc/hosts line="10.2.0.17 kmaster"
+
+- file: path=/etc/kubernetes state=directory mode=0755
+  tags: kpy
+
+- copy: src="{{ item.src }}" dest="{{ item.dest }}" mode=0644
+  with_items:
+    - src: config
+      dest: /etc/kubernetes/config
+    - src: apiserver
+      dest: /etc/kubernetes/apiserver
+    - src: kubelet
+      dest: /etc/kubernetes/kubelet
+    - src: proxy
+      dest: /etc/kubernetes/proxy
+  notify:
+    - reload systemd
+  tags: kpy

@@ -1,0 +1,3 @@
+---
+- yum: name=docker state=present
+- service: name=docker enabled=true state=running 

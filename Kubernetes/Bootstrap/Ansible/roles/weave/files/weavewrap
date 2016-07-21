@@ -1,0 +1,4 @@
+#!/bin/bash
+
+PEERS=$(asg_ips)
+/usr/local/bin/weave launch-router $WEAVE_ROUTER_ARGS $PEERS

@@ -1,0 +1,13 @@
+---
+- name: restart weave
+  service: name=weave state=restarted 
+  notify: 
+  - "wait for weave socket"
+  when: packer is undefined
+
+- name: wait for weave socket
+  wait_for: port=6783 delay=5
+
+- name: restart weaveproxy
+  service: name=weaveproxy state=restarted
+  when: packer is undefined

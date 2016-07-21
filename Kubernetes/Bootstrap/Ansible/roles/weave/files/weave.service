@@ -1,0 +1,14 @@
+[Unit]
+Description=Weave Network
+Documentation=http://docs.weave.works/weave/latest_release/
+Requires=docker.service
+After=docker.service
+
+[Service]
+EnvironmentFile=-/etc/sysconfig/weave
+ExecStartPre=/usr/local/bin/weavewrap
+ExecStart=/usr/bin/docker attach weave
+ExecStop=/usr/local/bin/weave stop-router
+
+[Install]
+WantedBy=multi-user.target
