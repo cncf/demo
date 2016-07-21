@@ -54,7 +54,7 @@ if __name__ == "__main__":
   parser.add_argument('-K', '--KeyName', default='cncf-aws')
   parser.add_argument('-T', '--InstanceType', default='t2.micro')
   parser.add_argument('-S', '--SecurityGroups', default=['k-minions'], action='append')
-  parser.add_argument('-I', '--ImageId', default='ami-b89e52d8')
+  parser.add_argument('-I', '--ImageId', default='ami-1cb67a7c')
   parser.add_argument('-V', '--vpc', default='')
   parser.add_argument('-r', '--region', default='us-west-2')
   parser.add_argument('-c', '--create', action='store_true', default=True)
