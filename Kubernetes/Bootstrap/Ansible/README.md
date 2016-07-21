@@ -1,4 +1,10 @@
-# Reference Installation of Kubernetes Cluster on Bare Metal 
+# Reference Installation of Kubernetes Cluster (Bare Metal)
+
+## Cloud provider images
+
+Simply install and configure Packer and fork this repo to customize. 
+
+> packer build packer.json
 
 ## Requirements
 
