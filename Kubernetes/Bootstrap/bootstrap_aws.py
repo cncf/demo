@@ -9,7 +9,7 @@ import json
 import boto3
 import botocore
 
-def run(actions):
+def execute(actions):
 
   for action in actions:
     try:
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     except botocore.exceptions.ClientError as e:
       if e.response['Error']['Code'] == 'InvalidKeyPair.Duplicate':
         log.info(e.response['Error']['Message'])
-	keyResponse = 'Not displaying the key..'
+	keyResponse = 'Not displaying the key.'
       elif e.response['Error']['Code'] == 'DryRunOperation':
         log.info(e.response['Error']['Message'])
       else:
@@ -94,16 +94,15 @@ if __name__ == "__main__":
       log.info(keyResponse)  # TODO: Not secure to print to stdout, need to log to file or something
 
     bootstrap.extend([(IAM,'create_instance_profile', {'InstanceProfileName': cli.InstanceProfile}),
-                    (IAM,'create_role', {'RoleName': cli.RoleName, 'AssumeRolePolicyDocument': json.dumps(TrustedPolicy)}),
-                    (IAM,'add_role_to_instance_profile', {'RoleName': cli.RoleName, 'InstanceProfileName': cli.InstanceProfile})
-                   ])
+                      (IAM,'create_role', {'RoleName': cli.RoleName, 'AssumeRolePolicyDocument': json.dumps(TrustedPolicy)}),
+                      (IAM,'add_role_to_instance_profile', {'RoleName': cli.RoleName, 'InstanceProfileName': cli.InstanceProfile})])
 
   if 'k-minions' in cli.SecurityGroups:
     bootstrap.extend([(EC2, 'create_security_group', {'GroupName':'k-minions', 'Description':'k-minions', 'VpcId':cli.vpc }),
-                      ((EC2, 'authorize_security_group_ingress', {'GroupName': 'k-minions', 'IpProtocol': '-1', \
-                                                                  'CidrIp':'172.0.0.0/8', 'FromPort':-1, 'ToPort':-1 })),
-                      ((EC2, 'authorize_security_group_ingress', {'GroupName': 'k-minions', 'IpProtocol': 'tcp', \
-                                                                  'CidrIp':'0.0.0.0/0', 'FromPort':22, 'ToPort':22 }))])
+                     ((EC2, 'authorize_security_group_ingress', {'GroupName': 'k-minions', 'IpProtocol': '-1', \
+                                                                 'CidrIp':'172.0.0.0/8', 'FromPort':-1, 'ToPort':-1 })),
+                     ((EC2, 'authorize_security_group_ingress', {'GroupName': 'k-minions', 'IpProtocol': 'tcp', \
+                                                                 'CidrIp':'0.0.0.0/0', 'FromPort':22, 'ToPort':22 }))])
 
 
   bootstrap.extend([(ASG, 'create_launch_configuration', {'LaunchConfigurationName': cli.LaunchConfiguration,
@@ -114,17 +113,16 @@ if __name__ == "__main__":
                                                           'InstanceMonitoring': {'Enabled': True},
                                                           'IamInstanceProfile': cli.InstanceProfile
                                                          }),
-                  (ASG,'create_auto_scaling_group', {'AutoScalingGroupName':cli.AsgName,
-						        'LaunchConfigurationName':cli.LaunchConfiguration,
-						        'MinSize': 0,
-						        'MaxSize': 0,
-						        'DesiredCapacity': 0,
-						        'DefaultCooldown': 300,
-						        'AvailabilityZones': AvailabilityZones,
-						        'NewInstancesProtectedFromScaleIn': True 
-                                                       })
-                   ])
+                    (ASG,'create_auto_scaling_group', {'AutoScalingGroupName':cli.AsgName,
+						       'LaunchConfigurationName':cli.LaunchConfiguration,
+						       'MinSize': 0,
+						       'MaxSize': 0,
+						       'DesiredCapacity': 0,
+						       'DefaultCooldown': 300,
+						       'AvailabilityZones': AvailabilityZones,
+						       'NewInstancesProtectedFromScaleIn': True 
+                                                      })])
 						   
 
 
-  run(bootstrap)
+  execute(bootstrap)

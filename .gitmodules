@@ -1,4 +1,0 @@
-[submodule "Kubernetes/Bootstrap/1.3/kubernetes"]
-	path = Kubernetes/Bootstrap/1.3/kubernetes
-	url = https://github.com/kubernetes/kubernetes.git
-	branch = release-1.3
