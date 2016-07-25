@@ -12,7 +12,7 @@ spec:
   type: NodePort
   ports:
   - name: prometheus
-    protocol: TCP
+    protocol: tcp
     port: 9090
     nodePort: 30900
   type: LoadBalancer
