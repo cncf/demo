@@ -13,10 +13,9 @@ TIMEOUT=${TIMEOUT-3}
 
 # Global Defaults
 export hostIP=$(curl -m1 -s http://169.254.169.254/latest/meta-data/local-ipv4)
-export podID=$(hostname | cut -d- -f4)
+export podID=$HOSTNAME
 
 hostIP=${hostIP:=127.0.0.1}
-podID=${podID:=42}
 
 export PUSHGATEWAY_SERVICE_PORT=${PUSHGATEWAY_SERVICE_PORT:=9091}
 export PUSHGATEWAY=${PUSHGATEWAY-pushgateway}

@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: prometheus
 data:
+  foo: value1
+  bar: value2
   prometheus.yml: |-
     global:
       scrape_interval: 15s

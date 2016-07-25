@@ -4,7 +4,7 @@ metadata:
   name: wrk
 spec:
   parallelism: 3
-  completions: 6
+  completions: 3
   template:
     metadata:
       name: wrk
@@ -14,16 +14,14 @@ spec:
       - name: wrkr
         image: zilman/wrk
         env:
-        - name: SCRIPT
-          value: "/wrk/post.lua"
         - name: DURATION
-          value: "30"
+          value: "10"
         - name: CONNECTIONS
           value: "10"
         - name: THREADS
           value: "2"
         - name: TIMEOUT
-          value: "10"
+          value: "3"
         - name: URL
-          value: "http://countly.cncfdemo.io/i?begin_session=1&app_key="
+          value: "http://countly.cncfdemo.io/i?begin_session=1&app_key=6e42e649bf67b5e8651d5fb7e4b27d7af21411bb"
       restartPolicy: Never
