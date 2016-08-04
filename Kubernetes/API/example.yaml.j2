@@ -1,0 +1,73 @@
+{% for item in [{'name': 'mongocfg', 'configset': True},{'name': 'mongors1'},{'name': 'mongors2'}] %}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ item.name }}
+  labels:
+    app: {{ item.name }}
+spec:
+  ports:
+  - port: 27017
+    name: {{ item.name }}
+  clusterIP: None
+  selector: 
+    app: {{ item.name }}
+  
+---
+apiVersion: apps/v1alpha1
+kind: PetSet
+metadata:
+  name: {{ item.name }}
+spec:
+  serviceName: {{ item.name }}
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: {{ item.name }}
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: mongo
+        image: mongo:3.2
+        command: 
+        - mongod
+        {% if item.configset is defined -%}
+        - "--configsvr" 
+        {% endif -%}
+        - "--replSet"
+        - configs
+        - "--bind_ip"
+        - 0.0.0.0
+        ports:
+        - containerPort: 27017
+          name: {{ item.name }}
+---
+apiVersion: v1
+kind: pods
+conditional: all([item['status']['phase'] == 'Running' for item in resp['items']])
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: {{ item.name }}
+---
+apiVersion: extensions/v1beta1
+kind: Job
+metadata:
+  name: {{ item.name }}
+spec:
+  autoSelector: true
+  template:
+    metadata:
+      name: mng
+    spec:
+      containers:
+      - name: mng
+        image: mongo:3.2
+        command: ["mongo", "--host", "cfg-0.mongoc", "--port", "27019", "--eval", "rs.initiate({_id: 'configs', members: [{'_id':0,host:'cfg-0.mongoc:27019'},{'_id':1,host:'cfg-1.mongoc:27019'},{'_id':2,host:'cfg-2.mongoc:27019'}]})"]
+      restartPolicy: Never
+{% endfor %}
+
