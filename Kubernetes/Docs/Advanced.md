@@ -14,7 +14,7 @@ PetSets allow some state to be sprinkled in, as long as this is done in an idemp
 
 Mongo ReplicaSets map very conveniently to Kubernetes PetSets.
 
-Process to [https://docs.mongodb.com/manual/tutorial/deploy-shard-cluster/](Deploy a Sharded Mongo Cluster) is as follows:
+Process to [Deploy a Sharded Mongo Cluster](https://docs.mongodb.com/manual/tutorial/deploy-shard-cluster/) is as follows:
 
 - Create the Config Server Replica Set
 - Initiate the Config Server Replica Set 
