@@ -1,4 +1,4 @@
-{% for item in [{'name': 'mongocfg', 'configset': True},{'name': 'mongors1'},{'name': 'mongors2'}] %}
+{% for item in [{'name': 'mongocfg', 'configset': True, 'replicas': 3, 'port': 27019},{'name': 'mongors1', 'replicas': 3, 'port': 27017},{'name': 'mongors2', 'replicas': 3, 'port': 27017}] %}
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,12 +7,11 @@ metadata:
     app: {{ item.name }}
 spec:
   ports:
-  - port: 27017
+  - port: {{ item.port }}
     name: {{ item.name }}
   clusterIP: None
   selector: 
     app: {{ item.name }}
-  
 ---
 apiVersion: apps/v1alpha1
 kind: PetSet
@@ -38,11 +37,11 @@ spec:
         - "--configsvr" 
         {% endif -%}
         - "--replSet"
-        - configs
+        - "rs{{ loop.index0 }}"
         - "--bind_ip"
         - 0.0.0.0
         ports:
-        - containerPort: 27017
+        - containerPort: {{ item.port }}
           name: {{ item.name }}
 ---
 apiVersion: v1
@@ -57,17 +56,98 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Job
 metadata:
-  name: {{ item.name }}
+  name: {{ item.name }}-init
 spec:
   autoSelector: true
   template:
     metadata:
-      name: mng
+      name: {{ item.name }}-init
     spec:
       containers:
-      - name: mng
+      - name: {{ item.name }}-init
         image: mongo:3.2
-        command: ["mongo", "--host", "cfg-0.mongoc", "--port", "27019", "--eval", "rs.initiate({_id: 'configs', members: [{'_id':0,host:'cfg-0.mongoc:27019'},{'_id':1,host:'cfg-1.mongoc:27019'},{'_id':2,host:'cfg-2.mongoc:27019'}]})"]
+        command: 
+        - "mongo"
+        - "--host"
+        - "{{ item.name }}-0.{{ item.name }}"
+        - "--port"
+        - "{{ item.port }}"
+        - "--eval"
+        - "rs.initiate({_id: 'rs{{ loop.index0 }}', 
+           members: [{% for r in range(item.replicas) -%}
+                       {'_id':{{ loop.index0 }},host:'{{ item.name }}-{{ loop.index0 }}.{{ item.name }}:{{ item.port }}'}{% if not loop.last -%},{% endif -%}
+                     {% endfor -%}]})"
       restartPolicy: Never
+---
 {% endfor %}
 
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongos
+  labels:
+    app: mongos
+spec:
+  ports:
+  - port: 27019
+    name: mongos
+  clusterIP: None
+  selector: 
+    app: mongos
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mongos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongos
+  template:
+    metadata:
+      name: mongos
+      labels:
+        app: mongos
+    spec:
+      containers:
+      - name: mongo
+        image: mongo:3.2
+        command: 
+        - mongos
+        - "--configdb" 
+        - "rs0/mongocfg-0.mongocfg:27019,mongocfg-1.mongocfg:27019,mongocfg-2.mongocfg:27019"
+        - "--bind_ip"
+        - 0.0.0.0
+        ports:
+        - containerPort: 27019
+          name: mongos
+---
+
+{% for item in [{'name': 'mongors1', 'replicas': 3, 'port': 27017},{'name': 'mongors2', 'replicas': 3, 'port': 27017}] %}
+
+apiVersion: extensions/v1beta1
+kind: Job
+metadata:
+  name: {{ item.name }}-addshard
+spec:
+  autoSelector: true
+  template:
+    metadata:
+      name: {{ item.name }}-addshard
+    spec:
+      containers:
+      - name: {{ item.name }}-addshard
+        image: mongo:3.2
+        command: 
+        - "mongo"
+        - "--host"
+        - mongos.default
+        - "--port"
+        - "{{ item.port }}"
+        - "--eval"
+        - "sh.addShard( 'rs{{ loop.index }}/mongors{{ loop.index }}-0.mongors{{ loop.index }}:{{ item.port }}' )"
+      restartPolicy: Never
+---
+{% endfor %}
