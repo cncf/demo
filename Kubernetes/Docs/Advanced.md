@@ -50,9 +50,9 @@ rs.initiate(
 
 <sub>Fig 1: config document example from the official mongo docs</sub> 
 
-Above demostrated how the host names of all members of a replica must be deducible.
+The above demonstrates it is necessary for the  host names of all members of a replica to be deducible.
 
-A regular Kubernetes deployment names pods `rs0-<randomsuffix>` and creates them with nondeterministic order and timings.
+A regular Kubernetes deployment would name pods `rs0-<randomsuffix>` and create them with nondeterministic order and timings.
 
 In contrast, the usefulness of PetSets now becomes apparent. If we opt to use a PetSet named "rs0" of size 3 we get sequentially created pods named: rs0-0, rs0-1, rs0-2. Exactly what we need.
 
@@ -88,6 +88,8 @@ spec:
 
 This Kubernetes Job will start a pod using the official mongo:3.2 image, execute the mongo replica set initialization command against a group of hosts whose names are deducible because they belong to a PetSet, and exit.
 
-Against a fresh replica set this will happen quickly and reliably. It would be even better to run this *only once* after the replica set pods are ready. In essence, this Kubernetes Job is a One Shot step _conditional on the previous step_ succesfully completing. 
+Against a fresh replica set this will happen quickly and reliably. 
+
+It would be even better to run this **only once** and **_only after_** the replica set pods are up and running. In essence, this Kubernetes Job is a One Shot step _conditional on the previous step_ successfully completing. 
 
 ## InitContainers
