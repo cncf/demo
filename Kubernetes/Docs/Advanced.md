@@ -25,26 +25,30 @@ Process to [https://docs.mongodb.com/manual/tutorial/deploy-shard-cluster/](Depl
 
 #### Create and Initiate Replica Sets
 
-Using the official Mongo docker image we launch 3 pods with the command:        
+Using the official Mongo docker image we launch 3 pods running the command:        
 
 > mongod --configsvr --replSet rs0 --bind_ip 0.0.0.0
 
 Each pod now knows about itself that it is a special type of replica set (config server) and the name of the set is rs0.
 However, to initiate the replica set the members must be made aware of each other and reach a quorum. 
 
-> rs.initiate(
->   {
->     _id: "<replSetName>",
->     configsvr: true,
->     members: [
->       { _id : 0, host : "cfg-0.example.net:27017" },
->       { _id : 1, host : "cfg-1.example.net:27017" },
->       { _id : 2, host : "cfg-2.example.net:27017" }
->     ]
->   }
-> )
+```
+rs.initiate(
+   {
+     _id: "<replSetName>",
+     configsvr: true,
+     members: [
+       { _id : 0, host : "rs0-0.example.net:27017" },
+       { _id : 1, host : "rs0-1.example.net:27017" },
+       { _id : 2, host : "rs0-2.example.net:27017" }
+     ]
+   }
+ )
+```
 
-Above config document from the official mongo docs shows that the host names of all members of a replica must be deducible.
+<sub>Fig 1: config document example from the official mongo docs</sub> 
+
+Above shows that the host names of all members of a replica must be deducible.
 The usefulness of PetSets now becomes obvious. At the Kubernetes abstraction level, if we name our PetSet "cfg" of size 3 we get pods: cfg-0, cfg-1, cfg-2.
 
 Unlike a regular Kubernetes deployment where the pods would be named in cfg-<randomstring> and created in a none deterministic order.
