@@ -48,13 +48,15 @@ rs.initiate(
 
 <sub>Fig 1: config document example from the official mongo docs</sub> 
 
-Above shows that the host names of all members of a replica must be deducible.
-The usefulness of PetSets now becomes obvious. At the Kubernetes abstraction level, if we name our PetSet "cfg" of size 3 we get pods: cfg-0, cfg-1, cfg-2.
+Above demostrated how the host names of all members of a replica must be deducible.
 
-Unlike a regular Kubernetes deployment where the pods would be named in cfg-<randomstring> and created in a none deterministic order.
+A regular Kubernetes deployment names pods `rs0-<randomsuffix>` and creates them with nondeterministic order and timings.
+
+In contrast, the usefulness of PetSets now becomes apparent. If we opt to use a PetSet named "rs0" of size 3 we get sequentially created pods named: rs0-0, rs0-1, rs0-2. Exactly what we need.
+
 
 #### Kubernetes Jobs as One Shot steps of complex deployments
 
-We now know the neccessary mongo Replica Set Initialization command ahead of time, we don't yet know _when_ to run it, and what should execute it.
+We now know the necessary mongo Replica Set initialization command ahead of time, we don't yet know _when_ to run it, and _what_ should execute it.
 
 ## InitContainers
