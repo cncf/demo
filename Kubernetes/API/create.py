@@ -10,25 +10,29 @@ import logging
 import yaml, json
 
 import requests 
-
+from jinja2 import Template
 
 def parse(**kwargs):
-  require = 'filename','definition'
+  require = 'filename','definitions'
   args = [arg in kwargs.keys() for arg in require]
   if all(args) or not any(args): 
     raise TypeError('must provide parse() either {} or a {}'.format(*require))
 
-
   if kwargs.get('filename'):
     try:
       with open(kwargs.get('filename'), "r") as f:
-        definition = f.read()
+        definitions = f.read()
     except (IOError, OSError) as e:
       print e.strerror
       sys.exit(1)
 
+  if kwargs.get('filename').endswith('.j2') or cli.j:
+    t = Template(definitions)
+    definitions = t.render()
+    #import ipdb; ipdb.set_trace()
+
   try:
-    data = yaml.load_all(definition or kwargs.get('definition'))
+    data = yaml.load_all(definitions or kwargs.get('definitions'))
   except yaml.YAMLError, exc:
     data = None
     print "Error in file:", exc
@@ -81,7 +85,7 @@ def create(definition, overrides={}):
           sys.exit("Timeout, aborting..")
 
         iteration += 1
-        time.sleep((1.5 ** iteration) + (random.randint(0, 500) / 1000.0))
+        time.sleep((2 ** iteration) + (random.randint(0, 500) / 1000.0))
 
         matchLabels = definition['spec']['selector']['matchLabels']  # TODO: support full ruleset
         selectors = ','.join(['{}={}'.format(*pair) for pair in matchLabels.items()]) 
@@ -112,6 +116,8 @@ if __name__ == "__main__":
 
   parser = argparse.ArgumentParser()
   parser.add_argument('-f', '--filename', required=True) 
+  parser.add_argument('-j', '--jinja', default=False) 
+  parser.add_argument('-d', '--dryrun', action='count', default=False) 
   parser.add_argument('-v', '--verbose', action='count', default=0)
   cli = parser.parse_args()
 
@@ -126,8 +132,9 @@ if __name__ == "__main__":
 
   definitions = parse(filename=cli.filename)
   for definition in definitions:
-    log.info(definition)
-    result = create(definition)
-    log.debug(json.loads(result))
-    #import ipdb; ipdb.set_trace()
+    if definition:
+      log.info(definition)
+      if not cli.dryrun:
+        result = create(definition)
+        log.debug(json.loads(result))
 
