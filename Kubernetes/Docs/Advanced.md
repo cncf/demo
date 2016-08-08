@@ -3,7 +3,9 @@
 Non-trivial deployments sometimes require more advanced kubernetes primitives.  
 Two such neccessary building blocks have been recently released as alphas. 
 
-A third, Jobs, has shipped. Kubernetes Jobs are a crucial feature for complex deployments and the pattern is described below.
+A third, Jobs, has already shipped. 
+
+Kubernetes Jobs are a crucial feature for complex deployments and that pattern and others are described below.
 
 ##  PetSets
 
@@ -27,7 +29,7 @@ Process to [Deploy a Sharded Mongo Cluster](https://docs.mongodb.com/manual/tuto
 
 Using the official Mongo docker image we launch 3 pods running the command:        
 
-> mongod --configsvr --replSet rs0 --bind_ip 0.0.0.0
+```mongod --configsvr --replSet rs0 --bind_ip 0.0.0.0```
 
 Each pod now knows about itself that it is a special type of replica set (config server) and the name of the set is rs0.
 However, to initiate the replica set the members must be made aware of each other and reach a quorum. 
@@ -57,6 +59,35 @@ In contrast, the usefulness of PetSets now becomes apparent. If we opt to use a 
 
 #### Kubernetes Jobs as One Shot steps of complex deployments
 
-We now know the necessary mongo Replica Set initialization command ahead of time, we don't yet know _when_ to run it, and _what_ should execute it.
+We now know the necessary mongo Replica Set initialization command ahead of time, we don't yet know _when_ to run it, and _what_ should execute it. A Kubernetes Job is a great choice for this sort of thing.
+
+```
+apiVersion: extensions/v1beta1
+kind: Job
+metadata:
+  name: init
+spec:
+  autoSelector: true
+  template:
+    metadata:
+      name: init
+    spec:
+      containers:
+      - name: init
+        image: mongo:3.2
+        command:
+        - "mongo"
+        - "--host"
+        - "rs0-0"
+        - "--port"
+        - "27017"
+        - "--eval"
+        - "rs.initiate({_id: 'rs0', members: [{'_id':0,host:'rs0-0:27019'},{'_id':1,host:'rs0-1:27019'},{'_id':2,host:'rs0-2:27019'}]})"
+      restartPolicy: Always
+```
+
+This Kubernetes Job will start a pod using the official mongo:3.2 image, execute the mongo replica set initialization command against a group of hosts whose names are deducible because they belong to a PetSet, and exit.
+
+Against a fresh replica set this will happen quickly and reliably. It would be even better to run this *only once* after the replica set pods are ready. In essence, this Kubernetes Job is a One Shot step _conditional on the previous step_ succesfully completing. 
 
 ## InitContainers
