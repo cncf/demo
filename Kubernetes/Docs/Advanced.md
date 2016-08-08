@@ -1,6 +1,6 @@
 # Complex Deployments on Kubernetes
 
-None trivial deployments sometimes require more advanced kubernetes primitives.  
+Non-trivial deployments sometimes require more advanced kubernetes primitives.  
 Two such neccessary building blocks have been recently released as alphas. 
 
 A third, Jobs, has shipped. Kubernetes Jobs are a crucial feature for complex deployments and the pattern is described below.
