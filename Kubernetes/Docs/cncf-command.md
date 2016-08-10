@@ -61,11 +61,11 @@ The following is going on behind the scenes:
 
 The demo described above is difficult and brittle to put together with regular `kubectl` usage. Editing YAML files by hand is time consuming and error prone. 
 
-# Behind the scences 
+### Behind the scences 
 
 The demo was accomplished with [Jinja](http://jinja.pocoo.org/) templating, several [advanced kubernetes primitives & patterns](Advanced.md) that are currently in Alpha, and extending and adding some functionality to the `cncf` wrapper - all in order to greatly simplify and reduce the number of commands required to accomplish a complex deployment.
 
-# Future Plans
+### Future Plans
 
 - Additional cloud providers support
 - A visualization/UI layer to display the progress of cluster bootstraps, deployments, and benchmarks
