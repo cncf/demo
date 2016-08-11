@@ -7,7 +7,14 @@ The goal of this project is to demonstrate each of the technologies that have be
 
 ## Sample Applications
 1. Count.ly - [Project] (https://count.ly), [Source] (https://github.com/countly/countly-server) 
+  * Goals:
+    1. demonstrate autoscaling of Countly
+    2. illustrate background, lower priority jobs vs foreground, higher priority jobs
+
 2. Boinc - [Project] (http://boinc.berkeley.edu), [Source] (https://github.com/BOINC)
+  * Goals:
+    1. demonstrate grid computing use case
+    2. contribute cycles to curing [Zika] (https://en.wikipedia.org/wiki/Zika_virus) in IBM [World Community Grid] (https://www.worldcommunitygrid.org)
 
 ## Open
 The project output will be an open source Github repo that will become widely referenced within the CNCF community. 
