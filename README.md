@@ -17,9 +17,7 @@ The goal of this project is to demonstrate each of the technologies that have be
     2. contribute cycles to curing [Zika] (https://en.wikipedia.org/wiki/Zika_virus) in IBM [World Community Grid] (https://www.worldcommunitygrid.org)
 
 ## Open
-The project output will be an open source Github repo that will become widely referenced within the CNCF community. 
-
-All work will occur on a public repo, all externally referenced projects will be open source, and this project itself will be licensed under Apache 2.0. The project is also expected to provide material for numerous blog posts and white papers.
+The project output will be an open source Github repo that will become widely referenced within the CNCF community. All work will occur on a public repo, all externally referenced projects will be open source, and this project itself will be licensed under Apache 2.0. 
 
 ## Disclaimer
 Note that these are explicitly marketing demos, not reference stacks. The CNCF’s [Technical Oversight Committee] (https://github.com/cncf/toc) will over time be adopting additional projects and may eventually publish reference stacks. By contrast, this project is designed to take the shortest possible path to successful multi-cloud deployments of diverse applications.
