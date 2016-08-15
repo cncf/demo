@@ -10,15 +10,6 @@ Getting started with the `cncfdemo` is a three-step process:
 1. Run `brew install kubernetes-cli` 
 
   If your package manager does not have `kubectl`, simply [download a binary release](https://github.com/kubernetes/kubernetes/releases) and add `kubectl` to your path. See [Installing and Setting up kubectl] (http://kubernetes.io/docs/user-guide/prereqs/) for platform-specific installation instructions.
-  
-  **Linux**
-  ```
-  <path/to/kubernetes-directory>/platforms/linux/amd64
-  ```
-  **Windows**
-  ```
-  <path/to/kubernetes-directory>/platforms/windows/amd64/kubectl.exe
-  ```
 
 2. Run `pip install cncf`
 
