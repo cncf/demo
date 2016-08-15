@@ -20,7 +20,7 @@ The goal of this project is to demonstrate each of the technologies that have be
 A variety of deployments models will be supported. Support for each deployment model will be delivered in this order of priority:
 
 1. Local (to your machine)
-2. [CNCF Cluster] (#cncf-cluster)
+2. [CNCF Community Cluster] (#cncf-cluster)
 3. AWS
 4. Azure
 5. GCP
@@ -28,7 +28,7 @@ A variety of deployments models will be supported. Support for each deployment m
 
 Given this breadth of supported deployment models using the same sample applications, performance, cost, etc. characteristics between this variety of clusters may be compared.
 
-### CNCF Cluster <a id="cncf-cluster"></a>
+### CNCF Community Cluster <a id="cncf-cluster"></a>
 Donated by Intel, a 1,000 node cluster of servers is running in Switch, Las Vegas, to be used by the CNCF community. Visit these links for a description of the cluster [project page] (https://cncf.io/cluster) or to be involved in the [cluster community] (https://github.com/cncf/cluster). 
 
 ## Getting Started
