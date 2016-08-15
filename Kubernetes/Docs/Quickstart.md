@@ -5,11 +5,11 @@ Getting started with the `cncfdemo` is a three-step process:
 2. [Create a Kubernetes cluster, running Prometheus] (#cluster)
 3. [Run demo apps] (#demo)
 
- ## 1. Install Dependencies <a id="dependencies"></a>
+## 1. Install Dependencies <a id="dependencies"></a>
 
 - `brew install kubernetes-cli` 
 
-  <sub>If the package manager native to your platform doesn't have it, simply [download a binary release](https://github.com/kubernetes/kubernetes/releases) and add kubectl to your path.</sub>
+  <sub>If your package manager does not have `kubectl`, simply [download a binary release](https://github.com/kubernetes/kubernetes/releases) and add `kubectl` to your path. See [Installing and Setting up kubectl] (http://kubernetes.io/docs/user-guide/prereqs/) for platform-specific installation instructions. </sub>
 
   ```
   # Linux
@@ -29,7 +29,7 @@ Getting started with the `cncfdemo` is a three-step process:
 
 - `cncf bootstrap aws`
 
-  <sub>Grab a beverage, this step takes several minutes</sub>
+  <sub>AWS is used as an example. Substitute with your provider of choice. Grab a beverage, this step takes several minutes.</sub>
   
 - Keep a second terminal tab open and run:
 ```
