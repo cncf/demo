@@ -1,6 +1,11 @@
 # Quickstart Guide
+Getting started with the `cncfdemo` is a three-step process:
 
-### Grab dependencies
+1. [Install dependencies] (#dependencies)
+2. [Create a Kubernetes cluster, running Prometheus] (#cluster)
+3. [Run demo apps] (#demo)
+
+ ## 1. Install Dependencies <a id="dependencies"></a>
 
 - `brew install kubernetes-cli` 
 
@@ -13,8 +18,6 @@
   <path/to/kubernetes-directory>/platforms/windows/amd64/kubectl.exe
   ```
 
-
-
 - `pip install cncf`
 
   <sub>pip is the python package manager. It is strongly recommended to also use a dedicated python virtualenv.
@@ -22,7 +25,7 @@
   
   **Note**: cncf is coming to your native package manager soon.</sub>
   
-### Create Cluster
+## 2. Create Cluster <a id="cluster"></a>
 
 - `cncf bootstrap aws`
 
@@ -34,7 +37,7 @@
 Starting to serve on 127.0.0.1:8001
 ```
 
-### Run Demo
+## 3. Run Demo <a id="demo"></a>
 
 - `cncf demo`
 
