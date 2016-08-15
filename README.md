@@ -19,7 +19,7 @@ The goal of this project is to demonstrate each of the technologies that have be
 ## Supported Deployments
 A variety of deployments models will be supported. Support for each deployment model will be delivered in this order of priority:
 
-1. Local (to your machine)
+1. Local (on your machine)
 2. [CNCF Community Cluster] (#cncf-cluster)
 3. AWS
 4. Azure
