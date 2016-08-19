@@ -5,16 +5,18 @@ The goal of this project is to demonstrate each of the technologies that have be
 1. Kubernetes - [Project] (http://kubernetes.io), [Source] (https://github.com/kubernetes/kubernetes)
 2. Prometheus - [Project] (https://prometheus.io), [Source] (https://github.com/prometheus)
 
-## Sample Applications
+## Summary of Sample Applications
 1. Count.ly - [Project] (https://count.ly), [Source] (https://github.com/countly/countly-server) 
   * Goals:
     1. demonstrate autoscaling of Countly
     2. illustrate background, lower priority jobs vs foreground, higher priority jobs
+  * [Details of sample application] (#countly)
 
 2. Boinc - [Project] (http://boinc.berkeley.edu), [Source] (https://github.com/BOINC)
   * Goals:
     1. demonstrate grid computing use case
     2. contribute cycles to curing [Zika] (https://en.wikipedia.org/wiki/Zika_virus) in IBM [World Community Grid] (https://www.worldcommunitygrid.org)
+  * Details of sample application
 
 ## Supported Deployments
 A variety of deployments models will be supported. Support for each deployment model will be delivered in this order of priority:
@@ -39,3 +41,15 @@ The project output will be an open source Github repo that will become widely re
 
 ## Disclaimer
 Note that these are explicitly marketing demos, not reference stacks. The CNCF’s [Technical Oversight Committee] (https://github.com/cncf/toc) will over time be adopting additional projects and may eventually publish reference stacks. By contrast, this project is designed to take the shortest possible path to successful multi-cloud deployments of diverse applications.
+
+# Details of Sample Applications 
+## Countly <a id="countly"></a>
+Countly is an open source web & mobile analytics and marketing platform. It provides insights about user actions.
+
+## Configuration Files
+Two configuration files used to dictate the behavior of this demo application are [api.js] (configMaps/countly/api.js) and [frontend.js] (configMaps/countly/frontend.js). Each configuration file contains only one change from the default configurationonly line changed from the default config:
+
+  `Host: "mongos:default"`
+
+By setting `Host` to "mongos.default", the Countly application looks for its MongoDB servers at the address "mongos.default". The "mongos.default" reference resolves to a Kubernetes service called mongos. The .default namespace is the default top-level domain for pods and services deployed in Kubernetes.
+
