@@ -11,7 +11,7 @@ setup(
         'glob2',
         'pyyaml',
         'jinja2',
-        'boto',
+        'boto3',
     ],
     entry_points='''
         [console_scripts]

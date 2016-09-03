@@ -5,8 +5,7 @@
   roles:
    - { role: firewall, tags: firewall }
    - { role: dependencies, tags: dependencies }
-   - { role: awscli, tags: awscli }
    - { role: docker, tags: docker }
    - { role: weave, tags: weave }
-#   - { role: etcd, tags: etcd, when: "'etcd' in group_names" }
-#   - { role: kubernetes, tags: kubernetes }
+   - { role: etcd, tags: etcd }
+   - { role: kubernetes, tags: kubernetes }

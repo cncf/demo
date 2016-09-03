@@ -1,0 +1,50 @@
+{%- macro initContainers() -%}
+
+{"name": "ns", "image": "busybox", "command": ["/bin/sh", "-c", "sleep 5; [[ $(nslookup mongos.default | tail -n +5 | wc -l) -ge 1 ]]"]},
+{"name": "wait", "image": "busybox", "command": ["/bin/sh", "-c", "sleep 10"]},
+{"name": "connect", "image": "mongo:3.2", "command": ["mongo", "--host", "mongos.default", "--eval", "db.getSiblingDB('admin').runCommand({listShards:1})"]}
+
+{%- endmacro -%}
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: countly
+  name: countly
+spec:
+  selector:
+    app: countly
+  type: NodePort
+  ports:
+  - name: countly
+    protocol: TCP
+    port: 80
+    nodePort: 32080
+  type: LoadBalancer
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: countly
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: countly
+  template:
+    metadata:
+      name: countly
+      labels:
+        app: countly
+      annotations:
+        pod.alpha.kubernetes.io/init-containers: "[{{ initContainers()|json_dump|replace('\\n','') }}]"
+    spec:
+      containers:
+      - name: countly
+        image: countly/countly-server:16.06
+        ports:
+        - name: countly
+          containerPort: 80

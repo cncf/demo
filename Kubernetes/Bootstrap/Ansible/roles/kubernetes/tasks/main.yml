@@ -1,19 +1,28 @@
 ---
-- lineinfile: dest=/etc/hosts line="10.2.0.17 kmaster"
+- unarchive: src="https://github.com/containernetworking/cni/releases/download/v0.3.0/cni-v0.3.0.tgz" dest=/opt/cni/bin copy=no
+
+- get_url: url="{{ kubernetes_base_url }}/{{ item }}" dest=/usr/bin mode=a+x validate_certs=no force=true
+  with_items:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+    - kube-proxy
+    - kubelet
+    - kubectl
 
 - file: path=/etc/kubernetes state=directory mode=0755
-  tags: kpy
 
-- copy: src="{{ item.src }}" dest="{{ item.dest }}" mode=0644
+- copy: src=etc/ dest=/etc/kubernetes mode=0644
+- copy: src=services/ dest=/etc/systemd/system/ mode=0644
+
+- name: generate certs
+  command: /bin/sh /etc/kubernetes/make-ca-cert.sh 10.0.0.1
+  become: true
+
+- service: name="{{ item }}" enabled=true
   with_items:
-    - src: config
-      dest: /etc/kubernetes/config
-    - src: apiserver
-      dest: /etc/kubernetes/apiserver
-    - src: kubelet
-      dest: /etc/kubernetes/kubelet
-    - src: proxy
-      dest: /etc/kubernetes/proxy
-  notify:
-    - reload systemd
-  tags: kpy
+    - kube-apiserver
+    - kube-controller
+    - kube-proxy
+    - kube-scheduler
+    - kubelet
