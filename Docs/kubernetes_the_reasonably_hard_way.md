@@ -32,6 +32,7 @@ A highly available etcd is well covered by many other guides. The cncf demo and 
 
 Lets zoom in further on one of those circles representing a Kubernetes minion.
 
+
 <sub><sub>*AWS AutoScalingGroups, GCE "Managed Instance Groups", Azure "Scale Sets"</sub></sub>
 
 ## _To thy own self be true_
@@ -117,3 +118,45 @@ In order to let Pod A (10.32.0.1) from one minion node (172.20.0.1) communicate 
 
 CNI, the [Container Network Interface](https://github.com/containernetworking/cni), is a proposed standard for configuring network interfaces for Linux application containers. CNI is supported by Kubernetes, Apache Mesos and others.
 
+### Enabling CNI
+
+Required directories for CNI plugin:
+
+ - /opt/cni/bin
+ - /etc/cni/net.d
+ 
+ The [default cni plugin](https://github.com/containernetworking/cni/releases) binaries need to be placed in `/opt/cni/bin/`. We have opted to use Weave, its setup script adds weave binaries into this directory as well.
+ 
+ Finally, we direct the Kubelet to use the above:
+ 
+> KUBELET_ARGS="--network-plugin=cni --network-plugin-dir=/etc/cni/net.d --docker-endpoint=unix:///var/run/weave/weave.sock"
+
+
+### Weave Quorum
+
+Kubernetes will now rely on the Weave service to allocate the ips in the oerlay network.
+
+> PEERS=$(getent hosts minions.cncfdemo.k8s | awk '{ printf "%s ", $1 }')
+>
+> MEMBERS=$(getent hosts minions.cncfdemo.k8s | wc -l)
+>
+> /usr/local/bin/weave launch-router --ipalloc-init consensus=$MEMBERS ${PEERS}
+
+You can read further details on [Weave initialization strategies](https://www.weave.works/docs/net/latest/ipam/#quorum). We are using the consensus strategy. In keeping with our example:
+
+- PEERS=172.20.0.63 172.20.0.64
+- MEMBERS=2
+
+> Weave Net uses the estimate of the number of peers at initialization to compute a majority or quorum number – specifically floor(n/2) + 1.
+
+> If the actual number of peers is less than half the number stated, then they keep waiting for someone else to join in order to reach a quorum.
+
+Once the quorom has been reached you can see how the IP allocation has been divvied up between the members. 
+
+> weave status ipam
+>
+> 82:85:7e:7f:71:f3(ip-172-20-0-63)        32768 IPs (50.0% of total)
+>
+> ce:38:5e:9d:35:ab(ip-172-20-0-64)        32768 IPs (50.0% of total)
+
+<sub>For a deeper dive on how this mechanism works: [Distributed systems with (almost) no consensus](https://www.youtube.com/watch?v=117gWVShcGU).</sub>
