@@ -1,17 +1,20 @@
 [Unit]
 After=docker.service
+After=weave.service
+Documentation=http://docs.weave.works/
 Description=Weave proxy for Docker API
+ConditionPathExists=!/etc/sysconfig/kubernetes-masters
 Documentation=http://docs.weave.works/
 Requires=docker.service
 Requires=weave.service
 
 [Service]
-EnvironmentFile=-/etc/sysconfig/weave
-
+EnvironmentFile=/etc/sysconfig/weave
+ExecStartPre=/bin/bash -c "until /usr/local/bin/weave stop-proxy; do echo \"make sure proxy down first...\"; sleep 5; done"
 ExecStartPre=/usr/local/bin/weave launch-proxy $WEAVE_PROXY_ARGS
 ExecStart=/usr/bin/docker attach weaveproxy
-Restart=on-failure
 ExecStop=/usr/local/bin/weave stop-proxy
-
+Restart=on-failure
+RestartSec=5
 [Install]
 WantedBy=multi-user.target

@@ -1,0 +1,167 @@
+{%- macro initContainers(i, loopindex) -%}
+
+{%- if i.mongos -%}
+
+{"name": "connect", "image": "mongo:3.2", "command": ["mongo", "--host", "{{ i.name }}-2.{{ i.name}}", "--port", "{{ i.port }}", "--eval", "rs.status()"]},
+{"name": "wait", "image": "busybox", "command": ["/bin/sh", "-c", "sleep 45"]}
+
+{%- else %}
+
+{"name": "ns", "image": "busybox", "command": ["/bin/sh", "-c", "sleep 45; [[ $(nslookup {{ i.name }}.default | tail -n +5 | wc -l) -ge {{ i.replicas }} ]]"]},
+{"name": "connect", "image": "mongo:3.2", "command": ["mongo", "--host", "{{ i.name }}-2.{{ i.name}}", "--port", "{{ i.port }}", "--eval", "rs.status()"]},
+{"name": "wait", "image": "busybox", "command": ["/bin/sh", "-c", "sleep 10"]},
+{"name": "init", "image": "mongo:3.2", "command": ["mongo", "--host", "{{ i.name }}-0.{{ i.name}}", "--port", "{{ i.port }}", "--eval", 
+
+"rs.initiate({_id: 'rs{{ loopindex }}', 
+members: [{% for r in range(i.replicas) -%}
+{_id:{{ loop.index0 }},host:'{{ i.name }}-{{ loop.index0 }}.{{ i.name }}:{{ i.port }}'}{% if not loop.last -%},{% endif -%}
+{% endfor -%}]})"
+
+]}
+
+{%- if not i.configset  -%},
+{"name": "ns2", "image": "busybox", "command": ["/bin/sh", "-c", "sleep 30; [[ $(nslookup mongos.default | tail -n +5 | wc -l) -ge 1 ]]"]},
+{"name": "wait2", "image": "busybox", "command": ["/bin/sh", "-c", "sleep 15"]}
+{%- endif -%}
+
+{%- endif -%}
+{%- endmacro -%}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongos
+  labels:
+    app: mongos
+spec:
+  ports:
+  - port: 27019
+    name: mongos
+  clusterIP: None
+  selector:
+    app: mongos
+
+---
+{%- for item in [{'name': 'mongocfg', 'configset': True, 'replicas': 3, 'port': 27019, 'mongos': True}] %}
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mongos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongos
+  template:
+    metadata:
+      name: mongos
+      labels:
+        app: mongos
+      annotations:
+        pod.alpha.kubernetes.io/init-containers: "[{{ initContainers(item, loop.index0)|json_dump|replace('\\n','') }}]"
+    spec:
+      containers:
+      - name: mongo
+        image: mongo:3.2
+        command:
+        - mongos
+        - "--configdb"
+        - "rs0/mongocfg-0.mongocfg:27019,mongocfg-1.mongocfg:27019,mongocfg-2.mongocfg:27019"
+        - "--bind_ip"
+        - 0.0.0.0
+        ports:
+        - containerPort: 27019
+          name: mongos
+
+---
+{%- endfor -%}
+{%- for item in [{'name': 'mongocfg', 'configset': True, 'replicas': 3, 'port': 27019},
+                {'name': 'mongors1', 'configset': False, 'replicas': 3, 'port': 27017},
+                {'name': 'mongors2', 'configset': False, 'replicas': 3, 'port': 27017}] %}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ item.name }}
+  labels:
+    app: {{ item.name }}
+spec:
+  ports:
+  - port: {{ item.port }}
+    name: {{ item.name }}
+  clusterIP: None
+  selector:
+    app: {{ item.name }}
+
+---
+
+apiVersion: apps/v1alpha1
+kind: PetSet
+metadata:
+  name: {{ item.name }}
+spec:
+  serviceName: {{ item.name }}
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: {{ item.name }}
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: mongo
+        image: mongo:3.2
+        command:
+        - mongod
+        {% if item.configset -%}
+        - "--configsvr"
+        {% endif -%}
+        - "--replSet"
+        - "rs{{ loop.index0 }}"
+        - "--bind_ip"
+        - 0.0.0.0
+        ports:
+        - containerPort: {{ item.port }}
+          name: {{ item.name }}
+
+---
+{% endfor %}
+{%- for item in [{'name': 'mongocfg', 'configset': True, 'replicas': 3, 'port': 27019},
+                {'name': 'mongors1', 'configset': False, 'replicas': 3, 'port': 27017},
+                {'name': 'mongors2', 'configset': False, 'replicas': 3, 'port': 27017}] %}
+
+apiVersion: extensions/v1beta1
+kind: Job
+metadata:
+  name: {{ item.name }}-setup
+spec:
+  autoSelector: true
+  template:
+    metadata:
+      name: {{ item.name }}-setup
+      annotations:
+        pod.alpha.kubernetes.io/init-containers: "[{{ initContainers(item, loop.index0)|json_dump|replace('\\n','') }}]"
+    spec:
+      containers:
+      - name: {{ item.name }}-setup
+        image: mongo:3.2
+        command:
+        {%- if not item.configset  %}
+        - "mongo"
+        - "--host"
+        - mongos.default
+        - "--port"
+        - "27017"
+        - "--eval"
+        - "sh.addShard( 'rs{{ loop.index0 }}/mongors{{ loop.index0 }}-0.mongors{{ loop.index0 }}:{{ item.port }}' )"
+        {%- else %}
+        - "/bin/echo"
+        - "configset ready"
+        {%- endif %}
+      restartPolicy: OnFailure
+
+{% if not loop.last -%}---{% endif -%}
+{% endfor %}
