@@ -32,7 +32,6 @@ A highly available etcd is well covered by many other guides. The cncf demo and 
 
 Lets zoom in further on one of those circles representing a Kubernetes minion.
 
-
 <sub><sub>*AWS AutoScalingGroups, GCE "Managed Instance Groups", Azure "Scale Sets"</sub></sub>
 
 ## _To thy own self be true_
@@ -51,6 +50,7 @@ This file is injected into the instance upon creation via user data.
 Kubernetes consists of half a dozen binaries with no dependencies, we include _all_ and create and _enable all_ corresponding services. Accordingly, systemd service files include a conditional along the lines of:
 
 > ConditionPathExists=/etc/sysconfig/kubernetes-minions
+
 > ConditionPathExists=!/etc/sysconfig/kubernetes-masters
 	
 Naturally for a master we create the file with the name 'kubernetes-masters' instead and flip the conditional in the service files.
