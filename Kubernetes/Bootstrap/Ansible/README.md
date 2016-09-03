@@ -8,7 +8,7 @@ Simply install and configure Packer and fork this repo to customize.
 
 ## Requirements
 
-You must have ansible 2.1+ installed.
+You must have Ansible 2.1+ installed ([installation instructions] (http://docs.ansible.com/ansible/intro_installation.html)).
 
 ## Usage
 
