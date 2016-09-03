@@ -27,4 +27,4 @@ Notes:
 
 ### Deploy
 
-ansible-playbook playbooks/setup/main.yml 
+ansible-playbook playbooks/setup/main.yml -v
