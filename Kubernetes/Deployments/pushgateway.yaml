@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
+  name: pushgateway
+  labels:
+    app: pushgateway
   annotations:
     prometheus.io/scrape: 'true'
-  labels:
-    name: pushgateway
-  name: pushgateway
 spec:
   selector:
     app: pushgateway
@@ -22,6 +22,8 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: pushgateway
+  labels:
+    app: pushgateway
 spec:
   replicas: 1
   selector:
