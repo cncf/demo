@@ -9,7 +9,6 @@ Simply install and configure Packer and fork this repo to customize.
 ## Dependencies
 
 - Ansible 2.1+ installed ([installation instructions] (http://docs.ansible.com/ansible/intro_installation.html))
-- 
 
 ## Usage
 
@@ -31,6 +30,7 @@ Notes:
 
 1. `ansible-playbook playbooks/setup/main.yml -vvvv`
 2. Identify the node's role by creating _/etc/sysconfig/kubernetes-masters_ or */etc/sysconfig/kubernetes-minions*
+  
   ```
   CLUSTER_NAME=cncfdemo
   CLOUD_PROVIDER=--cloud-provider=aws  // Leave cloud_provider blank for bare metal installations
