@@ -36,7 +36,7 @@ Donated by Intel, a 1,000 node cluster of servers is running in Switch, Las Vega
 ## Getting Started
 * [Quick Start] (https://github.com/cncf/demo/blob/master/Kubernetes/Docs/Quickstart.md)
 
-## An Open Committment
+## An Open Commitment
 The project output will be an open source Github repo that will become widely referenced within the CNCF community. All work will occur on a public repo, all externally referenced projects will be open source, and this project itself will be licensed under Apache 2.0. 
 
 ## Disclaimer
