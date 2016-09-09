@@ -72,11 +72,11 @@ Note that these are explicitly marketing demos, not reference stacks. The CNCFâ€
 # Quickstart Guide <a id="quickstart"></a>
 Getting started with the `cncfdemo` is a three-step process:
 
-1. [Install dependencies] (#dependencies)
+1. [Install cncfdemo] (#dependencies)
 2. [Create a Kubernetes cluster, running Prometheus] (#cluster)
 3. [Run demo apps & benchmarks] (#demo)
 
-## 1. Install Dependencies <a id="dependencies"></a>
+## 1. Install cncfdemo <a id="dependencies"></a>
 
 1. Run `pip install cncfdemo`
 
