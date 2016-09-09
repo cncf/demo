@@ -1,6 +1,10 @@
 ---
-- name: disable 
+- name: disable firewalld
   service: name=firewalld enabled=no state=stopped
+  ignore_errors: yes
+
+- name: disable iptables-services
+  service: name=iptables-services enabled=no state=stopped
   ignore_errors: yes
 
 - selinux: state=disabled

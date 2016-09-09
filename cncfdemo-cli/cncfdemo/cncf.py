@@ -2,17 +2,18 @@ import os
 import sys
 import click
 
-from cncfdemo.commands.configmap import cli as configmap
-from cncfdemo.commands.create import cli as create
+#from cncfdemo.commands.configmap import cli as configmap
+#from cncfdemo.commands.create import cli as create
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix='CNCF', ignore_unknown_options=True)
 cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), 'commands'))
+cmd_folder2 = os.path.abspath(os.path.join(os.path.dirname(__file__), 'Bootstrap'))
 
 class ComplexCLI(click.MultiCommand):
 
     def list_commands(self, ctx):
         rv = []
-        for filename in os.listdir(cmd_folder):
+        for filename in (os.listdir(cmd_folder) + os.listdir(cmd_folder2)):
             if filename.endswith('.py') and \
                filename.startswith('cmd_'):
                 rv.append(filename[4:-3])

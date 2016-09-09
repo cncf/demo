@@ -18,6 +18,7 @@ ExecStart=/bin/kubelet \
             --api-servers=http://masters.${CLUSTER_NAME}.k8s:8080 \
             $CLOUD_PROVIDER \
             $KUBELET_HOSTNAME \
+            $KUBELET_POD_INFRA_CONTAINER \
             $KUBELET_ARGS \
             $KUBE_LOGTOSTDERR
 Restart=on-failure
