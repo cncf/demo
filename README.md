@@ -17,9 +17,9 @@
 
 - Patterns and Best Practices
 
-  How to adapt your app to run in Kubernetes (Countly example in detail), 
-  Clustred Datastores on top of Kubernetes (Mongo example in detail),
-  Making use of spare capcity with Background Jobs (Boinc example in detail) 
+  - How to adapt your app to run in Kubernetes (Countly example in detail)
+  - Clustred Datastores on top of Kubernetes (Mongo example in detail)
+  - Making use of spare capcity with Background Jobs (Boinc example in detail) 
 
 
 ---
