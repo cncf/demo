@@ -1,4 +1,31 @@
-# Quickstart Guide
+# Table of Contents
+
+## Quickstart 
+
+- [Launch a Kubernetes cluster with one command, right now.] (#quickstart) 
+
+## Overview 
+- [Kubernetes Cluster Architecture] (#architecture overview)
+- Kubernetes Cluster Provisioning 
+- Kubernetes Cluster Deployments 
+
+## Advanced 
+
+- Complex, Scriptable Kubernetes Deployments & Jinja Templating 
+  
+  What actually happens when you 'cncfdemo start'
+
+- Patterns and Best Practices
+
+  How to adapt your app to run in Kubernetes (Countly example in detail), 
+  Clustred Datastores on top of Kubernetes (Mongo example in detail),
+  Making use of spare capcity with Background Jobs (Boinc example in detail) 
+
+
+---
+
+
+# Quickstart Guide <a id="quickstart"></a>
 Getting started with the `cncfdemo` is a three-step process:
 
 1. [Install dependencies] (#dependencies)
@@ -27,9 +54,52 @@ Getting started with the `cncfdemo` is a three-step process:
  
 ---
 
+### The `cncfdemo` command _shadows and complements_ the official Kubectl binary. 
+
+> ❯ cncfdemo create configmap example --from-file=path/to/directory
+
+> ❯ kubectl create configmap example --from-file=path/to/directory
+
+
+cncfdemo is written in Python and like Kubectl interacts with the [remote REST API server](http://kubernetes.io/docs/admin/accessing-the-api/). Unlike Kubectl, it supports HTTP only. Further differing from kubectl it is able to create new clusters on your favorite cloud provider (or even bare metal).
+
+### Complex, Scriptable Kubernetes Deployments & Jinja Templating 
+
+In addition to the ability to quickly spin up new clusters from scratch the `cncfdemo` command comes with a built in demo of a complex multistep multicomponent deployment.
+
+When you run:
+> ❯ cncfdemo start
+
+The following is going on behind the scenes: 
+
+- [Prometheus](https://github.com/prometheus) and its Pushgateway are deployed
+- Grafana is deployed with preconfigured dashboards to expose metrics collected by Prometheus
+- ConfigMaps are created from autodetection of configuration files required by the applications being deployed
+- A sharded mongo cluster is provisioned 
+- One Shot Kuberentes Jobs initialize and configure the mongo cluster
+- A mongos service is exposed internally to the cluser
+- Multiple instances of [Countly](https://count.ly/) are spun up against the mongo cluster
+- Countly service is exposed at a human readable subdomain [countly.cncfdemo.io](countly.cncfdemo.io) via Route53
+- HTTP Benchmarking is performed against the Countly subdomain via [WRK](https://github.com/wg/wrk) jobs
+- Idle cluster capacity to search for a cure to the Zika virus is donated via [Boinc](https://hub.docker.com/r/zilman/boinc/) and [IBM WorldCommunityGrid](https://www.worldcommunitygrid.org/about_us/viewAboutUs.do)
+
+The demo described above is difficult and brittle to put together with regular `kubectl` usage. Editing YAML files by hand is time consuming and error prone. 
+
+### Behind the scences 
+
+The demo was accomplished with [Jinja](http://jinja.pocoo.org/) templating, several [advanced kubernetes primitives & patterns](Advanced.md) that are currently in Alpha, and extending and adding some functionality to the `cncfdemo` wrapper - all in order to greatly simplify and reduce the number of commands required to accomplish a complex deployment.
+
+### Future Plans
+
+- Additional cloud providers support
+- A visualization/UI layer to display the progress of cluster bootstraps, deployments, and benchmarks
+
+
+---
+
 <img src="https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.png" width="42px">
 
-## Overview
+## Overview <a id="architecture overview"></a>
 
 This document will walk you through setting up Kubernetes. This guide **_is_** for people looking for a fully automated command to bring up a Kubernetes cluster (In fact, this is the basis for the cncfdemo command utility and you can use that directly or learn how to make your own).
 
