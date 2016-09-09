@@ -9,7 +9,7 @@
 - Kubernetes Cluster Provisioning 
 - Kubernetes Cluster Deployments 
 
-## Advanced 
+## Deep Dive 
 
 - Complex, Scriptable Kubernetes Deployments & Jinja Templating 
   
