@@ -46,7 +46,7 @@ If you just want to try it out skip to the [Quick start](https://github.com/cncf
 
 Kubernetes components are neatly split up into three distinct groups*.
 
-<img src="arch.png" width="70%">
+<img src="https://raw.githubusercontent.com/cncf/demo/master/Docs/arch.png" width="70%">
 
 <sub>Diagram of a highly available kubernetes cluster</sub>
 
@@ -139,7 +139,7 @@ At this point you might be wondering why `minions.{KubernetesCluster}.k8s` is ne
 > Kubernetes allocates an IP address to each pod. When creating a cluster, you need to allocate a block of IPs for Kubernetes to use as Pod IPs. 
 <sub>-- [Kubernetes Docs](http://kubernetes.io/docs/getting-started-guides/scratch/#network)</sub> 
 
-<img src="sdn.png" width="70%">
+<img src="https://raw.githubusercontent.com/cncf/demo/master/Docs/sdn.png" width="70%">
 
 In order to let Pod A (10.32.0.1) from one minion node (172.20.0.1) communicate with Pod B (10.32.0.3) on another minion node (172.20.0.2) we use an Overlay network. It is possible to achieve this sort of routing without an overlay network (and associated performance penalty) but an overlay is simpler to configure and more importantly it is **_portable_**.
 
