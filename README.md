@@ -11,15 +11,15 @@
 
 ## Deep Dive 
 
-- Complex, Scriptable Kubernetes Deployments & Jinja Templating 
-  
-  What actually happens when you 'cncfdemo start'
-
 - Patterns and Best Practices
 
   - How to adapt your app to run in Kubernetes (Countly example in detail)
   - Clustred Datastores on top of Kubernetes (Mongo example in detail)
   - Making use of spare capcity with Background Jobs (Boinc example in detail) 
+
+- Complex, Scriptable Kubernetes Deployments & Jinja Templating 
+  
+  What actually happens when you 'cncfdemo start'
 
 
 ---
