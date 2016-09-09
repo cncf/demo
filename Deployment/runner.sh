@@ -1,5 +1,4 @@
 #!/bin/bash
-# Deployments 
 
 cncf2 create configmaps
 cncf2 create -f Deployments --recursive

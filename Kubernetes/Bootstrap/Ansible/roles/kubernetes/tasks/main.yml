@@ -16,7 +16,7 @@
 - copy: src=services/ dest=/etc/systemd/system/ mode=0644
 
 - name: generate certs
-  command: /bin/sh /etc/kubernetes/make-ca-cert.sh 10.0.0.1
+  command: /bin/sh /etc/kubernetes/make-ca-cert.sh _use_aws_external_ip_ IP:10.0.0.1,DNS:kubernetes,DNS:kubernetes.default,DNS:kubernetes.default.svc,DNS:kubernetes.default.svc.cluster.local,DNS:masters.cncfdemo.k8s
   become: true
 
 - service: name="{{ item }}" enabled=true

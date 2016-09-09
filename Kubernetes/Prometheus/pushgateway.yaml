@@ -17,7 +17,7 @@ spec:
     nodePort: 30901
   type: LoadBalancer
 
-----
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:

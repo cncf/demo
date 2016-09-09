@@ -19,7 +19,7 @@ ExecStart=/bin/kube-proxy \
             $KUBELET_HOSTNAME \
             $KUBE_CLUSTER_CIDR_RANGE \
             $KUBE_LOGTOSTDERR \
-            --v=4 \
+            --v=6 \
             $KUBE_PROXY_ARGS
 Restart=on-failure
 RestartSec=5
