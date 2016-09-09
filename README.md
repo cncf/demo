@@ -110,7 +110,7 @@ Kubernetes is currently experiencing a cambrian explosion[<sup>1</sup>](https://
 - Image based deployments bake all components into one single image
 
 
-If you just want to try it out skip to the [Quick start](https://github.com/cncf/demo/blob/master/Kubernetes/Docs/Quickstart.md).
+If you just want to try it out skip to the [Quick start]((#quickstart).
 
 ## Three Groups
 
