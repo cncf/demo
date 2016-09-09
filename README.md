@@ -1,3 +1,37 @@
+# Quickstart Guide
+Getting started with the `cncfdemo` is a three-step process:
+
+1. [Install dependencies] (#dependencies)
+2. [Create a Kubernetes cluster, running Prometheus] (#cluster)
+3. [Run demo apps] (#demo)
+
+## 1. Install Dependencies <a id="dependencies"></a>
+
+1. Run `brew install kubernetes-cli` 
+
+  If your package manager does not have `kubectl`, simply [download a binary release](https://github.com/kubernetes/kubernetes/releases) and add `kubectl` to your path. See [Installing and Setting up kubectl] (http://kubernetes.io/docs/user-guide/prereqs/) for platform-specific installation instructions.
+
+2. Run `pip install cncfdemo`
+
+   pip is the python package manager. It is strongly recommended to also use a dedicated python virtualenv. For detailed install instructions for your platform read: [The Hitchhiker's Guide to Python](http://docs.python-guide.org/en/latest/starting/install/osx/#setuptools-pip). 
+  
+## 2. Create Cluster <a id="cluster"></a>
+
+1. `cncfdemo bootstrap aws`
+
+  AWS is used as an example. Substitute with your provider of choice. 
+  
+  <sub>**Note**: Grab a beverage, this step takes several minutes.</sub>
+  
+
+## 3. Run Demo <a id="demo"></a>
+
+1. Run `cncfdemo start`
+2. Browse to [countly.cncfdemo.io](countly.cncfdemo.io)
+3. Run `cncfdemo benchmark --time 5m --save-html`
+ 
+
+
 # CNCF Technologies Demonstration
 The goal of this project is to demonstrate each of the technologies that have been adopted by the [Cloud Native Computing Foundation] (http://cncf.io) (CNCF) in a publicly available repository in order to facilitate their understanding through simple deployment tooling and by providing sample applications as common-ground for conversation. This project will enable replicable deployments and facilitate quantification of performance, latency, throughput, and cost between various deployment models.
 
