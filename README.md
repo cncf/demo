@@ -55,7 +55,7 @@ Kubernetes components are neatly split up into three distinct groups*.
 
 A highly available etcd is well covered by many other guides. The cncf demo and this document eschew such a setup for simplicity's sake. Instead we opt for a single Kubernetes master with etcd installed and available on 127.0.0.1.
 
-<img src="k8s-simpler.png" width="70%">
+<img src="https://raw.githubusercontent.com/cncf/demo/master/Docs/k8s-simpler.png" width="70%">
 
 Lets zoom in further on one of those circles representing a Kubernetes minion.
 
