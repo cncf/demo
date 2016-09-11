@@ -1,12 +1,24 @@
 
 # CNCF Technologies Demonstration
 The goal of this project is to demonstrate each of the technologies that have been adopted by the [Cloud Native Computing Foundation] (http://cncf.io) (CNCF) in a publicly available repository in order to facilitate their understanding through simple deployment tooling and by providing sample applications as common-ground for conversation. This project will enable replicable deployments and facilitate quantification of performance, latency, throughput, and cost between various deployment models.
+# Table of Contents <a id="toc"></a>
+- [Project Overview] (#projectoverview)
+  - [Sample Applications] (#sampleapps) 
+  - [Deployment Models] (#deploymentmodels)
+- [Getting Started] (#quickstart)
+  - [Dependencies] (#dependencies)
+  - [Create Cluster] (#cluster)
+  - [Run Demo] (#demo)
+- [Architecture] (#arch)
+  - [Kubernetes Architecture] (#kubearch)
 
-## Projects
+--- 
+
+## Technologies <a id="techoverview"></a>
 1. Kubernetes - [Project] (http://kubernetes.io), [Source] (https://github.com/kubernetes/kubernetes)
 2. Prometheus - [Project] (https://prometheus.io), [Source] (https://github.com/prometheus)
 
-## Summary of Sample Applications
+## Summary of Sample Applications <a id="sampleapps"></a>
 1. Count.ly - [Project] (https://count.ly), [Source] (https://github.com/countly/countly-server) 
   * Goals:
     1. demonstrate autoscaling of Countly
@@ -19,7 +31,7 @@ The goal of this project is to demonstrate each of the technologies that have be
     2. contribute cycles to curing [Zika] (https://en.wikipedia.org/wiki/Zika_virus) in IBM [World Community Grid] (https://www.worldcommunitygrid.org)
   * Details of sample application
 
-## Supported Deployments
+## Supported Deployments <a id="deploymentmodels"></a>
 A variety of deployments models will be supported. Support for each deployment model will be delivered in this order of priority:
 
 1. Local (on your machine)
@@ -40,36 +52,7 @@ The project output will be an open source Github repo that will become widely re
 ## Disclaimer
 Note that these are explicitly marketing demos, not reference stacks. The CNCF’s [Technical Oversight Committee] (https://github.com/cncf/toc) will over time be adopting additional projects and may eventually publish reference stacks. By contrast, this project is designed to take the shortest possible path to successful multi-cloud deployments of diverse applications.
 
----
-
-# Table of Contents
-
-## Quickstart 
-
-- [Launch a Kubernetes cluster with one command, right now.] (#quickstart) 
-
-## Overview 
-- [Kubernetes Cluster Architecture] (#architecture overview)
-- Kubernetes Cluster Provisioning 
-- Kubernetes Cluster Deployments 
-
-## Deep Dive 
-
-- Patterns and Best Practices
-
-  - How to adapt your app to run in Kubernetes (Countly example in detail)
-  - Clustred Datastores on top of Kubernetes (Mongo example in detail)
-  - Making use of spare capcity with Background Jobs (Boinc example in detail) 
-
-- Complex, Scriptable Kubernetes Deployments & Jinja Templating 
-  
-  What actually happens when you 'cncfdemo start'
-
-
----
-
-
-# Quickstart Guide <a id="quickstart"></a>
+# Quick Start Guide <a id="quickstart"></a> <sub><sup>([back to TOC]) (#toc)</sup></sub>
 Getting started with the `cncfdemo` is a three-step process:
 
 1. [Install cncfdemo] (#dependencies)
@@ -96,8 +79,6 @@ Getting started with the `cncfdemo` is a three-step process:
 2. Browse to [countly.cncfdemo.io](countly.cncfdemo.io)
 3. Run `cncfdemo benchmark --time 5m --save-html`
  
----
-
 ### The `cncfdemo` command _shadows and complements_ the official Kubectl binary. 
 
 > ❯ cncfdemo create configmap example --from-file=path/to/directory
@@ -137,13 +118,8 @@ The demo was accomplished with [Jinja](http://jinja.pocoo.org/) templating, seve
 
 - Additional cloud providers support
 - A visualization/UI layer to display the progress of cluster bootstraps, deployments, and benchmarks
-
-
----
-
-<img src="https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.png" width="42px">
-
-## Overview <a id="architecture overview"></a>
+# Architecture (#arch)
+## Kubernetes Architecture <a id="kubearch"></a> <img src="https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.png" width="42px">
 
 This document will walk you through setting up Kubernetes. This guide **_is_** for people looking for a fully automated command to bring up a Kubernetes cluster (In fact, this is the basis for the cncfdemo command utility and you can use that directly or learn how to make your own).
 
@@ -315,3 +291,16 @@ Two configuration files used to dictate the behavior of this demo application ar
 
 By setting `Host` to "mongos.default", the Countly application looks for its MongoDB servers at the address "mongos.default". The "mongos.default" reference resolves to a Kubernetes service called mongos. The .default namespace is the default top-level domain for pods and services deployed in Kubernetes.
 
+---
+
+## Deep Dive 
+
+- Patterns and Best Practices
+
+  - How to adapt your app to run in Kubernetes (Countly example in detail)
+  - Clustred Datastores on top of Kubernetes (Mongo example in detail)
+  - Making use of spare capcity with Background Jobs (Boinc example in detail) 
+
+- Complex, Scriptable Kubernetes Deployments & Jinja Templating 
+  
+  What actually happens when you 'cncfdemo start'
