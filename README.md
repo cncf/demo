@@ -119,7 +119,7 @@ The demo was accomplished with [Jinja](http://jinja.pocoo.org/) templating, seve
 - Additional cloud providers support
 - A visualization/UI layer to display the progress of cluster bootstraps, deployments, and benchmarks
 
-# Architecture <a id="#arch"></a>
+# Architecture <a id="arch"></a> <sub><sup>([back to TOC] (#toc))</sup></sub>
 
 ## Kubernetes Architecture <a id="kubearch"></a> <img src="https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.png" width="42px">
 
