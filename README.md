@@ -52,7 +52,7 @@ The project output will be an open source Github repo that will become widely re
 ## Disclaimer
 Note that these are explicitly marketing demos, not reference stacks. The CNCF’s [Technical Oversight Committee] (https://github.com/cncf/toc) will over time be adopting additional projects and may eventually publish reference stacks. By contrast, this project is designed to take the shortest possible path to successful multi-cloud deployments of diverse applications.
 
-# Quick Start Guide <a id="quickstart"></a> <sub><sup>([back to TOC]) (#toc)</sup></sub>
+# Quick Start Guide <a id="quickstart"></a> <sub><sup>([back to TOC] (#toc))</sup></sub>
 Getting started with the `cncfdemo` is a three-step process:
 
 1. [Install cncfdemo] (#dependencies)
@@ -118,7 +118,9 @@ The demo was accomplished with [Jinja](http://jinja.pocoo.org/) templating, seve
 
 - Additional cloud providers support
 - A visualization/UI layer to display the progress of cluster bootstraps, deployments, and benchmarks
-# Architecture (#arch)
+
+# Architecture <a id="#arch"></a>
+
 ## Kubernetes Architecture <a id="kubearch"></a> <img src="https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.png" width="42px">
 
 This document will walk you through setting up Kubernetes. This guide **_is_** for people looking for a fully automated command to bring up a Kubernetes cluster (In fact, this is the basis for the cncfdemo command utility and you can use that directly or learn how to make your own).
