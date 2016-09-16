@@ -41,16 +41,17 @@ def execute2(context, actions):
 
     try:
       resource = context[a.resource]
-      #arguments = {k: (unroll(v) if isinstance(v, tuple) else v) for k,v in a.arguments.items()}
       arguments = walk(a.arguments)
-      #click.echo("{}...".format(a.method))
       result = getattr(resource, a.method)(**arguments)
       click.echo("{}... OK".format(a.method))
       if a.saveas:
         context[a.saveas] = result
+
     except botocore.exceptions.ClientError as e:
       click.echo("Unexpected error: {}".format(e))
       sys.exit("Aborting..")
+
+  return context
 
 
 def DhcpConfigurations(region):

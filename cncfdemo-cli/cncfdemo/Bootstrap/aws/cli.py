@@ -24,68 +24,37 @@ def get_plan(name, dir='execution_plans'):
 
 
 def destroy_vpc(ctx, clustername, region, cidr, dry_run):
+
   filters = [{'Name':'tag:KubernetesCluster', 'Values':[clustername]}]
-  Tags=[{ 'Key': 'KubernetesCluster', 'Value': clustername }, {'Key': 'Name', 'Value': clustername+'-vpc'}]
-  ec2resource = boto3.resource('ec2', region_name=region)
+  ec2resource = ctx.obj['ec2resource']
   for vpc in list(ec2resource.vpcs.filter(Filters=filters)):
     vpc.delete()
 
-def create_vpc(ctx, clustername, region, cidr, dry_run):
-  
-  #import ipdb; ipdb.set_trace()
+
+def create_vpc(ctx, clustername, region, cidr):
 
   filters = [{'Name':'tag:KubernetesCluster', 'Values':[clustername]}]
-  Tags=[{ 'Key': 'KubernetesCluster', 'Value': clustername }, {'Key': 'Name', 'Value': clustername+'-vpc'}]
-
-  ec2resource = boto3.resource('ec2', region_name=region)
-
+  ec2resource = ctx.obj['ec2resource']
   if any(ec2resource.vpcs.filter(Filters=filters)):
-    click.echo('VPC {} already exists, there can only be one!'.format(clustername+'-vpc'))
+    click.echo('VPC {} already exists, there can only be one!'.format(clustername))
     return 'Done'
 
-  internet_gateway = ec2resource.create_internet_gateway(DryRun=dry_run)
-  dhcp_opts = ec2resource.create_dhcp_options(DhcpConfigurations=[{'Key': 'domain-name-servers', 'Values': ['AmazonProvidedDNS']}, 
-                                                                  {'Key': 'domain-name', 'Values': ['us-west-2.compute.internal k8s']} 
-                                                                 ])
+  Tags = ctx.obj['Tags']
+  DhcpConfiguration = DhcpConfigurations(region)
+  context = { 'ec2': ec2resource,
+              '_get': lambda x: pluck(context, x) or (partial(context.get), x)
+            }
 
+  IpWhitelist = [{ 'IpProtocol': 'tcp', 'FromPort':8080, 'ToPort':8080, 'IpRanges': [{'CidrIp':'0.0.0.0/0'}] }] 
+  IpPermissions = [
+                   { 'IpProtocol': 'tcp', 'FromPort':22, 'ToPort':22, 'IpRanges': [{'CidrIp':'0.0.0.0/0'}] },
+                   { 'IpProtocol': '-1', 'UserIdGroupPairs': [{ 'GroupId': context['_get']('sg_masters.group_id') }] },
+                   { 'IpProtocol': '-1', 'UserIdGroupPairs': [{ 'GroupId': context['_get']('sg_minions.group_id') }] } 
+                  ]
 
-  vpc = ec2resource.create_vpc(CidrBlock=cidr)
-
-  vpc.modify_attribute(EnableDnsSupport={'Value': True})
-  vpc.modify_attribute(EnableDnsHostnames={'Value': True })
-  vpc.associate_dhcp_options(DhcpOptionsId=dhcp_opts.id)
-  vpc.attach_internet_gateway(InternetGatewayId=internet_gateway.id)
-
-  subnet = vpc.create_subnet(CidrBlock='172.20.0.0/24')
-  route_table = vpc.create_route_table()
-
-  route_table.create_route(DestinationCidrBlock='0.0.0.0/0', GatewayId=internet_gateway.id)
-  route_table.associate_with_subnet(SubnetId=subnet.id, DryRun=dry_run)
-
-  sg_masters = vpc.create_security_group(GroupName='k8s-masters-'+clustername, Description='k8s sg applied to masters', DryRun=dry_run)
-  sg_minions = vpc.create_security_group(GroupName='k8s-minions-'+clustername, Description='k8s sg applied to minions', DryRun=dry_run)
-
-  IpPermissions = [{ 'IpProtocol': 'tcp', 'FromPort':22, 'ToPort':22, 'IpRanges': [{'CidrIp':'0.0.0.0/0'}] },
-                   { 'IpProtocol': '-1', 'UserIdGroupPairs': [{ 'GroupId': sg_masters.group_id }] },
-                   { 'IpProtocol': '-1', 'UserIdGroupPairs': [{ 'GroupId': sg_minions.group_id }] }]
-
-  sg_minions.authorize_ingress(IpPermissions=IpPermissions)
-  sg_masters.authorize_ingress(IpPermissions=IpPermissions)
-  sg_masters.authorize_ingress(IpPermissions=[{ 'IpProtocol': 'tcp', 'FromPort':443, 'ToPort':443, 'IpRanges': [{'CidrIp':'0.0.0.0/0'}] }])
-
-  tag1 = vpc.create_tags(Tags=Tags, DryRun=dry_run)
-  tag2 = dhcp_opts.create_tags(Tags=Tags, DryRun=dry_run)
-  tag3 = subnet.create_tags(Tags=Tags, DryRun=dry_run)
-  tag4 = internet_gateway.create_tags(Tags=Tags, DryRun=dry_run)
-  tag5 = route_table.create_tags(Tags=Tags, DryRun=dry_run)
-  tag6 = sg_masters.create_tags(Tags=Tags, DryRun=dry_run)
-  tag7 = sg_minions.create_tags(Tags=Tags, DryRun=dry_run)
-
-  tag8 = sg_masters.create_tags(Tags=[{ 'Key': 'Role', 'Value': 'kubernetes-master' }], DryRun=dry_run)
-  tag8 = sg_minions.create_tags(Tags=[{ 'Key': 'Role', 'Value': 'kubernetes-minion' }], DryRun=dry_run)
-
-  ctx.obj['default']['vpc'] = vpc.id
-  return 'OK'
+  vpc_plan = eval(get_plan('vpc'))
+  result = execute2(context, vpc_plan)
+  return result['vpc'].id
 
 
 def delete_record_sets(kind, clustername, **kwargs):
@@ -248,7 +217,7 @@ def create(ctx, clustername, keyname, imageid, instancetype, \
     return bootstrap
 
 
-def remove(ctx, policyarn, asgname, launchconfiguration, instanceprofile, securitygroups, rolename, **kwargs):
+def remove(ctx, policyarn, asgname, launchconfiguration, instanceprofile, rolename, **kwargs):
 
   ASG = ctx.obj['ASG']
   IAM = ctx.obj['IAM']
@@ -329,6 +298,8 @@ def aws(ctx, region, scale, \
   }
 
   region = 'us-west-2'
+  ctx.obj['Tags'] = [{ 'Key': 'Name', 'Value': clustername }, { 'Key': 'KubernetesCluster', 'Value': clustername }] 
+
   filters = [{'Name':'tag:KubernetesCluster', 'Values':[clustername]}]
   ec2resource = boto3.resource('ec2', region_name=region)
 
@@ -346,6 +317,7 @@ def aws(ctx, region, scale, \
   ctx.obj['ASG'] = boto3.client('autoscaling', region_name=region)
   ctx.obj['IAM'] = boto3.client('iam', region_name=region)
   ctx.obj['EC2'] = boto3.client('ec2', region_name=region)
+  ctx.obj['r53'] = boto3.client('route53', region_name=region)
   ctx.obj['ec2resource'] = boto3.resource('ec2', region_name=region)
 
   ctx.obj['userdata'] = '\n'.join(('#!/bin/bash', 
@@ -436,16 +408,14 @@ def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_ru
 
   if not ctx.obj['default']['vpc']:
     click.echo('no vpc found, creating..')
-    create_vpc(ctx, clustername, region, cidr, dry_run)
-    click.echo('created vpc {}'.format(ctx.obj['default']['vpc'])
-    return 'bye'
+    ctx.obj['default']['vpc'] = create_vpc(ctx, clustername, region, cidr)
+    click.echo('created vpc {}'.format(ctx.obj['default']['vpc']))
 
-    r53 = boto3.client('route53')
-    HostedZones = r53.list_hosted_zones_by_name(DNSName='k8s')['HostedZones']
-    HostedZoneId = HostedZones.pop()['Id'].split('/')[2] if HostedZones else None
+  r53 = ctx.obj['r53']
+  HostedZones = r53.list_hosted_zones_by_name(DNSName='k8s')['HostedZones']
+  HostedZoneId = HostedZones.pop()['Id'].split('/')[2] if HostedZones else None
 
-    response = r53.associate_vpc_with_hosted_zone(HostedZoneId=HostedZoneId, VPC={'VPCRegion': region, 'VPCId': ctx.obj['default']['vpc'] })
-    import ipdb; ipdb.set_trace()
+  r53.associate_vpc_with_hosted_zone(HostedZoneId=HostedZoneId, VPC={'VPCRegion': region, 'VPCId': ctx.obj['default']['vpc'] })
 
   for name in _default_names:
 
@@ -530,34 +500,8 @@ def vpc(ctx, clustername, cidr, region, \
     if destroy:
       destroy_vpc(ctx, clustername, region, cidr, dry_run)
     else:
-      create_vpc(ctx, clustername, region, cidr, dry_run)
+      create_vpc(ctx, clustername, region, cidr)
 
-
-@click.command()
-@common_options
-@click.pass_context
-@click.option('--cidr', default='172.20.0.0/16')
-@click.option('--region', default='us-west-2')
-def test(ctx, clustername, cidr, region, destroy, dry_run, verbose):
-  click.echo('yo testing')
-
-  context = { 'ec2': boto3.resource('ec2', region_name=region), 
-              '_get': lambda x: pluck(context, x) or (partial(context.get), x)
-            }
-
-  IpWhitelist   = [{ 'IpProtocol': 'tcp', 'FromPort':8080, 'ToPort':8080, 'IpRanges': [{'CidrIp':'0.0.0.0/0'}] }] }
-  IpPermissions = [
-                   { 'IpProtocol': 'tcp', 'FromPort':22, 'ToPort':22, 'IpRanges': [{'CidrIp':'0.0.0.0/0'}] },
-                   { 'IpProtocol': '-1', 'UserIdGroupPairs': [{ 'GroupId': context['_get']('sg_masters.group_id') }] },
-                   { 'IpProtocol': '-1', 'UserIdGroupPairs': [{ 'GroupId': context['_get']('sg_minions.group_id') }] } 
-                  ]
-
-
-  DhcpConfiguration = DhcpConfigurations(region)
-  Tags = [{ 'Key': 'Name', 'Value': clustername }, { 'Key': 'KubernetesCluster', 'Value': clustername }] 
-
-  vpc_plan = eval(get_plan('vpc'))
-  execute2(context, vpc_plan)
 
 
 cli.add_command(aws)
@@ -567,7 +511,6 @@ aws.add_command(status)
 aws.add_command(cluster)
 aws.add_command(cluster_info)
 aws.add_command(vpc)
-aws.add_command(test)
 
 
 if __name__ == '__main__':
