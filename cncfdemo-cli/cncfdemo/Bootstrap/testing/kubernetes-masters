@@ -1,1 +1,0 @@
-KUBELET_HOSTNAME=--hostname-override=batman
