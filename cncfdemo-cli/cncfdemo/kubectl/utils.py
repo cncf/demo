@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 
+import jinja2
 import json
 
 import click
-import jinja2
 import requests 
+
+
+def json_dump(foo):
+  return json.dumps(foo)[1:-1]
 
 
 def create(definition, overrides={}):
@@ -39,12 +43,5 @@ def create(definition, overrides={}):
     return r.content, r.ok
 
 
-@click.command('creat', short_help='create a resource')
-@click.option('--dry-run', is_flag=True)
-@click.option('--debug', is_flag=True)
-@click.pass_context
-def cli(debug, dry_run):
-  click.echo('yo')
-
 if __name__ == "__main__":
-    cli()
+  pass   
