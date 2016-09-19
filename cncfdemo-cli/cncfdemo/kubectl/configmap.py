@@ -1,13 +1,17 @@
+#!/usr/bin/env python
+
 import sys
 import os
 
 import glob2
 import yaml
+import json
 
 import click
 import jinja2
 
-from cncfdemo.commands.create import create
+from cncfdemo.kubectl.utils import create, json_dump
+
 
 configmapTemplate = ('{% macro inc(file) %}{% include [file] %}{% endmacro %}' '\n'
                      'apiVersion: v1'                                          '\n'
@@ -20,6 +24,13 @@ configmapTemplate = ('{% macro inc(file) %}{% include [file] %}{% endmacro %}' '
                      '{{ inc(file)|indent(6, true) }}'                         '\n'
                      '  {% endfor -%}')
 
+
+@click.group()
+def cli():
+  pass
+
+
+#@click.group()
 @click.command('configmap', short_help='create a configmap')
 @click.argument('name')
 @click.option('--from-file', type=click.Path(exists=True), help='point at a file or folder', required=True)
@@ -27,8 +38,8 @@ configmapTemplate = ('{% macro inc(file) %}{% include [file] %}{% endmacro %}' '
 @click.option('--debug', is_flag=True) 
 @click.option('--recursive', is_flag=True) 
 @click.option('--extra-args')
-@click.pass_context
-def cli(ctx, name, from_file, dry_run, debug, recursive, extra_args):
+#@click.pass_context
+def configmap(name, from_file, dry_run, debug, recursive, extra_args):
 
   #import ipdb; ipdb.set_trace()
   if (not name) and extra_args:
@@ -43,7 +54,7 @@ def cli(ctx, name, from_file, dry_run, debug, recursive, extra_args):
     sys.exit(0)
 
   if not from_file:
-    click.echo('''error: Missing option "--from-file".''')
+    click.echo('''error: Missing loloption "--from-file".''')
     click.echo('''See 'cncf create configmap -help' for help and examples.''')
     sys.exit(0)
 
@@ -69,12 +80,15 @@ def cli(ctx, name, from_file, dry_run, debug, recursive, extra_args):
     basename = os.path.basename(os.path.realpath(item))
 
     if os.path.isfile(item) and os.path.getsize(item) > 0:
-      t = jinja2.Environment(loader=jinja2.FileSystemLoader(dirname)).from_string(configmapTemplate)
-      definitions = t.render(files=[basename], name=basename)
+      t = jinja2.Environment(loader=jinja2.FileSystemLoader(item))
+      t.filters['json_dump'] = json_dump
+      definitions = t.from_string(configmapTemplate).render(files=[basename], name=basename)
 
     if os.path.isdir(item) and os.listdir(item):
-      t = jinja2.Environment(loader=jinja2.FileSystemLoader(item)).from_string(configmapTemplate)
-      definitions = t.render(files=[f for f in os.listdir(item) if os.path.isfile(item+'/'+f)], name=basename)
+      t = jinja2.Environment(loader=jinja2.FileSystemLoader(item))
+      t.filters['json_dump'] = json_dump
+      definitions = t.from_string(configmapTemplate).render(files=[f for f in os.listdir(item) if os.path.isfile(item+'/'+f)], name=basename)
+      
     
     if debug: 
       click.echo(definitions if definitions else 'Empty')
@@ -88,5 +102,7 @@ def cli(ctx, name, from_file, dry_run, debug, recursive, extra_args):
         click.echo(definition)
       resp, status = create(definition)
 
+cli.add_command(configmap)
+
 if __name__ == '__main__':
-    cli()
+    configmap()
