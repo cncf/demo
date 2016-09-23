@@ -4,7 +4,6 @@ import random
 import json
 
 import falcon
-#import ipdb; ipdb.set_trace()
 
 
 class JSONResource(object):
@@ -37,6 +36,7 @@ def timeout(request, response, resource, params):
 def error(request, response, resource, params):
   if random.randrange(100) < sorted((0, request.get_param_as_int('error_probability') or 0, 100))[1]:
     raise falcon.HTTPInternalServerError('INTERNAL SERVER ERROR', 'The server encountered an unexpected condition that prevented it from fulfilling the request.')
+
 
 @falcon.before(timeout)
 @falcon.before(error)
