@@ -15,10 +15,9 @@ import click
 import requests
 
 from utils import *
-#from execution_plans.vpc import plan as vpc_plan
 
 
-def get_plan(name, dir='execution_plans'): 
+def get_plan(name, dir=os.path.dirname(os.path.realpath(__file__))+'/execution_plans'): 
   with open('{}/{}'.format(dir,name), 'r') as f: 
     return f.read()
 
@@ -342,7 +341,7 @@ def aws(ctx, region, scale, \
 @click.option('--InstanceProfile', default=_default_names[0])
 @click.option('--PolicyArn', default='arn:aws:iam::aws:policy/AmazonEC2FullAccess')
 @click.pass_context
-def masters(ctx, clustername, destroy, vpc, scale, policyarn, instancetype, \
+def masters(ctx, clustername, destroy, scale, policyarn, instancetype, \
             asgname, rolename, launchconfiguration, instanceprofile, \
             dry_run, verbose):
 
