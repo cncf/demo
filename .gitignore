@@ -3,4 +3,5 @@
 *.swp
 *.swo
 *.egg-info/
+*.out
 
