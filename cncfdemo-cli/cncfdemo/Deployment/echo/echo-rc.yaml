@@ -13,6 +13,8 @@ spec:
       labels:
         k8s-app: echo
     spec:
+      nodeSelector:
+        echo: "yes"
       containers:
       - name: echo
         image: zilman/echo:latest

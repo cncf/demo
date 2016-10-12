@@ -1,0 +1,48 @@
+[
+
+
+  ('ec2',              'create_key_pair',              { 'KeyName':              keyname                                 }                     ),
+  ('iam',              'create_instance_profile',      { 'InstanceProfileName':  instanceprofile                         }                     ),
+  ('ipe',              'wait',                         { 'InstanceProfileName':  instanceprofile                         }                     ),
+
+  ('iam',              'create_role',                  { 'RoleName': rolename, 'AssumeRolePolicyDocument': TrustedPolicy }                     ),
+  ('iam',              'add_role_to_instance_profile', { 'RoleName': rolename, 'InstanceProfileName': instanceprofile    }                     ),
+  ('iam',              'attach_role_policy',           { 'RoleName': rolename, 'PolicyArn': policyarn                    }                     ),
+
+  ('asg',              'create_launch_configuration',  { 'LaunchConfigurationName': launchconfiguration, 
+                                                         'ImageId': imageid,                             
+                                                         'KeyName': keyname,                             
+                                                         'SecurityGroups': securitygroups,               
+                                                         'AssociatePublicIpAddress': True,               
+                                                         'UserData': userdata,                           
+                                                         'InstanceType': instancetype,                   
+                                                         'InstanceMonitoring': {'Enabled': True},        
+                                                         'IamInstanceProfile': instanceprofile                           }                     ),
+
+
+  ('asg',              'create_auto_scaling_group',    { 'AutoScalingGroupName': asgname,
+                                                         'LaunchConfigurationName':launchconfiguration,
+                                                         'MinSize': scale,
+                                                         'MaxSize': scale,
+                                                         'DesiredCapacity': scale,
+                                                         'DefaultCooldown': 300,
+                                                         'VPCZoneIdentifier': vpc,
+                                                         'NewInstancesProtectedFromScaleIn': False,
+                                                         'Tags':[{'ResourceId': asgname,
+                                                           'ResourceType': 'auto-scaling-group',
+                                                           'Key': 'KubernetesCluster',
+                                                           'Value': clustername,
+                                                           'PropagateAtLaunch': True },
+                                                          {'ResourceId': asgname,
+                                                           'ResourceType': 'auto-scaling-group',
+                                                           'Key': 'Name',
+                                                           'Value': kind,
+                                                           'PropagateAtLaunch': True },
+                                                          {'ResourceId': asgname,
+                                                           'ResourceType': 'auto-scaling-group',
+                                                           'Key': 'Role',
+                                                           'Value': kind,
+                                                           'PropagateAtLaunch': True }]                                  }                     )
+
+
+]

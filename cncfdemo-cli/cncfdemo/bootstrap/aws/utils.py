@@ -4,6 +4,7 @@ import collections
 import sys
 import botocore
 import click
+import time
 
 
 class Action(collections.namedtuple('Action', [ "resource", "method", "arguments", "saveas" ])):
@@ -40,6 +41,11 @@ def execute2(context, actions):
   for a in map(lambda action: Action(*action), actions):
 
     try:
+
+      if a.method == 'create_launch_configuration':
+        click.echo('waiting some more..')
+        time.sleep(10) # AWS API bug, remove in future
+
       resource = context[a.resource]
       arguments = walk(a.arguments)
       result = getattr(resource, a.method)(**arguments)
@@ -47,9 +53,17 @@ def execute2(context, actions):
       if a.saveas:
         context[a.saveas] = result
 
+
     except botocore.exceptions.ClientError as e:
-      click.echo("Unexpected error: {}".format(e))
-      sys.exit("Aborting..")
+    
+      Errors = ['InvalidKeyPair.Duplicate','InvalidGroup.Duplicate','InvalidPermission.Duplicate','EntityAlreadyExists','AlreadyExists', \
+                'InvalidGroup.NotFound','NoSuchEntity','ValidationError','LimitExceeded','DependencyViolation', 'DryRunOperation']
+    
+      if e.response['Error']['Code'] in Errors:
+        click.echo(e.response['Error']['Message'])
+      else:
+        click.echo("Unexpected error: {}".format(e))
+        sys.exit("Aborting..")
 
   return context
 

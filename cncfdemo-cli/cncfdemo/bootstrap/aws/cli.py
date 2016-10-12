@@ -134,7 +134,7 @@ def execute(actions):
 def create(ctx, clustername, keyname, imageid, instancetype, \
            rolename, policyarn, asgname, launchconfiguration, instanceprofile, scale, kind, userdata, **kwargs):
            
-  TrustedPolicy = ctx.obj['TrustedPolicy'] 
+  TrustedPolicy = ctx.obj['default']['TrustedPolicy'] 
 
   ASG = ctx.obj['ASG']
   exists = ASG.describe_auto_scaling_groups(AutoScalingGroupNames=[asgname]).get('AutoScalingGroups')
@@ -283,7 +283,7 @@ def aws(ctx, region, scale, \
   ctx.obj = ctx.obj or {}
   ctx.obj['whitelist_ip'] = requests.get("http://checkip.amazonaws.com/").text + '/32'
 
-  ctx.obj['TrustedPolicy'] = {
+  TrustedPolicy = {
     "Version": "2012-10-17",
     "Statement": [
       {
@@ -310,13 +310,16 @@ def aws(ctx, region, scale, \
               'keyname': keyname, 
               'imageid': imageid, 
               'securitygroups': securitygroups, 
-              'vpc': vpc } 
+              'vpc': vpc,  
+              'keyname': keyname,  
+              'TrustedPolicy': json.dumps(TrustedPolicy) } 
 
   ctx.obj['default'] = default
-  ctx.obj['ASG'] = boto3.client('autoscaling', region_name=region)
-  ctx.obj['IAM'] = boto3.client('iam', region_name=region)
-  ctx.obj['EC2'] = boto3.client('ec2', region_name=region)
-  ctx.obj['r53'] = boto3.client('route53', region_name=region)
+  ctx.obj['AWS'] = boto3.Session(region_name=region)
+  #ctx.obj['ASG'] = boto3.client('autoscaling', region_name=region)
+  #ctx.obj['IAM'] = boto3.client('iam', region_name=region)
+  #ctx.obj['EC2'] = boto3.client('ec2', region_name=region)
+  #ctx.obj['r53'] = boto3.client('route53', region_name=region)
   ctx.obj['ec2resource'] = boto3.resource('ec2', region_name=region)
 
   ctx.obj['userdata'] = '\n'.join(('#!/bin/bash', 
@@ -502,6 +505,55 @@ def vpc(ctx, clustername, cidr, region, \
       create_vpc(ctx, clustername, region, cidr)
 
 
+def create_asg(aws, config):
+
+  context = { 'ec2': aws.client('ec2'),
+              'iam': aws.client('iam'),
+              'asg': aws.client('autoscaling'),
+              '_get': lambda x: pluck(context, x) or (partial(context.get), x)
+            }
+
+  context.update({ 'ipe': context['iam'].get_waiter('instance_profile_exists') })
+  context.update(**config)
+
+  asg_plan = eval(get_plan('asg'), context)
+  #print asg_plan
+  #sys.exit()
+  result = execute2(context, asg_plan)
+  #import ipdb; ipdb.set_trace()
+
+
+@click.command()
+@click.pass_context
+@click.option('--scale', default=1)
+@click.option('--PolicyArn', default='arn:aws:iam::aws:policy/AmazonEC2FullAccess')
+@click.option('--InstanceType', default='m3.medium')
+@click.option('--AsgName', default=_default_names[0])
+@click.option('--LaunchConfiguration', default=_default_names[0])
+@click.option('--InstanceProfile', default=_default_names[0])
+@click.option('--Kind', default='kubernetes-minion')
+@click.option('--RoleName', default=_default_names[0])
+def asg(ctx, scale, policyarn, instancetype, asgname, launchconfiguration, instanceprofile, kind, rolename):
+
+  aws = ctx.obj['AWS'] 
+  ec2resource = ctx.obj['ec2resource']
+
+  config = ctx.obj['default'].copy()
+
+  config.update({'scale': scale,
+                 'userdata': ctx.obj['userdata'].format('kubernetes-masters', config['clustername']),
+                 'policyarn': policyarn,
+                 'instancetype': instancetype,
+                 'asgname': asgname,
+                 'instanceprofile': instanceprofile,
+                 'launchconfiguration': launchconfiguration,
+                 'kind': kind,
+                 'VPCZoneIdentifier': ','.join((subnet.id for subnet in ec2resource.subnets.filter(Filters=filters))),
+                 'rolename': rolename })
+
+  create_asg(aws, config)
+
+
 
 cli.add_command(aws)
 aws.add_command(masters)
@@ -510,6 +562,7 @@ aws.add_command(status)
 aws.add_command(cluster)
 aws.add_command(cluster_info)
 aws.add_command(vpc)
+aws.add_command(asg)
 
 
 if __name__ == '__main__':
