@@ -1,7 +1,7 @@
 #!/bin/bash
 
-cncfdemo create configmaps
-cncfdemo create -f Deployments --recursive
+cncfdemo create configmap demo --from-file . --recursive
+cncfdemo create -f . --recursive
 
 # kubectl get pods
 # kubectl logs -f mongors1-setup-k8cxn
