@@ -11,7 +11,7 @@ import click
 import jinja2
 
 from cncfdemo.kubectl.configmap import configmap
-from cncfdemo.kubectl.utils import create, json_dump
+from cncfdemo.kubectl.utils import create as kreate, json_dump
 
 
 @click.group()
@@ -52,6 +52,7 @@ def create(ctx, filename, recursive, dry_run, debug):
     else:
       manifests.extend([realpath+'/'+f for f in os.listdir(realpath) if os.path.isfile(realpath+'/'+f) and f.endswith(('.j2','.yaml','.yml'))])
 
+
   if not manifests:
     click.echo('no manifest files found')
     sys.exit(0)
@@ -70,8 +71,9 @@ def create(ctx, filename, recursive, dry_run, debug):
       print definitions if definitions else ''
 
     for definition in yaml.load_all(definitions):
+      import ipdb; ipdb.set_trace()
       if not dry_run:
-        resp, status = create(definition)
+        resp, status = kreate(definition)
 
 
 cli.add_command(create)
