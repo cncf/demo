@@ -16,7 +16,7 @@ You can't always run one process per container. What you really might crave in s
 
 > Traditionally a Docker container runs a single process when it is launched, for example an Apache daemon or a SSH server daemon. Often though you want to run more than one process in a container. There are a number of ways you can achieve this ranging from using a simple Bash script as the value of your container’s CMD instruction to installing a process management tool. <sub>- [Docker's documentation on using supervisord](https://docs.docker.com/engine/admin/using_supervisord/)</sub>
 
-There's [several such supervisors](http://centos-vn.blogspot.com/2014/06/daemon-showdown-upstart-vs-runit-vs.html), another popular one being [runit](http://smarden.org/runit/). Runit is written in C and uses less resources than supervisord, adheres to the unix philosophy of utilities doing one thing well, and is very reliable.
+There's [several such supervisors](http://centos-vn.blogspot.com/2014/06/daemon-showdown-upstart-vs-runit-vs.html), a popular one being [runit](http://smarden.org/runit/). Runit is written in C and uses less resources than supervisord, adheres to the unix philosophy of utilities doing one thing well, and is very reliable.
 
 ##### Beware
 
@@ -84,7 +84,32 @@ mongodb: {
 
 As a result, it is up to us to deploy and scale mongo seperatly from countly. Even if this particular mongo cluster is dedicated entirely to countly, and it should be, this seperation of concerns is good for maintainability and resilience. 
 
-For example, a bug in one of the horizontally scaled countly API servers that causes a crash would not negativly impact mongo and thus overall countly performance. It will simply crash and burn on the side, its liveliness tests will fail, and Kubernetes will transparantly route away further requests to its siblings while simultanousely launching a replacemet. 
+This decoupling is healthy. For example, a bug in one of the horizontally scaled countly API servers that causes a crash would not take a mongo pod along with it and thus the impact on overall performance is contained. Instead it will crash and burn on the side, the liveliness tests will fail, and Kubernetes in turn will transparantly route away further requests to siblings while simultanousely launching a replacement. 
 
-<graph showing how chaos-monkey style killing one of the countlies impacts overall writes, and for how long>
+- graph showing how chaos-monkey style killing one of the countlies impacts overall writes, and for how long (fast recovery is cool)
 
+#### InitContainers
+
+Ask yourself, does it make sense for Countly pods to be running when there is no Mongo backend available to them? The answer is no. In fact, if Countly happens to start first the deployment becomes unpredictable.
+
+Luckily [init containers](https://github.com/kubernetes/kubernetes/blob/release-1.4/docs/proposals/container-init.md) have reached beta status in the latest version of Kubernetes (1.4). In short, with this feature enabled the pod you normally specify alone now starts last in a blocking list.
+
+```
+pod:
+  spec:
+    containers: ...
+    initContainers:
+    - name: init-container1
+      image: ...
+      ...
+    - name: init-container2
+    Containers:
+    - name: regularcontainer
+    
+```
+
+init-container1 can have a simple command along the lines of `nslookup monogos.default | -ge 3`. This will fail as long as the mongo service is not up and running and passing its readyness and liveliness probes. Countly will be blocked from starting until the init container succeeds, exactly the desired behaviour. 
+
+### Deploying a Mongo cluster with Kubernetes
+
+Separate article?
