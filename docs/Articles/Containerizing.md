@@ -18,7 +18,7 @@ You can't always run one process per container. What you really might crave in s
 
 There's [several such supervisors](http://centos-vn.blogspot.com/2014/06/daemon-showdown-upstart-vs-runit-vs.html), a popular one being [runit](http://smarden.org/runit/). Runit is written in C and uses less resources than supervisord, adheres to the unix philosophy of utilities doing one thing well, and is very reliable.
 
-##### Beware
+##### Resolving the PID 1 problem
 
 There's a subtle problem of [Docker and PID 1 zombie reaping](http://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/) the aformentioned process supervisors alone don't solve. 
 
