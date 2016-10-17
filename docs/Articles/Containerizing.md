@@ -1,4 +1,4 @@
-# Containerizing & Kubernetesizing Apps
+# Notes on Containerizing Apps
 
 ## Picking a base image
 
