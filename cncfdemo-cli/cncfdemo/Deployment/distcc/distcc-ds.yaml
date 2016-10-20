@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: distcc
+spec:
+  template:
+    metadata:
+      labels:
+        app: distcc
+      name: distcc
+    spec:
+      containers:
+      - image: zilman/distcc
+        name: distcc
