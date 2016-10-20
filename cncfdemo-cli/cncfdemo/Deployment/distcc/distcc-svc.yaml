@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: distcc
+  name: distcc
+spec:
+  selector:
+    app: distcc
+  clusterIP: None
+  ports:
+    - port: 3632
