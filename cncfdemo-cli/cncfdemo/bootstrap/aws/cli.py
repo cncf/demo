@@ -309,17 +309,17 @@ def aws(ctx, region, scale, \
               'clustername': clustername, 
               'keyname': keyname, 
               'imageid': imageid, 
-              'securitygroups': securitygroups, 
+              #'securitygroups': securitygroups, 
               'vpc': vpc,  
               'keyname': keyname,  
               'TrustedPolicy': json.dumps(TrustedPolicy) } 
 
   ctx.obj['default'] = default
   ctx.obj['AWS'] = boto3.Session(region_name=region)
-  #ctx.obj['ASG'] = boto3.client('autoscaling', region_name=region)
-  #ctx.obj['IAM'] = boto3.client('iam', region_name=region)
-  #ctx.obj['EC2'] = boto3.client('ec2', region_name=region)
-  #ctx.obj['r53'] = boto3.client('route53', region_name=region)
+  ctx.obj['ASG'] = boto3.client('autoscaling', region_name=region)
+  ctx.obj['IAM'] = boto3.client('iam', region_name=region)
+  ctx.obj['EC2'] = boto3.client('ec2', region_name=region)
+  ctx.obj['r53'] = boto3.client('route53', region_name=region)
   ctx.obj['ec2resource'] = boto3.resource('ec2', region_name=region)
 
   ctx.obj['userdata'] = '\n'.join(('#!/bin/bash', 
@@ -413,11 +413,19 @@ def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_ru
     ctx.obj['default']['vpc'] = create_vpc(ctx, clustername, region, cidr)
     click.echo('created vpc {}'.format(ctx.obj['default']['vpc']))
 
-  r53 = ctx.obj['r53']
-  HostedZones = r53.list_hosted_zones_by_name(DNSName='k8s')['HostedZones']
-  HostedZoneId = HostedZones.pop()['Id'].split('/')[2] if HostedZones else None
+  if not destroy:
 
-  r53.associate_vpc_with_hosted_zone(HostedZoneId=HostedZoneId, VPC={'VPCRegion': region, 'VPCId': ctx.obj['default']['vpc'] })
+    r53 = ctx.obj['r53']
+    HostedZones = r53.list_hosted_zones_by_name(DNSName='k8s')['HostedZones']
+    HostedZoneId = HostedZones.pop()['Id'].split('/')[2] if HostedZones else None
+    try:
+      r53.associate_vpc_with_hosted_zone(HostedZoneId=HostedZoneId, VPC={'VPCRegion': region, 'VPCId': ctx.obj['default']['vpc'] })
+    except botocore.exceptions.ClientError as e:
+      click.echo(e)
+
+  aws = ctx.obj['AWS'] 
+  ec2resource = ctx.obj['ec2resource']
+  filters = [{'Name':'tag:KubernetesCluster', 'Values':[clustername]}]
 
   for name in _default_names:
 
@@ -425,24 +433,32 @@ def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_ru
     config = ctx.obj['default'].copy()
     config.update({'scale': scale, 'kind': 'kubernetes-minion', 'destroy': destroy})
     config.update({'userdata': ctx.obj['userdata'].format('kubernetes-minions', clustername)})
+    #import ipdb; ipdb.set_trace()
     config.update({'instancetype': instancetype,
                    'asgname': name,
                    'rolename': name,
                    'launchconfiguration': name,
                    'instanceprofile': name,
+                   'securitygroups': [sg.id for sg in ec2resource.security_groups.filter(Filters=filters)],
+                   'VPCZoneIdentifier': ','.join([subnet.id for subnet in ec2resource.subnets.filter(Filters=filters)]),
                    'policyarn': 'arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess'})
 
     if name == _default_names[0]:
       config.update({'scale': 1, 'kind': 'kubernetes-master', 'instancetype': 'm3.medium', 'policyarn': 'arn:aws:iam::aws:policy/AmazonEC2FullAccess' })
       config.update({'userdata': ctx.obj['userdata'].format('kubernetes-masters', clustername)})
  
-    plan = _default_plan(**config)
+    #import ipdb; ipdb.set_trace()
+    #'kind': kind,
 
-    if verbose:
-      click.echo(plan)
+    create_asg(config, aws)
 
-    if not dry_run:
-      execute(plan)
+    #plan = _default_plan(**config)
+
+    #if verbose:
+      #click.echo(plan)
+
+    #if not dry_run:
+      #execute(plan)
 
 
 @click.command()
@@ -505,7 +521,7 @@ def vpc(ctx, clustername, cidr, region, \
       create_vpc(ctx, clustername, region, cidr)
 
 
-def create_asg(aws, config):
+def create_asg(config, aws):
 
   context = { 'ec2': aws.client('ec2'),
               'iam': aws.client('iam'),
@@ -521,10 +537,12 @@ def create_asg(aws, config):
   #sys.exit()
   result = execute2(context, asg_plan)
   #import ipdb; ipdb.set_trace()
+  return result
 
 
 @click.command()
 @click.pass_context
+@common_options
 @click.option('--scale', default=1)
 @click.option('--PolicyArn', default='arn:aws:iam::aws:policy/AmazonEC2FullAccess')
 @click.option('--InstanceType', default='m3.medium')
@@ -533,10 +551,12 @@ def create_asg(aws, config):
 @click.option('--InstanceProfile', default=_default_names[0])
 @click.option('--Kind', default='kubernetes-minion')
 @click.option('--RoleName', default=_default_names[0])
-def asg(ctx, scale, policyarn, instancetype, asgname, launchconfiguration, instanceprofile, kind, rolename):
+def asg(ctx, scale, policyarn, instancetype, asgname, launchconfiguration, instanceprofile, kind, rolename, clustername, \
+        destroy, dry_run, verbose):
 
   aws = ctx.obj['AWS'] 
   ec2resource = ctx.obj['ec2resource']
+  filters = [{'Name':'tag:KubernetesCluster', 'Values':[clustername]}]
 
   config = ctx.obj['default'].copy()
 
@@ -548,10 +568,12 @@ def asg(ctx, scale, policyarn, instancetype, asgname, launchconfiguration, insta
                  'instanceprofile': instanceprofile,
                  'launchconfiguration': launchconfiguration,
                  'kind': kind,
-                 'VPCZoneIdentifier': ','.join((subnet.id for subnet in ec2resource.subnets.filter(Filters=filters))),
+                 'securitygroups': [sg.id for sg in ec2resource.security_groups.filter(Filters=filters)],
+                 'VPCZoneIdentifier': ','.join([subnet.id for subnet in ec2resource.subnets.filter(Filters=filters)]),
                  'rolename': rolename })
 
-  create_asg(aws, config)
+  import ipdb; ipdb.set_trace()
+  create_asg(config, aws)
 
 
 
