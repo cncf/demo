@@ -6,7 +6,7 @@ import sys
 
 import json
 import collections
-from functools import partial 
+from functools import partial
 
 import boto3
 import botocore
@@ -17,8 +17,8 @@ import requests
 from utils import *
 
 
-def get_plan(name, dir=os.path.dirname(os.path.realpath(__file__))+'/execution_plans'): 
-  with open('{}/{}'.format(dir,name), 'r') as f: 
+def get_plan(name, dir=os.path.dirname(os.path.realpath(__file__))+'/execution_plans'):
+  with open('{}/{}'.format(dir,name), 'r') as f:
     return f.read()
 
 
@@ -44,11 +44,11 @@ def create_vpc(ctx, clustername, region, cidr):
               '_get': lambda x: pluck(context, x) or (partial(context.get), x)
             }
 
-  IpWhitelist = [{ 'IpProtocol': 'tcp', 'FromPort':8080, 'ToPort':8080, 'IpRanges': [{'CidrIp':'0.0.0.0/0'}] }] 
+  IpWhitelist = [{ 'IpProtocol': 'tcp', 'FromPort':8080, 'ToPort':8080, 'IpRanges': [{'CidrIp':'0.0.0.0/0'}] }]
   IpPermissions = [
                    { 'IpProtocol': 'tcp', 'FromPort':22, 'ToPort':22, 'IpRanges': [{'CidrIp':'0.0.0.0/0'}] },
                    { 'IpProtocol': '-1', 'UserIdGroupPairs': [{ 'GroupId': context['_get']('sg_masters.group_id') }] },
-                   { 'IpProtocol': '-1', 'UserIdGroupPairs': [{ 'GroupId': context['_get']('sg_minions.group_id') }] } 
+                   { 'IpProtocol': '-1', 'UserIdGroupPairs': [{ 'GroupId': context['_get']('sg_minions.group_id') }] }
                   ]
 
   vpc_plan = eval(get_plan('vpc'))
@@ -90,13 +90,13 @@ def get_ips(group, region):
 
   EC2 = boto3.client('ec2', region_name=region)
 
-  InstanceIds = [i['InstanceId'] for i in group['Instances']] 
+  InstanceIds = [i['InstanceId'] for i in group['Instances']]
   Instances = EC2.describe_instances(InstanceIds=InstanceIds)
   try:
     PublicIpAddresses = [i['Instances'][0]['PublicIpAddress'] for i in Instances['Reservations']]
   except:
     PublicIpAddresses = []
-  return PublicIpAddresses 
+  return PublicIpAddresses
 
 def humanize(resp):
   status = (resp or {}).get('ResponseMetadata', {}).get('HTTPStatusCode', '')
@@ -117,7 +117,7 @@ def execute(actions):
       result = getattr(client, method)(**args)
       click.echo("{}... {}".format(method, humanize(result)))
       results.append(result)
-  
+
     except botocore.exceptions.ClientError as e:
 
       Errors = ['InvalidKeyPair.Duplicate','InvalidGroup.Duplicate','InvalidPermission.Duplicate','EntityAlreadyExists','AlreadyExists', \
@@ -126,15 +126,15 @@ def execute(actions):
       if e.response['Error']['Code'] in Errors:
         click.echo(e.response['Error']['Message'])
       else:
-  	click.echo("Unexpected error: {}".format(e))
+        click.echo("Unexpected error: {}".format(e))
         sys.exit("Aborting..")
 
   return results
 
 def create(ctx, clustername, keyname, imageid, instancetype, \
            rolename, policyarn, asgname, launchconfiguration, instanceprofile, scale, kind, userdata, **kwargs):
-           
-  TrustedPolicy = ctx.obj['default']['TrustedPolicy'] 
+
+  TrustedPolicy = ctx.obj['default']['TrustedPolicy']
 
   ASG = ctx.obj['ASG']
   exists = ASG.describe_auto_scaling_groups(AutoScalingGroupNames=[asgname]).get('AutoScalingGroups')
@@ -145,24 +145,24 @@ def create(ctx, clustername, keyname, imageid, instancetype, \
   else:
     IAM = ctx.obj['IAM']
     EC2 = ctx.obj['EC2']
-  
+
     IPE = IAM.get_waiter('instance_profile_exists')
     IPE.config.delay = 2 # AWS API consistency bug, unreliable
-  
+
     bootstrap = [(EC2, 'create_key_pair', {'KeyName': keyname, 'DryRun': False}),
                  (IAM, 'create_instance_profile', {'InstanceProfileName': instanceprofile}),
                  (IPE, 'wait', {'InstanceProfileName': instanceprofile}),
                  (IAM, 'create_role', {'RoleName': rolename, 'AssumeRolePolicyDocument': json.dumps(TrustedPolicy)}),
                  (IAM, 'add_role_to_instance_profile', {'RoleName': rolename, 'InstanceProfileName': instanceprofile}),
                  (IAM, 'attach_role_policy', {'RoleName': rolename, 'PolicyArn': policyarn})]
-  
+
     #for securitygroup in securitygroups:
     #  if ctx.obj.get('whitelist_ip'):
     #    whitelist_ip = ctx.obj['whitelist_ip']
     #    click.echo('whitelisting IP {}...'.format(whitelist_ip))
     #    bootstrap.extend([(EC2, 'authorize_security_group_ingress', {'GroupName': securitygroup, 'IpProtocol': 'tcp', \
     #                                                                 'CidrIp': whitelist_ip, 'FromPort':8080, 'ToPort':8080 })])
-  
+
     ec2resource = ctx.obj['ec2resource']
     sg = [{'Name':'tag:KubernetesCluster', 'Values':[clustername]}, {'Name':'tag:Role', 'Values':[kind]}]
     subnet = [{'Name':'tag:KubernetesCluster', 'Values':[clustername]}]
@@ -179,40 +179,40 @@ def create(ctx, clustername, keyname, imageid, instancetype, \
                                                             'IamInstanceProfile': instanceprofile
                                                            }),
                       (ASG, 'create_auto_scaling_group',   {'AutoScalingGroupName': asgname,
-        						    'LaunchConfigurationName':launchconfiguration,
-   						            'MinSize': scale,
-      						            'MaxSize': scale,
-  						            'DesiredCapacity': scale,
-  						            'DefaultCooldown': 300,
-  						            'VPCZoneIdentifier': ','.join([s.id for s in list(ec2resource.subnets.filter(Filters=subnet))]),
-  						            #'AvailabilityZones': AvailabilityZones,
-  						            'NewInstancesProtectedFromScaleIn': False, 
-        						    'Tags':[
-        							{
-        							    'ResourceId': asgname,
-        							    'ResourceType': 'auto-scaling-group',
-        							    'Key': 'KubernetesCluster',
-        							    'Value': clustername,
-        							    'PropagateAtLaunch': True
-        							},
+                                                            'LaunchConfigurationName':launchconfiguration,
+                                                            'MinSize': scale,
+                                                            'MaxSize': scale,
+                                                            'DesiredCapacity': scale,
+                                                            'DefaultCooldown': 300,
+                                                            'VPCZoneIdentifier': ','.join([s.id for s in list(ec2resource.subnets.filter(Filters=subnet))]),
+                                                            #'AvailabilityZones': AvailabilityZones,
+                                                            'NewInstancesProtectedFromScaleIn': False,
+                                                            'Tags':[
                                                                 {
-        							    'ResourceId': asgname,
-        							    'ResourceType': 'auto-scaling-group',
-        							    'Key': 'Name',
-        							    'Value': kind,
-        							    'PropagateAtLaunch': True
-        							},
+                                                                    'ResourceId': asgname,
+                                                                    'ResourceType': 'auto-scaling-group',
+                                                                    'Key': 'KubernetesCluster',
+                                                                    'Value': clustername,
+                                                                    'PropagateAtLaunch': True
+                                                                },
                                                                 {
-        							    'ResourceId': asgname,
-        							    'ResourceType': 'auto-scaling-group',
-        							    'Key': 'Role',
-        							    'Value': kind,
-        							    'PropagateAtLaunch': True
-        							}
-        						           ]
+                                                                    'ResourceId': asgname,
+                                                                    'ResourceType': 'auto-scaling-group',
+                                                                    'Key': 'Name',
+                                                                    'Value': kind,
+                                                                    'PropagateAtLaunch': True
+                                                                },
+                                                                {
+                                                                    'ResourceId': asgname,
+                                                                    'ResourceType': 'auto-scaling-group',
+                                                                    'Key': 'Role',
+                                                                    'Value': kind,
+                                                                    'PropagateAtLaunch': True
+                                                                }
+                                                                   ]
                                                            })])
-  
-  
+
+
     return bootstrap
 
 
@@ -237,14 +237,14 @@ def remove(ctx, policyarn, asgname, launchconfiguration, instanceprofile, rolena
 def _default_plan(destroy, **kwargs):
 
   if destroy:
-    plan = remove(**kwargs) 
+    plan = remove(**kwargs)
     delete_record_sets(**kwargs)
 
   else:
-    plan = create(**kwargs) 
+    plan = create(**kwargs)
 
     ASG, asgname, scale = kwargs['ctx'].obj['ASG'], kwargs['asgname'], kwargs['scale']
-    plan.extend([(ASG, 'update_auto_scaling_group', {'AutoScalingGroupName': asgname, 'MaxSize': scale, 'DesiredCapacity': scale, 'MinSize': scale})]) 
+    plan.extend([(ASG, 'update_auto_scaling_group', {'AutoScalingGroupName': asgname, 'MaxSize': scale, 'DesiredCapacity': scale, 'MinSize': scale})])
 
   return plan
 
@@ -272,14 +272,13 @@ def cli():
 @click.option('--scale', default=1)
 
 @click.option('--KeyName', default='cncf-aws')
-#@click.option('--ImageId', default='ami-a73dedc7') # 1.3.6
-@click.option('--ImageId', default='ami-0e51816e') # 1.4.0-alpha.3
+@click.option('--ImageId', default='ami-020fab62') # 1.4.4
 @click.option('--SecurityGroups', default=['cncfdemo'], multiple=True)
 @click.pass_context
 def aws(ctx, region, scale, \
         clustername, keyname, imageid, securitygroups, \
         destroy, dry_run, verbose):
-       
+
   ctx.obj = ctx.obj or {}
   ctx.obj['whitelist_ip'] = requests.get("http://checkip.amazonaws.com/").text + '/32'
 
@@ -297,22 +296,22 @@ def aws(ctx, region, scale, \
   }
 
   region = 'us-west-2'
-  ctx.obj['Tags'] = [{ 'Key': 'Name', 'Value': clustername }, { 'Key': 'KubernetesCluster', 'Value': clustername }] 
+  ctx.obj['Tags'] = [{ 'Key': 'Name', 'Value': clustername }, { 'Key': 'KubernetesCluster', 'Value': clustername }]
 
   filters = [{'Name':'tag:KubernetesCluster', 'Values':[clustername]}]
   ec2resource = boto3.resource('ec2', region_name=region)
 
   exists = list(ec2resource.vpcs.filter(Filters=filters))
   vpc = exists[0].id if exists else ''
- 
-  default = { 'ctx': ctx, 
-              'clustername': clustername, 
-              'keyname': keyname, 
-              'imageid': imageid, 
-              #'securitygroups': securitygroups, 
-              'vpc': vpc,  
-              'keyname': keyname,  
-              'TrustedPolicy': json.dumps(TrustedPolicy) } 
+
+  default = { 'ctx': ctx,
+              'clustername': clustername,
+              'keyname': keyname,
+              'imageid': imageid,
+              #'securitygroups': securitygroups,
+              'vpc': vpc,
+              'keyname': keyname,
+              'TrustedPolicy': json.dumps(TrustedPolicy) }
 
   ctx.obj['default'] = default
   ctx.obj['AWS'] = boto3.Session(region_name=region)
@@ -322,13 +321,13 @@ def aws(ctx, region, scale, \
   ctx.obj['r53'] = boto3.client('route53', region_name=region)
   ctx.obj['ec2resource'] = boto3.resource('ec2', region_name=region)
 
-  ctx.obj['userdata'] = '\n'.join(('#!/bin/bash', 
+  ctx.obj['userdata'] = '\n'.join(('#!/bin/bash',
                                    'set -ex',
                                    '\n'
-                                   'HOSTNAME_OVERRIDE=$(curl -s http://169.254.169.254/2007-01-19/meta-data/local-hostname | cut -d" " -f1)', 
+                                   'HOSTNAME_OVERRIDE=$(curl -s http://169.254.169.254/2007-01-19/meta-data/local-hostname | cut -d" " -f1)',
                                    '\n'
-                                   'cat << EOF > /etc/sysconfig/{}', 
-                                   'CLOUD_PROVIDER=--cloud-provider=aws', 
+                                   'cat << EOF > /etc/sysconfig/{}',
+                                   'CLOUD_PROVIDER=--cloud-provider=aws',
                                    'CLUSTER_NAME={}',
                                    'KUBELET_HOSTNAME=--hostname-override=$HOSTNAME_OVERRIDE',
                                    'EOF'
@@ -423,7 +422,7 @@ def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_ru
     except botocore.exceptions.ClientError as e:
       click.echo(e)
 
-  aws = ctx.obj['AWS'] 
+  aws = ctx.obj['AWS']
   ec2resource = ctx.obj['ec2resource']
   filters = [{'Name':'tag:KubernetesCluster', 'Values':[clustername]}]
 
@@ -446,7 +445,7 @@ def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_ru
     if name == _default_names[0]:
       config.update({'scale': 1, 'kind': 'kubernetes-master', 'instancetype': 'm3.medium', 'policyarn': 'arn:aws:iam::aws:policy/AmazonEC2FullAccess' })
       config.update({'userdata': ctx.obj['userdata'].format('kubernetes-masters', clustername)})
- 
+
     #import ipdb; ipdb.set_trace()
     #'kind': kind,
 
@@ -476,7 +475,7 @@ def status(ctx, asgname, public, private):
     click.echo('{}: {}/{}'.format(group['AutoScalingGroupName'], len(group['Instances']), group['DesiredCapacity']))
 
     if (public or private):
-      InstanceIds = [i['InstanceId'] for i in group['Instances']] 
+      InstanceIds = [i['InstanceId'] for i in group['Instances']]
       Instances = EC2.describe_instances(InstanceIds=InstanceIds)
 
     if private:
@@ -501,7 +500,7 @@ def cluster_info(ctx, asgname):
 
   groups = ASG.describe_auto_scaling_groups(AutoScalingGroupNames=([asgname])).get('AutoScalingGroups')
   for group in groups:
-    InstanceIds = [i['InstanceId'] for i in group['Instances']] 
+    InstanceIds = [i['InstanceId'] for i in group['Instances']]
     Instances = EC2.describe_instances(InstanceIds=InstanceIds)
     PublicIpAddresses = [i['Instances'][0]['PublicIpAddress'] for i in Instances['Reservations']]
     click.echo('Kubernetes master is running at http://{}:8080'.format(PublicIpAddresses[0]))
@@ -554,7 +553,7 @@ def create_asg(config, aws):
 def asg(ctx, scale, policyarn, instancetype, asgname, launchconfiguration, instanceprofile, kind, rolename, clustername, \
         destroy, dry_run, verbose):
 
-  aws = ctx.obj['AWS'] 
+  aws = ctx.obj['AWS']
   ec2resource = ctx.obj['ec2resource']
   filters = [{'Name':'tag:KubernetesCluster', 'Values':[clustername]}]
 

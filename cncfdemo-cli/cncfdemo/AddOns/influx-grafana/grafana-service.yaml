@@ -8,7 +8,7 @@ metadata:
   namespace: kube-system
 spec:
   # In a production setup, we recommend accessing Grafana through an external Loadbalancer
-  # or through a public IP. 
+  # or through a public IP.
   # type: LoadBalancer
   ports:
   - port: 80
