@@ -12,3 +12,6 @@ spec:
       containers:
       - image: zilman/distcc
         name: distcc
+        ports:
+        - containerPort: 3632
+          hostPort: 3632
