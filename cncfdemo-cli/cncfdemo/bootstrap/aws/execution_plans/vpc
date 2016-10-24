@@ -25,12 +25,14 @@
   
   ('vpc',              'create_security_group',   { 'GroupName':            'k8s-masters-{}'.format(clustername),
                                                     'Description':          'k8s security group applied to masters' }, 'sg_masters'       ),
+
+  ('vpc',              'create_security_group',   { 'GroupName':            'k8s-minions-{}'.format(clustername),
+                                                    'Description':          'k8s security group applied to minions' }, 'sg_minions'       ),
+
   ('sg_masters',       'create_tags',             { 'Tags':                 Tags                                    },                    ),
   ('sg_masters',       'create_tags',             { 'Tags':                 [{ 'Key': 'Role',
                                                                                'Value':'kubernetes-master'}]        }                     ),
   
-  ('vpc',              'create_security_group',   { 'GroupName':            'k8s-minions-{}'.format(clustername),
-                                                    'Description':          'k8s security group applied to minions' }, 'sg_minions'       ),
   ('sg_minions',       'create_tags',             { 'Tags':                 Tags                                    },                    ),
   ('sg_minions',       'create_tags',             { 'Tags':                 [{ 'Key': 'Role',
                                                                                'Value':'kubernetes-minion'}]        }                     ),
