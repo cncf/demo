@@ -1,4 +1,4 @@
-# Kuberentes Walkthrough 
+# Kuberentes Walkthrough
 
 ## Prologue
 
@@ -42,11 +42,11 @@ Storage Driver: devicemapper
  Metadata file: /dev/loop1
  ..
  Data loop file: /var/lib/docker/devicemapper/devicemapper/data
- WARNING: Usage of loopback devices is strongly discouraged for production use. 
+ WARNING: Usage of loopback devices is strongly discouraged for production use.
  Metadata loop file: /var/lib/docker/devicemapper/devicemapper/metadata
 ```
 
-As you can see from the warning, the default Docker storage config that ships with CentOS 7 is not recommended for production use. Using devicemapper with loopback can lead to unpredictable behaviour. 
+As you can see from the warning, the default Docker storage config that ships with CentOS 7 is not recommended for production use. Using devicemapper with loopback can lead to unpredictable behaviour.
 
 In fact, to give a bit of a look into this dead end if we follow the path all the way to a Kubernetes cluster you will see nodes coming up like this:
 
@@ -64,7 +64,7 @@ This is insidious because depending on how many volumes your instance happens to
 
 For example if you have one hard-drive on bare-metal and no unallocated space this will always happen.
 
-Only after some activity will xfs corruption in the docker image tree (`/var/lib/docker`) start to sporadically manifest itself and kubernetes nodes will mysteriously fail. 
+Only after some activity will xfs corruption in the docker image tree (`/var/lib/docker`) start to sporadically manifest itself and kubernetes nodes will mysteriously fail.
 
 #### Select a storage driver
 
@@ -76,15 +76,15 @@ Several factors influence the selection of a storage driver. However, these two 
 > - No single driver is well suited to every use-case
 > - Storage drivers are improving and evolving all of the time
 
-The docker docs don't take a position. If one doesn't want to make assumptions about how many disks a machine has (laptops, baremetal servers with one drive, 'etc) direct LVM is out. 
+The docker docs don't take a position. If one doesn't want to make assumptions about how many disks a machine has (laptops, baremetal servers with one drive, 'etc) direct LVM is out.
 
-AUFS [was the original backend](http://jpetazzo.github.io/assets/2015-03-03-not-so-deep-dive-into-docker-storage-drivers.html#28) used by docker but is not in the mainline kernel (it is included by debian/ubuntu). 
+AUFS [was the original backend](http://jpetazzo.github.io/assets/2015-03-03-not-so-deep-dive-into-docker-storage-drivers.html#28) used by docker but is not in the mainline kernel (it is included by debian/ubuntu).
 
 Overlay is in mainline and supported as a Technology Preview by RHEL.
 
 Additionally _"Many people consider OverlayFS as the future of the Docker storage driver"_. It is the future proof way to go (Incidently this issue is currently one of the reasons to opt for CentOS over debian/ubuntu or CoreOS).
 
-##### Overlay Dependencies 
+##### Overlay Dependencies
 
 - CentOS 7.2
 - _"Only XFS is currently supported for use as a lower layer file system."_
@@ -114,7 +114,7 @@ If I was writing a choose your own adventure book this is the point I'd write th
 
 If you follow _this_ dead end all the way to a Kubernetes cluster you will find out that **kube-proxy requires that bridged traffic passes through netfilter**. So that path should absolutely exist otherwise you have a problem.
 
-Furthermore you'll find that [kube-proxy will not work properly with Weave Net on Centos](https://github.com/kubernetes/kubernetes/issues/33790) if this isn't toggled to 1. At first everything will appear to be fine, the problem only manifests itself by kubernetes service endpoints not being routable. 
+Furthermore you'll find that [kube-proxy will not work properly with Weave Net on Centos](https://github.com/kubernetes/kubernetes/issues/33790) if this isn't toggled to 1. At first everything will appear to be fine, the problem only manifests itself by kubernetes service endpoints not being routable.
 
 To get rid of these warnings you might try:
 
@@ -179,13 +179,13 @@ Stay the course, there's nothing else to toggle to make this warning go away, it
 
 With Overlay as the storage backend currently you can only run with selinux on the host. However, kubernetes uses a mechanism that injects special volumes into each container to expose service account tokens and [with selinux turned on secrets simply don't work](http://stackoverflow.com/questions/35338213/kubernetes-serviceaccounts-and-selinux/35347520#35347520).
 
-The work around is to set the security context of volume on the kubernetes host (`sudo chcon -Rt svirt_sandbox_file_t /var/lib/kubelet`) or set selinux to permissive mode. 
+The work around is to set the security context of volume on the kubernetes host (`sudo chcon -Rt svirt_sandbox_file_t /var/lib/kubelet`) or set selinux to permissive mode.
 
 Otherwise down the line [kubernetes add-ons](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons) will fail or behave unpredictably. For example KubeDNS will fail to authenticate with the master and dns lookups on service endpoints will fail. (Slightly differs from the bridge netfilter disabled problem described above which results in routing by ip intermittently failing)
 
 Since there might be other selinux permissions necessary elsewhere consider turning off selinux entirely until this is properly pinned down upstream and documented.
 
-### Correct CNI config	
+### Correct CNI config
 
 
 Kubernetes supports [CNI Network Plugins](http://kubernetes.io/docs/admin/network-plugins/#cni) for interoperability. Setting up a network overlay requires this dependency.
@@ -201,18 +201,18 @@ In https://github.com/kubernetes/kubernetes/issues/26093 additional undocumented
    - conntrack-tools
    - socat
    - bridge-utils
-   
+
 ### AWS specific requirements & debugging
 
 [Peeking under the hood of Kubernetes on AWS](https://github.com/kubernetes/kubernetes/blob/master/docs/design/aws_under_the_hood.md#tagging) you'll find:
 
 > All AWS resources are tagged with a tag named "KubernetesCluster", with a value that is the unique cluster-id. This tag is used to identify a particular 'instance' of Kubernetes, even if two clusters are deployed into the same VPC. Resources are considered to belong to the same cluster if and only if they have the same value in the tag named "KubernetesCluster".
 
-This isn't only neccessary to diffrentiate resources of two different clusters in the same VPC but also for the controller to discover and manage AWS resources (even if it has an entire VPC to itself).
+This isn't only neccessary to differentiate resources between different clusters in the same VPC but also needed for the controller to discover and manage AWS resources at all (even if it has an entire VPC to itself).
 
-Unfortunatly these tags are [not filtered on in a uniform manner across different resource types](https://github.com/cncf/demo/issues/144). 
+Unfortunatly these tags are [not filtered on in a uniform manner across different resource types](https://github.com/cncf/demo/issues/144).
 
-A `kubectl create -f resource.yaml` succesfully submitted to kubernetes might not result in expected functionality (in this case a load balancer endpoint) even when the desired resource shows as `creating...` - it will show that indefinitely.
+A `kubectl create -f resource.yaml` succesfully submitted to kubernetes might not result in expected functionality (in this case a load balancer endpoint) even when the desired resource shows as `creating...`. It will simply show that indefinitely instead of an error.
 
 Since the problem doesn't bubble up to kubectl responses the only way to see that something is amiss is by carefully watching the controller log.
 
@@ -229,24 +229,24 @@ And reading the code at https://github.com/kubernetes/kubernetes/blob/master/pkg
 // Otherwise we will return an error.
 ```
 
-In this example the kubernetes masters and minions each have a security group, both security groups are tagged with "KubernetesCluster=<name>". Removing the tags from the master security group resolves this problem as now the controller receives an expected response from the AWS API.
+In this example the kubernetes masters and minions each have a security group, both security groups are tagged with "KubernetesCluster=name". Removing the tags from the master security group resolves this problem as now the controller receives an expected response from the AWS API. It is easy to imagine many other scenarios where such conflicts might arise if the tag filtering is not consistent.
 
 ## Conclusion
 
-The most difficult bugs are the ones that occur far away from their origins. 
+The most difficult bugs are the ones that occur far away from their origins.
 
-Even a slightly outdated version of the host OS can turn out to be insufficient. 
+Even a slightly outdated version of the host OS can turn out to be insufficient.
 
 Picking the wrong storage backend can initially result in a functioning cluster. Nodes hang unpredictabily at some inderminent point down the line. Or not, depending how many disks you've started with.
 
-Incorrect networking configurations are not necessarily catastrophic right away. Connectivity problems can manifest sporadically and only grow dire after reboots. 
+Incorrect networking configurations are not necessarily catastrophic right away. Connectivity problems can manifest sporadically and only grow dire after reboots.
 
-Warning messages can erroneously complain missing dependencies haven't been resolved when they in fact have. Minor releases of kubernetes can have undocumented changes and undocumented dependencies. 
+Warning messages can erroneously complain missing dependencies haven't been resolved when they in fact have. Minor releases of kubernetes can have undocumented changes and undocumented dependencies.
 
-Critical Add-ons might work until they hit a codepath that requires permissions blocked by selinux. 
+Critical Add-ons might work until they hit a codepath that requires permissions blocked by selinux.
 
 And unforseen combinations of AWS resources can confuse the controller and prevent it from deploying things with silent errors.
 
-The permutations of host operating system kind and version, cloud providers and bare metal, minor and major versions of kubernetes and its dependencies, different types of overlay networks, and the state of resources allocated to the cluster result in a complex support metrix. 
+The permutations of host operating system kind and version, cloud providers and bare metal, minor and major versions of kubernetes and its dependencies, different types of overlay networks, and the state of resources allocated to the cluster result in a complex support metrix.
 
 Better smoke tests, e2e tests, and CI for all these combinations would likely catch many problems quicker. And most of all more and better documentation.
