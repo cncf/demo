@@ -5,7 +5,7 @@
   roles:
    - { role: firewall, tags: firewall }
    - { role: dependencies, tags: dependencies }
-   - { role: docker, tags: docker }
+  #   - { role: docker, tags: docker }
    - { role: weave, tags: weave }
    - { role: etcd, tags: etcd }
    - { role: kubernetes, tags: kubernetes }

@@ -9,7 +9,7 @@
   "ssh_pty" : false,
   "ami_name": "cncf{{timestamp}}",
   "user_data_file": "scripts/disable_tty.sh"
-}], 
+}],
 
 "provisioners": [{
       "type": "ansible",

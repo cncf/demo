@@ -272,7 +272,7 @@ def cli():
 @click.option('--scale', default=1)
 
 @click.option('--KeyName', default='cncf-aws')
-@click.option('--ImageId', default='ami-020fab62') # 1.4.4
+@click.option('--ImageId', default='ami-7b10b41b') # 1.4.4
 @click.option('--SecurityGroups', default=['cncfdemo'], multiple=True)
 @click.pass_context
 def aws(ctx, region, scale, \
