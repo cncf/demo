@@ -205,7 +205,7 @@ However, elsewhere, kubernetes uses a mechanism that injects special volumes int
 
 The work around is to set the security context of volume on the kubernetes host (`sudo chcon -Rt svirt_sandbox_file_t /var/lib/kubelet`) or set selinux to permissive mode.
 
-Otherwise down the line [kubernetes add-ons](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons) will fail or behave unpredictably. For example KubeDNS will fail to authenticate with the master and dns lookups on service endpoints will fail. (Slightly differs from the bridge netfilter disabled problem described above which results in routing by ip intermittently failing)
+Otherwise down the line [kubernetes add-ons](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons) will fail or behave unpredictably. For example KubeDNS will fail to authenticate with the master and [dns lookups on service endpoints will fail](https://github.com/cncf/demo/issues/103). (Slightly differs from the bridge netfilter disabled problem described above which results in routing by ip intermittently failing)
 
 Since there might be other selinux permissions necessary elsewhere consider turning off selinux entirely until this is properly decided upon and documented.
 
@@ -220,7 +220,7 @@ As of Kuberentes 1.4 the [flags to specify cni directories](https://github.com/k
 
 ### Other Dependencies
 
-In [Kubernetes issue #26093](https://github.com/kubernetes/kubernetes/issues/26093) additional undocumented dependencies have been identified as follows:
+There's [additional undocumented missing dependencies](https://github.com/cncf/demo/issues/64) as follows:
 
    - conntrack-tools
    - socat
