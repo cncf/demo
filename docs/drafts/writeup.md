@@ -15,7 +15,7 @@ What follows chronologically describes one beaten path to a custom cluster and s
 
 <sub><sub>_"If you wish to make an apple pie from scratch, you must first invent the universe."_ -- [Carl Sagan](https://www.youtube.com/watch?v=7s664NsLeFM)</sub></sub>
 
-Starting out on AWS one might be tempted to quick start from the web console and opt for Amazon Linux AMI. But that is not a portable choice. To keep your options open (perhaps in the future you'll want to run on another cloud provider, bare metal, or your laptop) it is best to opt for something like CentOS, Debian, or CoreOS.
+Starting out on AWS one might be tempted to quick start from the web console and opt for Amazon Linux AMI. But that is not a portable choice. So at least for the sake of portability (perhaps in the future you'll want to run on another cloud provider, bare metal, or your laptop) it is better to opt for something like CentOS, Debian, or CoreOS.
 
 This is not an easy choice and there is no universal answer. Each option brings along its own dependencies, problems, and bugs. But since choose we must we will go down the CentOS direction of this decision tree and see how far it takes us.
 
@@ -64,28 +64,28 @@ systemctl --failed
 ● network.service              loaded failed failed LSB: Bring up/down networking
 ```
 
-#### What docker-storage-setup is trying (and failing ) to do 
+#### What docker-storage-setup is trying (and failing) to do 
 
-`docker-storage-setup` looks for free space in the volume group of the root volume and attempts to setup a thin pool. If there is no free space it fails to set up an LVM thin pool and will fall back to using loopback devices. Which we are warned by docker itself is a `strongly discouraged` outcome.
+`docker-storage-setup` looks for free space in the volume group of the root volume and attempts to setup a thin pool. If there is no free space it fails to set up a LVM thin pool and will fall back to using loopback devices. Which we are warned by docker itself is a `strongly discouraged` outcome.
 
 #### Why this is a problem
 
 This is insidious for several reasons. Depending on how many volumes your instance happens to spin up with (and how they're configured) you might never see this warning or experience any problem at all. For example if you have one hard-drive on bare-metal and no unallocated space this will always happen.
 
-If your provisioning changes you might end up in this edge case but the cluster will _still_ initially appear to be working. Only after some activity will xfs corruption in the docker image tree (`/var/lib/docker`) start to sporadically manifest itself and kubernetes nodes will mysteriously fail. 
+If the disk provisioning changes you might end up in this edge case but the cluster will _still_ initially appear to be working. Only after some activity will xfs corruption in the docker image tree (`/var/lib/docker`) start to sporadically manifest itself and kubernetes nodes will mysteriously fail as a result. 
 
 
 Despite this being [known as problematic](https://twitter.com/codinghorror/status/604096348682485760) for some time and [documented](https://access.redhat.com/documentation/en/red-hat-enterprise-linux-atomic-host/7/single/getting-started-with-containers/#overlay_graph_driver), people still frequently [run into this](https://forums.docker.com/t/docker-with-devicemapper-doesnt-start-on-centos-7/9641) problem.  
 
-In fact even `yum install docker` can result in slightly different versions of docker installed. 
+Incidentally `yum install docker` can result in slightly different versions of docker installed. 
 
-`Each docker release has some known issues running in Kubernetes as a runtime.`
+> Each docker release has some known issues running in Kubernetes as a runtime.
 
-[So what's the recommended docker version](https://github.com/kubernetes/kubernetes/issues/25893 )? v1.12 or v1.11? It turns out the latest (v1.12) is not yet supported for Kubernetes v1.4.
+[So what's the recommended docker version](https://github.com/kubernetes/kubernetes/issues/25893 )? v1.12 or v1.11? It turns out the latest (v1.12) is not yet supported by Kubernetes v1.4.
 
-_The problem CentOS 7, officially supported by Kubernetes, by default will arbitrarily work for some and not others, the real requirements are hidden and underspecified._
+_The problem is a distribution like CentOS 7, officially supported by Kubernetes, by default will arbitrarily work for some but not others, with the full requirements hidden and **underspecified**._
 
-At the very least Docker versions should be pinned together with OS and Kubernetes versions and a recommendation about the storage driver.
+At the very least Docker versions should be pinned together with OS and Kubernetes versions and a recommendation about the storage driver should be made.
 
 
 #### To avoid these pitfalls, carefully select the storage driver
@@ -214,7 +214,7 @@ Since there might be other selinux permissions necessary elsewhere consider turn
 
 Kubernetes supports [CNI Network Plugins](http://kubernetes.io/docs/admin/network-plugins/#cni) for interoperability. Setting up a network overlay requires this dependency.
 
-Kubernetes 1.3.5 [broke the cni config](https://github.com/kubernetes/kubernetes/issues/30681) - as of that version it is necessary to pull in the [cni release binaries](https://github.com/containernetworking/cni/releases) into the cni bin folder.
+Kubernetes 1.3.5 [broke the cni config](https://github.com/kubernetes/kubernetes/issues/30681) — as of that version it is necessary to pull in the [cni release binaries](https://github.com/containernetworking/cni/releases) into the cni bin folder.
 
 As of Kuberentes 1.4 the [flags to specify cni directories](https://github.com/kubernetes/kubernetes.github.io/pull/1516) changed and documentation was added pinning the minimum cni version to 0.2 and at least the `lo` binary.
 
@@ -244,7 +244,7 @@ Since the problem doesn't bubble up to kubectl responses the only way to see tha
 aws.go:2731] Error opening ingress rules for the load balancer to the instances: Multiple tagged security groups found for instance i-04bd9c4c8aa; ensure only the k8s security group is tagged
 ```
 
-Reading the code at https://github.com/kubernetes/kubernetes/blob/master/pkg/cloudprovider/providers/aws/aws.go#L2783 yields:
+[Reading the code](https://github.com/kubernetes/kubernetes/blob/master/pkg/cloudprovider/providers/aws/aws.go#L2783) yields:
 
 ```
 // Returns the first security group for an instance, or nil
@@ -255,18 +255,33 @@ Reading the code at https://github.com/kubernetes/kubernetes/blob/master/pkg/clo
 
 In this example the kubernetes masters and minions each have a security group, both security groups are tagged with "KubernetesCluster=name". Removing the tags from the master security group resolves this problem as now the controller receives an expected response from the AWS API. It is easy to imagine many other scenarios where such conflicts might arise if the tag filtering is not consistent.
 
+Smoke tests that simply launch and destroy a large amount of pods and resources would not catch this problem either.
+
 ## Conclusion
 
 The most difficult bugs are the ones that occur far away from their origins.
-An outdated version of the host OS, the wrong storage backend for the environment the cluster deploys into, the wrong docker version, inexact networking configurations, can all result in clusters that will slowly but surely degrade.
+Bugs that will slowly but surely degrade a cluster and yet sneak past continuous integration tests.
 
-And the target is a moving one. 
+Additionally the target is a moving one. Minor releases of kubernetes can still have undocumented changes and undocumented dependencies.
 
-Minor releases of kubernetes can still have undocumented changes and undocumented dependencies.
-
-Critical Add-ons might work until they hit a codepath that requires permissions currently blocked by selinux (if an Add-On container is not pinned such a code path can be introduced at any time and seemingly identical clusters deployed minutes apart will have divergent behaviour).
+If a [critical Add-Ons fails](https://github.com/kubernetes/kubernetes/issues/14232) seemingly identical clusters deployed minutes apart will have divergent behaviour.
 
 Unforeseen combinations of AWS resources can confuse the controller and prevent it from deploying things with silent errors.
 
-This is a complex support matrix.
+In short, this is a complex support matrix.
 
+A possible way to improve things is by introducing:
+
+- A set of host OS images with minimal changes baked in as neccessary for Kubernetes
+
+	- Continuously (weekly?) rebased on top of the latest official images 
+
+
+	- As the basis for a well documented reference implementation of a custom cluster 
+		
+- Long running custom clusters spun up for each permutation of minor version updates (kubernetes version bump, weave, flannel, etcd, and so on) 
+
+- A deterministic demo app/deployment as a comprehensive smoketest & benchmark
+
+
+The community need to mix and match the multiple supported components with arbitrary  neccessary for custom deployments can be benefit from a set of "blessed"  kubernetes-flavored host OS images and a more typical real-world artifcat 
