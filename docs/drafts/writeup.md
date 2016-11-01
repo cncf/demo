@@ -264,9 +264,7 @@ Bugs that will slowly but surely degrade a cluster and yet sneak past continuous
 
 Additionally the target is a moving one. Minor releases of kubernetes can still have undocumented changes and undocumented dependencies.
 
-If a [critical Add-Ons fails](https://github.com/kubernetes/kubernetes/issues/14232) seemingly identical clusters deployed minutes apart will have divergent behaviour.
-
-Unforeseen combinations of AWS resources can confuse the controller and prevent it from deploying things with silent errors.
+If a [critical Add-Ons fails](https://github.com/kubernetes/kubernetes/issues/14232) seemingly identical clusters deployed minutes apart will have divergent behaviour. The cloud environments clusters slot into are also a source of state and therfore subtle edgecase that can confuse the controller and silently prevent it from deploying things.
 
 In short, this is a complex support matrix.
 
@@ -284,4 +282,4 @@ A possible way to improve things is by introducing:
 - A deterministic demo app/deployment as a comprehensive smoketest & benchmark
 
 
-The community need to mix and match the multiple supported components with arbitrary  neccessary for custom deployments can be benefit from a set of "blessed"  kubernetes-flavored host OS images and a more typical real-world artifcat 
+The community need to mix and match the multiple supported components with arbitrary neccessary for custom deployments can be benefit from a set of "blessed"  kubernetes-flavored host OS images and a more typical real-world artifcat to check their customizations against.
