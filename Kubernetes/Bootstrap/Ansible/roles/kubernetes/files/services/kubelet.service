@@ -3,11 +3,11 @@ Description=Kubernetes Proxy
 Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 ConditionPathExists=!/etc/sysconfig/kubernetes-masters
 ConditionPathExists=/etc/sysconfig/kubernetes-minions
-After=weaveproxy.service
+#After=weaveproxy.service
 After=kube-proxy.service
-Wants=weaveproxy.service
+#Wants=weaveproxy.service
 Wants=kube-proxy.service
-Requires=weaveproxy.service
+#Requires=weaveproxy.service
 
 [Service]
 EnvironmentFile=/etc/kubernetes/config

@@ -3,9 +3,10 @@
   become: yes
 
   roles:
-   - { role: firewall, tags: firewall }
-   - { role: dependencies, tags: dependencies }
-  #   - { role: docker, tags: docker }
-   - { role: weave, tags: weave }
+   - { role: docker, tags: docker }
    - { role: etcd, tags: etcd }
+   - { role: cni, tags: cni }
+   # - { role: weave, tags: weave }
    - { role: kubernetes, tags: kubernetes }
+
+  # TODO: yum versionlock dependencies

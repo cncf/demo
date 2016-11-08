@@ -7,16 +7,16 @@
   "instance_type": "t2.micro",
   "ssh_username": "centos",
   "ssh_pty" : false,
-  "ami_name": "cncf{{timestamp}}",
+  "ami_name": "cncfbase{{timestamp}}",
   "user_data_file": "scripts/disable_tty.sh"
 }],
 
 "provisioners": [{
       "type": "ansible",
-      "playbook_file": "playbooks/setup/main.yml",
+      "playbook_file": "playbooks/base/main.yml",
       "user": "centos",
       "sftp_command": "/usr/libexec/openssh/sftp-server",
-      "extra_arguments": [ "--extra-vars", "packer=yes" ]
+      "extra_arguments": [ "-vvv", "--extra-vars", "packer=yes" ]
   }]
 
 }

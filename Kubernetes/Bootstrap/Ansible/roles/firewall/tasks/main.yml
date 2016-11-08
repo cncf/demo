@@ -6,6 +6,10 @@
 - selinux: state=disabled
 
 #- sysctl: name=net.bridge.bridge-nf-call-iptables value=1 state=present
-- command: echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
-- copy: content="net.bridge.bridge-nf-call-iptables = 1" dest="/usr/lib/sysctl.d/90-system.conf" mode=0644 owner=root group=root
-
+#- command: echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+#
+- copy:
+    content: |
+      net.bridge.bridge-nf-call-ip6tables = 1
+      net.bridge.bridge-nf-call-iptables = 1
+    dest: "/usr/lib/sysctl.d/90-system.conf"
