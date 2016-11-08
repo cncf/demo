@@ -1,0 +1,27 @@
+---
+- name: download binary
+  get_url: url="{{ weave_url }}" dest=/usr/local/bin/weave mode=a+x validate_certs=no force=true
+
+- command: /usr/local/bin/weave setup creates=/root/weave.setup
+  register: weavesetup
+
+- stat: path=/root/weave.setup
+  register: weavesetuptouch
+
+- name: register setup
+  file: path=/root/weave.setup state=touch
+  when: weavesetup|succeeded and weavesetuptouch.stat.exists == False
+
+- copy: src="{{ item.src }}" dest="{{ item.dest }}" mode=0777
+  with_items:
+    - src: weavewrap
+      dest: /usr/local/bin/weavewrap
+    - src: weave.env
+      dest: /etc/sysconfig/weave
+    - src: weave.service
+      dest: /etc/systemd/system/weave.service
+    - src: weaveproxy.service
+      dest: /etc/systemd/system/weaveproxy.service
+
+- service: name=weave enabled=true
+- service: name=weaveproxy enabled=true

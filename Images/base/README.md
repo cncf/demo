@@ -4,7 +4,7 @@ This image is a minimally modified Centos7 configured with sensible defaults for
 
 ## Quickstart
 
-Simply install and configure [Packer](https://www.packer.io/) and fork this repo to customize.
+Simply install and configure [packer](https://www.packer.io/) and fork this repo to customize.
 
 > packer build packer.json
 

@@ -1,0 +1,5 @@
+---
+- yum: state=present name={{ item }}
+  with_items:
+   - docker
+   - etcd

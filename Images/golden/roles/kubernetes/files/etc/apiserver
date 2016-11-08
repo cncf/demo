@@ -1,0 +1,15 @@
+# The address on the local server to listen to.
+KUBE_API_ADDRESS="--insecure-bind-address=0.0.0.0"
+
+# The port on the local server to listen on.
+KUBE_API_PORT="--insecure-port=8080 --secure-port=443"
+
+#--etcd-servers=http://127.0.0.1:4001
+#--etcd-servers-overrides=/events#http://127.0.0.1:4002 <-- not sure what this does, find out
+
+# --secure-port=6443
+# --insecure-port=8080
+# --insecure-bind-address=127.0.0.1: The IP address on which to serve the --insecure-port (set to 0.0.0.0 for all interfaces). Defaults to localhost.
+# --bind-address=0.0.0.0: The IP address on which to listen for the --secure-port port. The associated interface(s) must be reachable by the rest of the cluster, and by CLI/web clients. If blank, all interfaces will be used (0.0.0.0).
+
+KUBE_API_ARGS="--admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,ResourceQuota --authorization-mode=AlwaysAllow --client-ca-file=/srv/kubernetes/ca.crt --tls-cert-file=/srv/kubernetes/server.cert --tls-private-key-file=/srv/kubernetes/server.key --allow-privileged=True"

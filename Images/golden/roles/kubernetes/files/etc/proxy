@@ -1,0 +1,6 @@
+# Additional arguments
+
+KUBE_PROXY_ARGS="--proxy-mode=iptables --masquerade-all=true"
+
+#KUBE_PROXY_ARGS="--proxy-mode=userspace"
+# --kubeconfig=/var/lib/kube-proxy/kubeconfig #Path to kubeconfig file with authorization information
