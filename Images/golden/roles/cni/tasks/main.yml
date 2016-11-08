@@ -1,0 +1,8 @@
+---
+- name: create directories for CNI plugin
+  file: path={{ item }} state=directory mode=0755
+  with_items:
+    - /opt/cni/bin
+    - /etc/cni/net.d
+
+- unarchive: src="https://github.com/containernetworking/cni/releases/download/v0.3.0/cni-v0.3.0.tgz" dest=/opt/cni/bin copy=no

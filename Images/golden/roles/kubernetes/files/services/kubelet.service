@@ -1,0 +1,28 @@
+[Unit]
+Description=Kubernetes Proxy
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+ConditionPathExists=!/etc/sysconfig/kubernetes-masters
+ConditionPathExists=/etc/sysconfig/kubernetes-minions
+#After=weaveproxy.service
+After=kube-proxy.service
+#Wants=weaveproxy.service
+Wants=kube-proxy.service
+#Requires=weaveproxy.service
+
+[Service]
+EnvironmentFile=/etc/kubernetes/config
+EnvironmentFile=/etc/kubernetes/kubelet
+EnvironmentFile=/etc/sysconfig/kubernetes-minions
+ExecStartPre=/bin/bash -c "until /usr/bin/curl -s http://masters.${CLUSTER_NAME}.k8s:8080; do echo \"waiting for master...\"; sleep 5; done"
+ExecStart=/bin/kubelet \
+            --api-servers=http://masters.${CLUSTER_NAME}.k8s:8080 \
+            $CLOUD_PROVIDER \
+            $KUBELET_HOSTNAME \
+            $KUBELET_POD_INFRA_CONTAINER \
+            $KUBELET_ARGS \
+            $KUBE_LOGTOSTDERR
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

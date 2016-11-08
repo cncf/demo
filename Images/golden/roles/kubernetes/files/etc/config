@@ -1,0 +1,13 @@
+# logging to stderr means we get it in the systemd journal
+KUBE_LOGTOSTDERR="--logtostderr=true"
+
+# journal message level, 0 is debug
+KUBE_LOG_LEVEL="--v=4"
+
+# Address range to use for services
+# 10.0.0.1 - 10.0.255.254
+KUBE_SERVICE_RANGE="--service-cluster-ip-range=10.0.0.0/16"
+
+# Address range to use for pods
+# 10.244.0.0 - 10.244.255.255
+KUBE_CLUSTER_CIDR_RANGE="--cluster-cidr=10.244.0.0/16"
