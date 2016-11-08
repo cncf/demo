@@ -1,4 +1,4 @@
-## Centos7 base image
+## Centos7 based golden Kubernetes image
 
 This image builds on the [base image](https://github.com/cncf/demo/tree/master/Images/base),
 a minimally modified Centos7 configured with sensible defaults for hosting a Kubernetes cluster.
