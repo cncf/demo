@@ -1,0 +1,22 @@
+{
+
+"builders": [{
+  "type": "amazon-ebs",
+  "region": "us-west-2",
+  "source_ami": "ami-d2c924b2",
+  "instance_type": "t2.micro",
+  "ssh_username": "centos",
+  "ssh_pty" : false,
+  "ami_name": "cncfbase{{timestamp}}",
+  "user_data_file": "disable_tty.sh"
+}],
+
+"provisioners": [{
+      "type": "ansible",
+      "playbook_file": "playbook.yml",
+      "user": "centos",
+      "sftp_command": "/usr/libexec/openssh/sftp-server",
+      "extra_arguments": [ "-vvv", "--extra-vars", "packer=yes" ]
+  }]
+
+}

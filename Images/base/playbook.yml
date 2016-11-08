@@ -1,0 +1,26 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+  - selinux: state=disabled
+  - service: name={{ item }} enabled=no
+    ignore_errors: yes
+    with_items:
+      - firewalld
+      - kdump
+
+  - copy: content="overlay" dest=/etc/modules-load.d/overlay.conf
+  - copy:
+      content: |
+        net.bridge.bridge-nf-call-ip6tables = 1
+        net.bridge.bridge-nf-call-iptables = 1
+      dest: /usr/lib/sysctl.d/90-system.conf
+
+  - yum: name={{ item }} state=present update_cache=yes
+    with_items:
+     - socat
+     - bridge-utils
+     - conntrack-tools
+
+  - yum: name=* state=latest

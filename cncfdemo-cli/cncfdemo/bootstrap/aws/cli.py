@@ -164,7 +164,7 @@ def create(ctx, clustername, keyname, imageid, instancetype, \
     #                                                                 'CidrIp': whitelist_ip, 'FromPort':8080, 'ToPort':8080 })])
 
     ec2resource = ctx.obj['ec2resource']
-    sg = [{'Name':'tag:KubernetesCluster', 'Values':[clustername]}, {'Name':'tag:Role', 'Values':[kind]}]
+    sg = [{'Name':'tag:Name', 'Values':[clustername]}, {'Name':'tag:Role', 'Values':[kind]}]
     subnet = [{'Name':'tag:KubernetesCluster', 'Values':[clustername]}]
 
     #AvailabilityZones = [z['ZoneName'] for z in EC2.describe_availability_zones()['AvailabilityZones']]
@@ -400,7 +400,7 @@ def minions(ctx, clustername, destroy, scale, policyarn, instancetype, \
 
 @click.command()
 @common_options
-@click.option('--scale', default=1)
+@click.option('--scale', default=3)
 @click.option('--InstanceType', default='t2.micro')
 @click.option('--region', default='us-west-2')
 @click.option('--cidr', default='172.20.0.0/16')
@@ -446,7 +446,6 @@ def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_ru
       config.update({'scale': 1, 'kind': 'kubernetes-master', 'instancetype': 'm3.medium', 'policyarn': 'arn:aws:iam::aws:policy/AmazonEC2FullAccess' })
       config.update({'userdata': ctx.obj['userdata'].format('kubernetes-masters', clustername)})
 
-    #import ipdb; ipdb.set_trace()
     #'kind': kind,
 
     create_asg(config, aws)
@@ -573,7 +572,6 @@ def asg(ctx, scale, policyarn, instancetype, asgname, launchconfiguration, insta
 
   import ipdb; ipdb.set_trace()
   create_asg(config, aws)
-
 
 
 cli.add_command(aws)
