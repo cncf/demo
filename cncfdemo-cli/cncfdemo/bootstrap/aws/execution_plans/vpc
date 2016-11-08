@@ -4,39 +4,35 @@
   ('ec2',              'create_internet_gateway', {                                                                 }, 'internet_gateway' ),
   ('ec2',              'create_dhcp_options',     { 'DhcpConfigurations':   DhcpConfiguration                       }, 'dhcp_options'     ),
   ('ec2',              'create_vpc',              { 'CidrBlock':            cidr                                    }, 'vpc'              ),
-  
+
   ('internet_gateway', 'create_tags',             { 'Tags':                 Tags                                    },                    ),
   ('dhcp_options',     'create_tags',             { 'Tags':                 Tags                                    },                    ),
   ('vpc',              'create_tags',             { 'Tags':                 Tags                                    },                    ),
-  
+
   ('vpc',              'modify_attribute',        { 'EnableDnsSupport':     {'Value': True}                         }                     ),
   ('vpc',              'modify_attribute',        { 'EnableDnsHostnames':   {'Value': True}                         }                     ),
   ('vpc',              'associate_dhcp_options',  { 'DhcpOptionsId':        context['_get']('dhcp_options.id')      }                     ),
   ('vpc',              'attach_internet_gateway', { 'InternetGatewayId':    context['_get']('internet_gateway.id')  }                     ),
-  
+
   ('vpc',              'create_subnet',           { 'CidrBlock':            '172.20.0.0/24'                         }, 'subnet'           ),
   ('subnet',           'create_tags',             { 'Tags':                 Tags                                    },                    ),
-  
+
   ('vpc',              'create_route_table',      {                                                                 }, 'route_table'      ),
   ('route_table',      'create_tags',             { 'Tags':                 Tags                                    },                    ),
   ('route_table',      'create_route',            { 'DestinationCidrBlock': '0.0.0.0/0', \
                                                     'GatewayId':            context['_get']('internet_gateway.id')  },                    ),
   ('route_table',      'associate_with_subnet',   { 'SubnetId':             context['_get']('subnet.id')            },                    ),
-  
-  ('vpc',              'create_security_group',   { 'GroupName':            'k8s-masters-{}'.format(clustername),
-                                                    'Description':          'k8s security group applied to masters' }, 'sg_masters'       ),
 
   ('vpc',              'create_security_group',   { 'GroupName':            'k8s-minions-{}'.format(clustername),
                                                     'Description':          'k8s security group applied to minions' }, 'sg_minions'       ),
 
-  ('sg_masters',       'create_tags',             { 'Tags':                 Tags                                    },                    ),
-  ('sg_masters',       'create_tags',             { 'Tags':                 [{ 'Key': 'Role',
-                                                                               'Value':'kubernetes-master'}]        }                     ),
-  
+  ('vpc',              'create_security_group',   { 'GroupName':            'k8s-masters-{}'.format(clustername),
+                                                    'Description':          'k8s security group applied to masters' }, 'sg_masters'       ),
+
   ('sg_minions',       'create_tags',             { 'Tags':                 Tags                                    },                    ),
   ('sg_minions',       'create_tags',             { 'Tags':                 [{ 'Key': 'Role',
                                                                                'Value':'kubernetes-minion'}]        }                     ),
-  
+
   ('sg_minions',       'authorize_ingress',       { 'IpPermissions':        IpPermissions                           }                     ),
   ('sg_masters',       'authorize_ingress',       { 'IpPermissions':        IpPermissions                           }                     ),
   ('sg_masters',       'authorize_ingress',       { 'IpPermissions':        IpWhitelist                             }                     )
