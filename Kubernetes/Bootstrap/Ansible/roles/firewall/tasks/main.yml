@@ -3,20 +3,13 @@
   service: name=firewalld enabled=no state=stopped
   ignore_errors: yes
 
-- name: disable iptables-services
-  service: name=iptables-services enabled=no state=stopped
-  ignore_errors: yes
-
 - selinux: state=disabled
 
-- sysctl: name=net.ipv6.conf.all.disable_ipv6 value=1 state=present
-- sysctl: name=net.ipv6.conf.default.disable_ipv6 value=1 state=present
-- sysctl: name=net.ipv6.conf.lo.disable_ipv6 value=1 state=present
-
-- lineinfile: dest=/etc/modprobe.conf line='install ipv6 /bin/true' create=yes
-
-- lineinfile: dest=/etc/sysconfig/network line='NETWORKING_IPV6=NO'
-- lineinfile: dest=/etc/sysconfig/network line='IPV6INIT=no'
-
-- name: remove ipv6 hosts entry
-  shell: sed -i -e '/::/d' -e '/IPv6/d' /etc/hosts
+#- sysctl: name=net.bridge.bridge-nf-call-iptables value=1 state=present
+#- command: echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+#
+- copy:
+    content: |
+      net.bridge.bridge-nf-call-ip6tables = 1
+      net.bridge.bridge-nf-call-iptables = 1
+    dest: "/usr/lib/sysctl.d/90-system.conf"

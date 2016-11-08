@@ -1,6 +1,4 @@
 ---
-- unarchive: src="https://github.com/containernetworking/cni/releases/download/v0.3.0/cni-v0.3.0.tgz" dest=/opt/cni/bin copy=no
-
 - get_url: url="{{ kubernetes_base_url }}/{{ item }}" dest=/usr/bin mode=a+x validate_certs=no force=true
   with_items:
     - kube-apiserver

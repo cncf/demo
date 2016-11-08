@@ -1,3 +1,30 @@
 ---
-- yum: name=docker state=present
-- service: name=docker enabled=true state=running 
+- yum_repository:
+    name: docker
+    description: Docker Repository
+    baseurl: https://yum.dockerproject.org/repo/main/centos/7/
+    gpgcheck: yes
+    gpgkey: https://yum.dockerproject.org/gpg
+
+- yum: name=docker-engine-1.11.2 state=present enablerepo=docker
+- service: name=docker enabled=yes state=running
+
+- file: path=/etc/systemd/system/docker.service.d/ state=directory
+- copy:
+    dest: /etc/systemd/system/docker.service.d/docker.conf
+    content: |
+      [Service]
+      EnvironmentFile=-/etc/sysconfig/docker
+      EnvironmentFile=-/etc/sysconfig/docker-storage
+      EnvironmentFile=-/etc/sysconfig/docker-network
+      ExecStart=
+      ExecStart=/usr/bin/docker daemon -H fd:// $OPTIONS \
+                $DOCKER_STORAGE_OPTIONS \
+                $DOCKER_NETWORK_OPTIONS \
+                $BLOCK_REGISTRY \
+                $INSECURE_REGISTRY
+
+- copy:
+    dest: /etc/sysconfig/docker-storage
+    content: |
+      DOCKER_STORAGE_OPTIONS="--storage-driver=overlay"
