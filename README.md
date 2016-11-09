@@ -102,7 +102,7 @@ The following is going on behind the scenes:
 - Grafana is deployed with preconfigured dashboards to expose metrics collected by Prometheus
 - ConfigMaps are created from autodetection of configuration files required by the applications being deployed
 - A sharded mongo cluster is provisioned 
-- One Shot Kuberentes Jobs initialize and configure the mongo cluster
+- One Shot Kubernetes Jobs initialize and configure the mongo cluster
 - A mongos service is exposed internally to the cluser
 - Multiple instances of [Countly](https://count.ly/) are spun up against the mongo cluster
 - Countly service is exposed at a human readable subdomain [countly.cncfdemo.io](countly.cncfdemo.io) via Route53
