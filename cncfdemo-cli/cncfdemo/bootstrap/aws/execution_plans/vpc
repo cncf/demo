@@ -23,11 +23,14 @@
                                                     'GatewayId':            context['_get']('internet_gateway.id')  },                    ),
   ('route_table',      'associate_with_subnet',   { 'SubnetId':             context['_get']('subnet.id')            },                    ),
 
-  ('vpc',              'create_security_group',   { 'GroupName':            'k8s-minions-{}'.format(clustername),
-                                                    'Description':          'k8s security group applied to minions' }, 'sg_minions'       ),
-
   ('vpc',              'create_security_group',   { 'GroupName':            'k8s-masters-{}'.format(clustername),
                                                     'Description':          'k8s security group applied to masters' }, 'sg_masters'       ),
+
+  ('sg_masters',       'create_tags',             { 'Tags':                 [{ 'Key': 'Role',
+                                                                               'Value':'kubernetes-masters'}]       }                     ),
+
+  ('vpc',              'create_security_group',   { 'GroupName':            'k8s-minions-{}'.format(clustername),
+                                                    'Description':          'k8s security group applied to minions' }, 'sg_minions'       ),
 
   ('sg_minions',       'create_tags',             { 'Tags':                 Tags                                    },                    ),
   ('sg_minions',       'create_tags',             { 'Tags':                 [{ 'Key': 'Role',
@@ -35,6 +38,15 @@
 
   ('sg_masters',       'create_tags',             { 'Tags':                 [{ 'Key': 'Role',
                                                                                'Value':'kubernetes-master'}]        }                     ),
+
+  ('sg_minions',       'authorize_ingress',       { 'IpPermissions':        IpPermissions                           }                     ),
+  ('sg_masters',       'authorize_ingress',       { 'IpPermissions':        IpPermissions                           }                     ),
+  ('sg_masters',       'authorize_ingress',       { 'IpPermissions':        IpWhitelist                             }                     )
+
+
+]
+  ('sg_minions',       'create_tags',             { 'Tags':                 [{ 'Key': 'Role',
+                                                                               'Value':'kubernetes-minion'}]        }                     ),
 
   ('sg_minions',       'authorize_ingress',       { 'IpPermissions':        IpPermissions                           }                     ),
   ('sg_masters',       'authorize_ingress',       { 'IpPermissions':        IpPermissions                           }                     ),
