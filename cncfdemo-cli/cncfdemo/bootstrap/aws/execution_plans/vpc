@@ -33,6 +33,9 @@
   ('sg_minions',       'create_tags',             { 'Tags':                 [{ 'Key': 'Role',
                                                                                'Value':'kubernetes-minion'}]        }                     ),
 
+  ('sg_masters',       'create_tags',             { 'Tags':                 [{ 'Key': 'Role',
+                                                                               'Value':'kubernetes-master'}]        }                     ),
+
   ('sg_minions',       'authorize_ingress',       { 'IpPermissions':        IpPermissions                           }                     ),
   ('sg_masters',       'authorize_ingress',       { 'IpPermissions':        IpPermissions                           }                     ),
   ('sg_masters',       'authorize_ingress',       { 'IpPermissions':        IpWhitelist                             }                     )

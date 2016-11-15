@@ -9,14 +9,14 @@
   ('iam',              'add_role_to_instance_profile', { 'RoleName': rolename, 'InstanceProfileName': instanceprofile    }                     ),
   ('iam',              'attach_role_policy',           { 'RoleName': rolename, 'PolicyArn': policyarn                    }                     ),
 
-  ('asg',              'create_launch_configuration',  { 'LaunchConfigurationName': launchconfiguration, 
-                                                         'ImageId': imageid,                             
-                                                         'KeyName': keyname,                             
+  ('asg',              'create_launch_configuration',  { 'LaunchConfigurationName': launchconfiguration,
+                                                         'ImageId': imageid,
+                                                         'KeyName': keyname,
                                                          'SecurityGroups': securitygroups,
-                                                         'AssociatePublicIpAddress': True,               
-                                                         'UserData': userdata,                           
-                                                         'InstanceType': instancetype,                   
-                                                         'InstanceMonitoring': {'Enabled': True},        
+                                                         'AssociatePublicIpAddress': True,
+                                                         'UserData': userdata,
+                                                         'InstanceType': instancetype,
+                                                         'InstanceMonitoring': {'Enabled': True},
                                                          'IamInstanceProfile': instanceprofile                           }                     ),
 
 
