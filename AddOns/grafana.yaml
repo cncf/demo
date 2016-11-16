@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  selector:
+    app: grafana
+  type: NodePort
+  ports:
+  - name: grafana
+    port: 3000
+    targetPort: 3000
+    nodePort: 30000
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: monitoring
+  labels:
+    app: grafana
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+      - image: zilman/kube-grafana
+        name: grafana
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+          - name: GF_AUTH_BASIC_ENABLED
+            value: "false"
+          - name: GF_AUTH_ANONYMOUS_ENABLED
+            value: "true"
+          - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+            value: Admin
+            #- name: GF_SERVER_ROOT_URL
+            #value: /api/v1/proxy/namespaces/default/services/grafana/
