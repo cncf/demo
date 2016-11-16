@@ -24,3 +24,4 @@
     - kube-proxy
     - kube-scheduler
     - kubelet
+    - kube-addons
