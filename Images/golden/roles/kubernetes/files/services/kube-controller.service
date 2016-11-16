@@ -2,6 +2,7 @@
 Description=Kubernetes controller manager
 Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 ConditionPathExists=/etc/sysconfig/kubernetes-masters
+After=cloud-final.service
 After=etcd.service
 After=docker.service
 After=kube-apiserver.service
