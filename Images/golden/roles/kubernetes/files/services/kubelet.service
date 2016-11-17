@@ -4,6 +4,7 @@ Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 ConditionPathExists=!/etc/sysconfig/kubernetes-masters
 ConditionPathExists=/etc/sysconfig/kubernetes-minions
 After=kube-proxy.service
+After=cloud-final.service
 Wants=kube-proxy.service
 
 [Service]

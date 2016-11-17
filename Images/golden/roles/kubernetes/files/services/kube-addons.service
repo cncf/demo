@@ -5,6 +5,7 @@ After=kube-apiserver.service
 
 [Service]
 Type=oneshot
+ExecStartPre=/bin/bash -c "until /usr/bin/curl -s http://127.0.0.1:8080; do echo \"waiting for API server...\"; sleep 5; done"
 ExecStartPre=/bin/kubectl apply -f https://git.io/weave-kube
 ExecStartPre=/bin/kubectl create ns monitoring
 ExecStart=/bin/kubectl create -f https://gist.githubusercontent.com/zilman/01c1cf122b48f6248f7f5018e70d97bf/raw/97c54237e1ae003786ca1c8ea500124a6c8f2e61/clusterstart

@@ -2,6 +2,7 @@
 Description=Kubernetes scheduler
 ConditionPathExists=/etc/sysconfig/kubernetes-masters
 After=etcd.service
+After=cloud-final.service
 After=docker.service
 After=kube-apiserver.service
 Wants=etcd.service
