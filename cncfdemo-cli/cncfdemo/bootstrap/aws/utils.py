@@ -1,5 +1,5 @@
 from functools import partial, reduce
-import collections 
+import collections
 
 import sys
 import botocore
@@ -37,7 +37,7 @@ def walk(adict):
 
 
 def execute2(context, actions):
-      
+
   for a in map(lambda action: Action(*action), actions):
 
     try:
@@ -55,10 +55,10 @@ def execute2(context, actions):
 
 
     except botocore.exceptions.ClientError as e:
-    
+
       Errors = ['InvalidKeyPair.Duplicate','InvalidGroup.Duplicate','InvalidPermission.Duplicate','EntityAlreadyExists','AlreadyExists', \
                 'InvalidGroup.NotFound','NoSuchEntity','ValidationError','LimitExceeded','DependencyViolation', 'DryRunOperation']
-    
+
       if e.response['Error']['Code'] in Errors:
         click.echo(e.response['Error']['Message'])
       else:

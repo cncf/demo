@@ -4,7 +4,7 @@ import jinja2
 import json
 
 import click
-import requests 
+import requests
 
 
 def json_dump(foo):
@@ -14,21 +14,21 @@ def json_dump(foo):
 def create(definition, overrides={}):
 
     defaults = { 'scheme': 'http',
-      	         'host': 'localhost',
-  	         'port': '8001',
-  	         'path': 'api',
-  	         'apiVersion': 'v1',
-  	         'namespace': 'default'
+                 'host': 'localhost',
+                 'port': '8001',
+                 'path': 'api',
+                 'apiVersion': 'v1',
+                 'namespace': 'default'
                }
-  
+
     endpoint = defaults.copy()
     endpoint.update(overrides)
     endpoint.update(definition)
-  
+
     endpoint['path'] += 's' if not endpoint['apiVersion'] == 'v1' else ''
     endpoint['kind'] += 's' if not endpoint.get('kind','').endswith('s') else ''
     endpoint['kind'] = endpoint['kind'].lower()
-  
+
     url = '{scheme}://{host}:{port}/{path}/{apiVersion}/namespaces/{namespace}/{kind}'.format(**endpoint)
 
     #import ipdb; ipdb.set_trace()
@@ -44,4 +44,4 @@ def create(definition, overrides={}):
 
 
 if __name__ == "__main__":
-  pass   
+  pass
