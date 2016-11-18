@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: clusterstart
+spec:
+  activeDeadlineSeconds: 180
+  template:
+    metadata:
+      name: clusterstart
+    spec:
+      containers:
+      - name: clusterstart
+        image: zilman/cncf-demo
+        command: ["kubectl"]
+        args: ["create", "-f", "Demo", "--recursive"]
+      restartPolicy: Never
