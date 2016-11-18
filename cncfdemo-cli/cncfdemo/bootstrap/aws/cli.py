@@ -199,15 +199,18 @@ def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_ru
 
   click.echo('\n'.join(('', 'Master IP: {}'.format(PublicIpAddresses[0]), '')))
   url = 'http://{host}:8080/apis/batch/v1/jobs/'.format(host=PublicIpAddresses[0])
+  click.echo('Waiting for ClusterReady..', nl=False)
   while not ok:
     try:
+      click.echo('.', nl=False)
+      time.sleep(5)
       r = requests.get(url)
       resp = json.loads(r.content)
       start = [job['status'] for job in resp['items'] if job['metadata']['name'] == 'clusterstart']
       ok = (start[0]['succeeded'] == 1)
     except Exception:
-      print 'Waiting for ClusterReady..'
-      time.sleep(10)
+      click.echo('.', nl=False)
+      time.sleep(5)
       pass
 
 
