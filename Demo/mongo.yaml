@@ -1,0 +1,265 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongos
+  labels:
+    app: mongos
+spec:
+  ports:
+  - port: 27019
+    name: mongos
+  clusterIP: None
+  selector:
+    app: mongos
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mongos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongos
+  template:
+    metadata:
+      name: mongos
+      labels:
+        app: mongos
+      annotations:
+        pod.alpha.kubernetes.io/init-containers: "[{\"name\": \"connect\", \"image\": \"mongo:3.2\", \"command\": [\"mongo\", \"--host\", \"mongocfg-2.mongocfg\", \"--port\", \"27019\", \"--eval\", \"rs.status()\"]},{\"name\": \"wait\", \"image\": \"busybox\", \"command\": [\"/bin/sh\", \"-c\", \"sleep 45\"]}]"
+    spec:
+      containers:
+      - name: mongo
+        image: mongo:3.2
+        command:
+        - mongos
+        - "--configdb"
+        - "rs0/mongocfg-0.mongocfg:27019,mongocfg-1.mongocfg:27019,mongocfg-2.mongocfg:27019"
+        - "--bind_ip"
+        - 0.0.0.0
+        ports:
+        - containerPort: 27019
+          name: mongos
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongocfg
+  labels:
+    app: mongocfg
+spec:
+  ports:
+  - port: 27019
+    name: mongocfg
+  clusterIP: None
+  selector:
+    app: mongocfg
+
+---
+
+apiVersion: apps/v1alpha1
+kind: PetSet
+metadata:
+  name: mongocfg
+spec:
+  serviceName: mongocfg
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mongocfg
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: mongo
+        image: mongo:3.2
+        command:
+        - mongod
+        - "--configsvr"
+        - "--replSet"
+        - "rs0"
+        - "--bind_ip"
+        - 0.0.0.0
+        ports:
+        - containerPort: 27019
+          name: mongocfg
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongors1
+  labels:
+    app: mongors1
+spec:
+  ports:
+  - port: 27017
+    name: mongors1
+  clusterIP: None
+  selector:
+    app: mongors1
+
+---
+
+apiVersion: apps/v1alpha1
+kind: PetSet
+metadata:
+  name: mongors1
+spec:
+  serviceName: mongors1
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mongors1
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: mongo
+        image: mongo:3.2
+        command:
+        - mongod
+        - "--replSet"
+        - "rs1"
+        - "--bind_ip"
+        - 0.0.0.0
+        ports:
+        - containerPort: 27017
+          name: mongors1
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongors2
+  labels:
+    app: mongors2
+spec:
+  ports:
+  - port: 27017
+    name: mongors2
+  clusterIP: None
+  selector:
+    app: mongors2
+
+---
+
+apiVersion: apps/v1alpha1
+kind: PetSet
+metadata:
+  name: mongors2
+spec:
+  serviceName: mongors2
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mongors2
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: mongo
+        image: mongo:3.2
+        command:
+        - mongod
+        - "--replSet"
+        - "rs2"
+        - "--bind_ip"
+        - 0.0.0.0
+        ports:
+        - containerPort: 27017
+          name: mongors2
+
+---
+
+
+apiVersion: extensions/v1beta1
+kind: Job
+metadata:
+  name: mongocfg-setup
+spec:
+  autoSelector: true
+  template:
+    metadata:
+      name: mongocfg-setup
+      annotations:
+        pod.alpha.kubernetes.io/init-containers: "[{\"name\": \"ns\", \"image\": \"busybox\", \"command\": [\"/bin/sh\", \"-c\", \"sleep 45; [[ $(nslookup mongocfg.default | tail -n +5 | wc -l) -ge 3 ]]\"]},{\"name\": \"connect\", \"image\": \"mongo:3.2\", \"command\": [\"mongo\", \"--host\", \"mongocfg-2.mongocfg\", \"--port\", \"27019\", \"--eval\", \"rs.status()\"]},{\"name\": \"wait\", \"image\": \"busybox\", \"command\": [\"/bin/sh\", \"-c\", \"sleep 10\"]},{\"name\": \"init\", \"image\": \"mongo:3.2\", \"command\": [\"mongo\", \"--host\", \"mongocfg-0.mongocfg\", \"--port\", \"27019\", \"--eval\", \"rs.initiate({_id: 'rs0', members: [{_id:0,host:'mongocfg-0.mongocfg:27019'},{_id:1,host:'mongocfg-1.mongocfg:27019'},{_id:2,host:'mongocfg-2.mongocfg:27019'}]})\"]}]"
+    spec:
+      containers:
+      - name: mongocfg-setup
+        image: mongo:3.2
+        command:
+        - "/bin/echo"
+        - "configset ready"
+      restartPolicy: OnFailure
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Job
+metadata:
+  name: mongors1-setup
+spec:
+  autoSelector: true
+  template:
+    metadata:
+      name: mongors1-setup
+      annotations:
+        pod.alpha.kubernetes.io/init-containers: "[{\"name\": \"ns\", \"image\": \"busybox\", \"command\": [\"/bin/sh\", \"-c\", \"sleep 45; [[ $(nslookup mongors1.default | tail -n +5 | wc -l) -ge 3 ]]\"]},{\"name\": \"connect\", \"image\": \"mongo:3.2\", \"command\": [\"mongo\", \"--host\", \"mongors1-2.mongors1\", \"--port\", \"27017\", \"--eval\", \"rs.status()\"]},{\"name\": \"wait\", \"image\": \"busybox\", \"command\": [\"/bin/sh\", \"-c\", \"sleep 10\"]},{\"name\": \"init\", \"image\": \"mongo:3.2\", \"command\": [\"mongo\", \"--host\", \"mongors1-0.mongors1\", \"--port\", \"27017\", \"--eval\", \"rs.initiate({_id: 'rs1', members: [{_id:0,host:'mongors1-0.mongors1:27017'},{_id:1,host:'mongors1-1.mongors1:27017'},{_id:2,host:'mongors1-2.mongors1:27017'}]})\"]},{\"name\": \"ns2\", \"image\": \"busybox\", \"command\": [\"/bin/sh\", \"-c\", \"sleep 30; [[ $(nslookup mongos.default | tail -n +5 | wc -l) -ge 1 ]]\"]},{\"name\": \"wait2\", \"image\": \"busybox\", \"command\": [\"/bin/sh\", \"-c\", \"sleep 15\"]}]"
+    spec:
+      containers:
+      - name: mongors1-setup
+        image: mongo:3.2
+        command:
+        - "mongo"
+        - "--host"
+        - mongos.default
+        - "--port"
+        - "27017"
+        - "--eval"
+        - "sh.addShard( 'rs1/mongors1-0.mongors1:27017' )"
+      restartPolicy: OnFailure
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Job
+metadata:
+  name: mongors2-setup
+spec:
+  autoSelector: true
+  template:
+    metadata:
+      name: mongors2-setup
+      annotations:
+        pod.alpha.kubernetes.io/init-containers: "[{\"name\": \"ns\", \"image\": \"busybox\", \"command\": [\"/bin/sh\", \"-c\", \"sleep 45; [[ $(nslookup mongors2.default | tail -n +5 | wc -l) -ge 3 ]]\"]},{\"name\": \"connect\", \"image\": \"mongo:3.2\", \"command\": [\"mongo\", \"--host\", \"mongors2-2.mongors2\", \"--port\", \"27017\", \"--eval\", \"rs.status()\"]},{\"name\": \"wait\", \"image\": \"busybox\", \"command\": [\"/bin/sh\", \"-c\", \"sleep 10\"]},{\"name\": \"init\", \"image\": \"mongo:3.2\", \"command\": [\"mongo\", \"--host\", \"mongors2-0.mongors2\", \"--port\", \"27017\", \"--eval\", \"rs.initiate({_id: 'rs2', members: [{_id:0,host:'mongors2-0.mongors2:27017'},{_id:1,host:'mongors2-1.mongors2:27017'},{_id:2,host:'mongors2-2.mongors2:27017'}]})\"]},{\"name\": \"ns2\", \"image\": \"busybox\", \"command\": [\"/bin/sh\", \"-c\", \"sleep 30; [[ $(nslookup mongos.default | tail -n +5 | wc -l) -ge 1 ]]\"]},{\"name\": \"wait2\", \"image\": \"busybox\", \"command\": [\"/bin/sh\", \"-c\", \"sleep 15\"]}]"
+    spec:
+      containers:
+      - name: mongors2-setup
+        image: mongo:3.2
+        command:
+        - "mongo"
+        - "--host"
+        - mongos.default
+        - "--port"
+        - "27017"
+        - "--eval"
+        - "sh.addShard( 'rs2/mongors2-0.mongors2:27017' )"
+      restartPolicy: OnFailure
+
+
