@@ -10,7 +10,7 @@ spec:
       name: distcc
     spec:
       containers:
-      - image: zilman/distcc
+      - image: zilman/distcc-daemon
         name: distcc
         ports:
         - containerPort: 3632

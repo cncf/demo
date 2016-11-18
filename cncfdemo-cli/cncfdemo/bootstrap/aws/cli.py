@@ -70,7 +70,7 @@ def cli():
 @click.option('--region', default='us-west-2')
 @click.option('--scale', default=1)
 @click.option('--KeyName', default='cncf-aws')
-@click.option('--ImageId', default='ami-3bc36e5b')
+@click.option('--ImageId', default='ami-66b81506')
 @click.option('--SecurityGroups', default=['cncfdemo'], multiple=True)
 @click.pass_context
 def aws(ctx, region, scale, \
@@ -134,7 +134,7 @@ def aws(ctx, region, scale, \
 @click.command()
 @common_options
 @click.option('--scale', default=3)
-@click.option('--InstanceType', default='t2.micro')
+@click.option('--InstanceType', default='m4.large')
 @click.option('--region', default='us-west-2')
 @click.option('--cidr', default='172.20.0.0/16')
 @click.pass_context
@@ -178,15 +178,37 @@ def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_ru
       config.update({'scale': 1, 'kind': 'kubernetes-master', 'instancetype': 'm3.medium', 'policyarn': 'arn:aws:iam::aws:policy/AmazonEC2FullAccess' })
       config.update({'userdata': ctx.obj['userdata'].format('kubernetes-masters', clustername)})
 
-
     config.update({'securitygroups': [sg.id for sg in ec2resource.security_groups.filter(Filters=[{'Name':'tag:Role', 'Values':[config['kind']]}])]})
     create_asg(config, aws)
 
-    #if verbose:
-      #click.echo(plan)
+  ASG = ctx.obj['ASG']
+  EC2 = ctx.obj['EC2']
 
-    #if not dry_run:
-      #execute(plan)
+  click.echo('\n'.join(('', '='*70, '')))
+  click.echo('Waiting for master to be provisioned by cloud provider..', nl=False)
+  PublicIpAddresses = ok = []
+  while not PublicIpAddresses:
+    time.sleep(1)
+    click.echo('.', nl=False)
+    master = ASG.describe_auto_scaling_groups(AutoScalingGroupNames=['k-masters']).get('AutoScalingGroups')
+    if master:
+      InstanceIds = [i['InstanceId'] for i in master[0]['Instances']]
+      if InstanceIds:
+        Instances = EC2.describe_instances(InstanceIds=InstanceIds)
+        PublicIpAddresses = [i.get('PublicIpAddress') for i in Instances['Reservations'][0]['Instances']]
+
+  click.echo('\n'.join(('', 'Master IP: {}'.format(PublicIpAddresses[0]), '')))
+  url = 'http://{host}:8080/apis/batch/v1/jobs/'.format(host=PublicIpAddresses[0])
+  while not ok:
+    try:
+      r = requests.get(url)
+      resp = json.loads(r.content)
+      start = [job['status'] for job in resp['items'] if job['metadata']['name'] == 'clusterstart']
+      ok = (start[0]['succeeded'] == 1)
+    except Exception:
+      print 'Waiting for ClusterReady..'
+      time.sleep(10)
+      pass
 
 
 @click.command()

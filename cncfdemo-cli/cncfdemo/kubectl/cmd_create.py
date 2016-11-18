@@ -31,7 +31,7 @@ def create(ctx, filename, recursive, dry_run, debug):
 
   if ctx.invoked_subcommand:
     return 'defer to subcommand'
-    
+
   if not filename:
     #click.echo('error: Missing option "-f".')
     click.echo(create.get_help(ctx))
@@ -47,7 +47,7 @@ def create(ctx, filename, recursive, dry_run, debug):
     if recursive:
       manifests.extend([f for f in glob2.glob(realpath + '/**/*.j2')])
       manifests.extend([f for f in glob2.glob(realpath + '/**/*.yml')])
-      manifests.extend([f for f in glob2.glob(realpath + '/**/*.yaml')]) 
+      manifests.extend([f for f in glob2.glob(realpath + '/**/*.yaml')])
       manifests = [f for f in manifests if os.path.isfile(f)]
     else:
       manifests.extend([realpath+'/'+f for f in os.listdir(realpath) if os.path.isfile(realpath+'/'+f) and f.endswith(('.j2','.yaml','.yml'))])
@@ -62,7 +62,7 @@ def create(ctx, filename, recursive, dry_run, debug):
 
   for manifest in manifests:
     definitions = None
-    
+
     t = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(os.path.realpath(manifest))))
     t.filters['json_dump'] = json_dump
     definitions = t.get_template(os.path.basename(manifest)).render()
@@ -71,7 +71,7 @@ def create(ctx, filename, recursive, dry_run, debug):
       print definitions if definitions else ''
 
     for definition in yaml.load_all(definitions):
-      import ipdb; ipdb.set_trace()
+      # import ipdb; ipdb.set_trace()
       if not dry_run:
         resp, status = kreate(definition)
 
