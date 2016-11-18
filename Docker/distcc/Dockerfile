@@ -1,7 +1,7 @@
 FROM debian:stable
 MAINTAINER Eugene Zilman <ezilman@gmail.com>
 
-RUN apt update
+RUN apt-get clean && apt update && apt install -y
 
 RUN apt install -y kernel-package
 RUN apt install -y git build-essential

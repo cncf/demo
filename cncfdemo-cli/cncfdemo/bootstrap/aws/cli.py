@@ -70,7 +70,7 @@ def cli():
 @click.option('--region', default='us-west-2')
 @click.option('--scale', default=1)
 @click.option('--KeyName', default='cncf-aws')
-@click.option('--ImageId', default='ami-3bc36e5b')
+@click.option('--ImageId', default='ami-66b81506')
 @click.option('--SecurityGroups', default=['cncfdemo'], multiple=True)
 @click.pass_context
 def aws(ctx, region, scale, \
@@ -134,7 +134,7 @@ def aws(ctx, region, scale, \
 @click.command()
 @common_options
 @click.option('--scale', default=3)
-@click.option('--InstanceType', default='t2.micro')
+@click.option('--InstanceType', default='m4.large')
 @click.option('--region', default='us-west-2')
 @click.option('--cidr', default='172.20.0.0/16')
 @click.pass_context
