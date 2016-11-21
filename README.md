@@ -139,7 +139,7 @@ If you just want to try it out skip to the [Quick start](#quickstart).
 
 Kubernetes components are neatly split up into three distinct groups*.
 
-<img src="https://raw.githubusercontent.com/cncf/demo/master/Docs/arch.png" width="70%">
+<img src="https://github.com/cncf/demo/blob/master/docs/arch.png" width="70%">
 
 <sub>Diagram of a highly available kubernetes cluster</sub>
 
@@ -148,7 +148,7 @@ Kubernetes components are neatly split up into three distinct groups*.
 
 A highly available etcd is well covered by many other guides. The cncf demo and this document eschew such a setup for simplicity's sake. Instead we opt for a single Kubernetes master with etcd installed and available on 127.0.0.1.
 
-<img src="https://raw.githubusercontent.com/cncf/demo/master/Docs/k8s-simpler.png" width="70%">
+<img src="https://github.com/cncf/demo/blob/master/docs/k8s-simpler.png" width="70%">
 
 Lets zoom in further on one of those circles representing a Kubernetes minion.
 
@@ -232,7 +232,7 @@ At this point you might be wondering why `minions.{KubernetesCluster}.k8s` is ne
 > Kubernetes allocates an IP address to each pod. When creating a cluster, you need to allocate a block of IPs for Kubernetes to use as Pod IPs. 
 <sub>-- [Kubernetes Docs](http://kubernetes.io/docs/getting-started-guides/scratch/#network)</sub> 
 
-<img src="https://raw.githubusercontent.com/cncf/demo/master/Docs/sdn.png" width="70%">
+<img src="https://github.com/cncf/demo/blob/master/docs/sdn.png" width="70%">
 
 In order to let Pod A (10.32.0.1) from one minion node (172.20.0.1) communicate with Pod B (10.32.0.3) on another minion node (172.20.0.2) we use an Overlay network. It is possible to achieve this sort of routing without an overlay network (and associated performance penalty) but an overlay is simpler to configure and more importantly it is **_portable_**.
 
