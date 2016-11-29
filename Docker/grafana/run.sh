@@ -42,7 +42,7 @@ echo ""
 echo "Importing default dashboards..."
 for filename in ${DASHBOARD_LOCATION}/*.json; do
   echo "Importing ${filename} ..."
-  curl -k -i -XPOST --data "@${filename}" -H "${HEADER_ACCEPT}" -H "${HEADER_CONTENT_TYPE}" "localhost:${GRAFANA_SERVICE_PORT}/api/dashboards/db"
+  curl -k -i -XPOST --data "@${filename}" -H "${HEADER_ACCEPT}" -H "${HEADER_CONTENT_TYPE}" "localhost:${GRAFANA_SERVICE_PORT}/api/dashboards/import"
   echo ""
   echo "Done importing ${filename}"
 done
