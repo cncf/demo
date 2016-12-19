@@ -1,10 +1,8 @@
 <head>
 <title>cncfdemo</title>
-<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,500,100,100italic,300italic,400italic,500italic,700italic,700" rel="stylesheet" type="text/css">
-<link rel="stylesheet" type="text/css" href="main.css">
-<script src="https://raw.githubusercontent.com/github/fetch/master/fetch.js"></script>
-<script src="https://raw.githubusercontent.com/WebReflection/url-search-params/master/src/url-search-params.js"></script>
 
+<!--<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,500,100,100italic,300italic,400italic,500italic,700italic,700" rel="stylesheet" type="text/css">-->
+<link rel="stylesheet" type="text/css" href="main.css">
 </head>
 
 <body>
@@ -55,6 +53,8 @@
 
 <script>
 
+const DEBUG = true;
+const polyfills = ['js/fetch.js', 'js/url-search-params.js'];
 
 const humanize = t => {
   m = Math.floor(t / 60);
@@ -62,12 +62,10 @@ const humanize = t => {
   }
 
 
-const pluck = (path, obj) => {
-    return path.split('.').reduce(function(p, c) { return p ? p[c] : undefined }, obj || self)
-  }
+const pluck = (path, obj) => path.split('.').reduce(function(p, c) { return p ? p[c] : undefined }, obj || self);
 
 
-const T = (template, contexts) => { 
+const T = (template, contexts, data) => { 
     
     result = '';
     targets = template.innerHTML.match(/[^\{\}]+(?=\})/g);
@@ -75,9 +73,8 @@ const T = (template, contexts) => {
     [].concat(contexts).forEach( (context, i) => {
         
         context['_index'] = i;        
-        context['_time'] = humanize(context['timestart'] - resp['metadata']['timestart']);        
+        context['_time'] = humanize(context['timestart'] - data['metadata']['timestart']);        
         if (context['raw']) { result += context['raw'] } else {
-
           s = template.innerHTML;
           targets.forEach( target => s=s.replace(new RegExp('{'+target+'}','g'), pluck(target, context)) );
           result += s;
@@ -90,10 +87,28 @@ const T = (template, contexts) => {
      
   }
 
-var urlParams = new URLSearchParams(window.location.search);
-uuid = urlParams.get('id');
-uuid ? url = uuid + '.json' : '404.json';
-//url = 'base.json'
+
+function loadScripts(srcList) { 
+
+  const succeeded = new Set();  
+  return new Promise( (ok, err) => {
+
+    srcList.forEach( src => {
+
+      const js = document.createElement('script'); js.src = src;
+      js.onerror = () => err(new Error('Failed to load script ' + src));
+      js.onload  = () => {
+        succeeded.add(src); //es16 standard lib leaves a lot to be desired
+        (polyfills.filter(p => !succeeded.has(p)).length === 0) ? ok(succeeded) : 'wait';
+      }
+      document.head.appendChild(js);
+
+    })
+
+  })
+
+}
+
 
 
 function handleErrors(response) {
@@ -103,6 +118,13 @@ function handleErrors(response) {
     return response;
 }
 
+
+const main = () => {
+
+var urlParams = new URLSearchParams(window.location.search);
+uuid = urlParams.get('id');
+uuid ? url = uuid + '.json' : '404.json';
+var url = url || 'v6Zpj1B.json';
 
 response = fetch(url)
     .then(handleErrors)
@@ -117,26 +139,34 @@ let resp;
 response.then(result => { if (!result) { console.log("Fetch Failed") } else { 
 
     console.log(result);
-    resp = result; 
+    const resp = result; 
+    console.log(resp);
     
     Array.from(templates).forEach( x => {
-      x.insertAdjacentHTML( 'beforebegin', T(x, result[x.className]) );
+      x.insertAdjacentHTML( 'beforebegin', T(x, result[x.className], result) );
       x.remove();
   
       })
-            
-  }
+
+    var intervalID = window.setInterval( function (){
+                      current_event = resp['events'].slice(-1)[0];
+                      current_event['timestart'] += 1;
+                      tick = humanize(current_event['timestart'] - resp['metadata']['timestart']);
+                      event = document.querySelectorAll('#centercolumn > div:last-child')[0]
+                      event ? event.querySelector('.card-times').innerText = tick : false;
+                      }, 1000)
+
+}})
 
 
-var intervalID = window.setInterval( function (){
-                  current_event = resp['events'].slice(-1)[0];
-                  current_event['timestart'] += 1;
-                  tick = humanize(current_event['timestart'] - resp['metadata']['timestart']);
-                  event = document.querySelectorAll('#centercolumn > div:last-child')[0]
-                  event ? event.querySelector('.card-times').innerText = tick : false;
-                  }, 1000)
+}
 
 
-});
+
+if (!window.fetch) { 
+  loadScripts(polyfills)
+    .then((response) => { console.log('Polyfills loaded: ', response); main(); }, 
+          (Error) => console.log(Error))  
+} else { main() }
 
 </script>
