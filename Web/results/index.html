@@ -1,0 +1,172 @@
+<head>
+<title>cncfdemo</title>
+
+<!--<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,500,100,100italic,300italic,400italic,500italic,700italic,700" rel="stylesheet" type="text/css">-->
+<link rel="stylesheet" type="text/css" href="main.css">
+</head>
+
+<body>
+
+  <header>
+    <div id="logo"><img src="img/logo_cncf.png"></div>
+    <template class="metadata">
+    <div id="metadata">
+      <div id="uuid">Demo / {id}</div>
+      <div id="aws">{Provider}</div>
+      <div id="masters">{Masters.size} Master</div>
+      <div id="minions">{Minions.0.size} Minions </div>
+    </div>
+    </template>
+  </header>
+
+  <main>    
+    <aside id="leftcolumn">     
+    <template class="metadata">
+      <div>{vcpu} vCPU Cores</div>
+      <div>{RAM} Memory</div>
+      <div>{Storage} Storage</div>
+      <div id="buttons"><a href="#">More Info</a><a href="#">Fork Demo</a></div>
+    </template>
+    </aside>
+    
+    <article id="centercolumn">
+    <template class="events">
+      <div class="card" id="stat{_index}">
+        <div class="card-content">
+         <span class="card-title">{title}</span><span class="card-times">{_time}</span>
+        </div>
+      </div>
+    </template>
+    </article>  
+
+    <aside id="rightcolumn">
+       <div id="sticky">
+         <span id="stick">explanation of whats going on in each step </span>
+       </div>
+    </aside>      
+  </main>
+
+  <footer><span>Copyright © 2016 The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our Trademark Usage page. Linux is a registered trademark of Linus Torvalds. Privacy Policy and Terms of Use</span></footer>
+  
+</body>
+
+
+<script>
+
+const DEBUG = true;
+const polyfills = ['js/fetch.js', 'js/url-search-params.js'];
+
+const humanize = t => {
+  m = Math.floor(t / 60);
+  return `${ (m > 0) ? m+' minutes,' : '' } ${ Math.floor(t % 60) } seconds`
+  }
+
+
+const pluck = (path, obj) => path.split('.').reduce(function(p, c) { return p ? p[c] : undefined }, obj || self);
+
+
+const T = (template, contexts, data) => { 
+    
+    result = '';
+    targets = template.innerHTML.match(/[^\{\}]+(?=\})/g);
+
+    [].concat(contexts).forEach( (context, i) => {
+        
+        context['_index'] = i;        
+        context['_time'] = humanize(context['timestart'] - data['metadata']['timestart']);        
+        if (context['raw']) { result += context['raw'] } else {
+          s = template.innerHTML;
+          targets.forEach( target => s=s.replace(new RegExp('{'+target+'}','g'), pluck(target, context)) );
+          result += s;
+
+        }
+
+      })
+
+      return result;
+     
+  }
+
+
+function loadScripts(srcList) { 
+
+  const succeeded = new Set();  
+  return new Promise( (ok, err) => {
+
+    srcList.forEach( src => {
+
+      const js = document.createElement('script'); js.src = src;
+      js.onerror = () => err(new Error('Failed to load script ' + src));
+      js.onload  = () => {
+        succeeded.add(src); //es16 standard lib leaves a lot to be desired
+        (polyfills.filter(p => !succeeded.has(p)).length === 0) ? ok(succeeded) : 'wait';
+      }
+      document.head.appendChild(js);
+
+    })
+
+  })
+
+}
+
+
+
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
+}
+
+
+const main = () => {
+
+var urlParams = new URLSearchParams(window.location.search);
+uuid = urlParams.get('id');
+uuid ? url = uuid + '.json' : '404.json';
+var url = url || 'v6Zpj1B.json';
+
+response = fetch(url)
+    .then(handleErrors)
+    .then(r => { return r.clone().json().catch(() => { response = false; }) } )
+    .catch(error => console.log(error) );
+
+
+const templates = document.getElementsByTagName('template');
+
+let resp;
+
+response.then(result => { if (!result) { console.log("Fetch Failed") } else { 
+
+    console.log(result);
+    const resp = result; 
+    console.log(resp);
+    
+    Array.from(templates).forEach( x => {
+      x.insertAdjacentHTML( 'beforebegin', T(x, result[x.className], result) );
+      x.remove();
+  
+      })
+
+    var intervalID = window.setInterval( function (){
+                      current_event = resp['events'].slice(-1)[0];
+                      current_event['timestart'] += 1;
+                      tick = humanize(current_event['timestart'] - resp['metadata']['timestart']);
+                      event = document.querySelectorAll('#centercolumn > div:last-child')[0]
+                      event ? event.querySelector('.card-times').innerText = tick : false;
+                      }, 1000)
+
+}})
+
+
+}
+
+
+
+if (!window.fetch) { 
+  loadScripts(polyfills)
+    .then((response) => { console.log('Polyfills loaded: ', response); main(); }, 
+          (Error) => console.log(Error))  
+} else { main() }
+
+</script>
