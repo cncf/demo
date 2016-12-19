@@ -1,0 +1,193 @@
+html {
+  box-sizing: border-box;
+  font-family: Roboto,Helvetica Neue,Helvetica,Arial,sans-serif;
+  font-weight: 300; 
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+*, *:before, *:after { box-sizing: inherit; }
+a { color: #039be5; text-decoration: none; background-color: transparent; -webkit-tap-highlight-color: transparent; }
+hr {border: 0;height: 0;border-top: 1px solid rgba(0, 0, 0, 0.1);border-bottom: 1px solid rgba(255, 255, 255, 0.3);margin: 2.5em;}
+
+hr#ClusterReady:after { content: "Cluster Ready, Deploying CNCF Demo"; }
+hr:after {
+  position: absolute;
+  margin-top: -0.8em;
+  left: 37%;
+  background-color: #f9f9f9;
+  padding: 0 10px;
+}
+
+body {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  margin: 0; 
+  background-color: #f9f9f9; 
+  color: #7f7f7f; 
+}
+
+header {background-color: #fff;color: #888;height: 87px;flex: none;display: flex;justify-content: flex-start;flex-flow: row wrap;z-index: 1;}
+footer {background-color: #333;color: #ccc;height: 6em;padding: 2em;flex: none;z-index: 1;}
+            
+#logo img { width: 235px; margin-left: calc(17rem - 235px); }
+#metadata {display: flex;justify-content: space-around;flex-flow: row wrap;align-items: center;flex: 1 0 auto;}
+#metadata div {
+    color: #333;
+    font-size: 2em;
+    font-weight: 400;
+}
+
+#aws {margin-left: 50px }
+#aws:before {background-image: url("img/aws.png");background-size: 50px 40px;content: '';position: absolute;margin-left: -50px;width: 50px;height: 50px;background-position: left center;margin-top: -3px;}
+
+main {
+  display: flex;
+  flex-direction: row;
+  flex: 1 0 auto;
+}
+
+#leftcolumn {
+  flex: 0 0 17em;
+  background-color: #436ca9;
+  height: 14em;
+  border-right: 1px solid #cccccc;
+  border-radius: 0 0 2px;
+  margin-bottom: 2em;
+  color: snow;
+  font-weight: 400;
+  line-height: 3em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding: 0.75em 0 0 1.5em;
+  
+}
+
+#leftcolumn div {
+    font-size: 1.5em;
+}
+
+#leftcolumn, .card {
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+}
+
+#leftcolumn #buttons {
+    font-size: 0.9em;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+#leftcolumn #buttons a {
+    color: #71c4d5;
+    font-weight: 200;
+    padding: 0 1.2em 0 0;
+}
+
+#centercolumn {
+  flex: 1 1 50%;
+  padding: 1em 3em;
+  flex-direction: row;
+  border-right: 4px solid rgba(224, 224, 224, 0.42);
+}
+
+.event-message {text-align: center;display: inherit;font-weight: 400;}
+
+.card {
+    position: relative;
+    margin: 1.25rem 0;
+    background-color: #fff;
+    border-radius: 2px;
+}
+
+.card:after {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  position: absolute;
+  content: "";
+  background-color: rgb(239, 239, 239);
+  top: calc(50% - 1em);
+  right: -4em;
+}
+
+.card .card-title {
+    font-size: 1.5em;
+    font-weight: 300;
+}
+
+.card .card-content {
+    padding: 20px;
+    border-radius: 0 0 2px 2px;
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row wrap;
+    align-items: center;
+}
+
+.card:last-child:after {
+    animation: colorchange 2s;
+    animation-iteration-count: infinite;
+    animation-direction: forward;
+}
+
+@keyframes colorchange {
+      0%   {background: rgba(239, 239, 239, 0.7);}
+      50%  {background: rgba(150, 205, 216, 0.8);}
+      100% {background: rgba(239, 239, 239, 0.6);}
+    }
+
+#rightcolumn {
+  flex: 0 0 38em;
+  flex: 0 0 25%;
+  background-color: #f3f2f2;
+}
+
+h2#stick {
+    position: fixed;
+    border: 2px solid #333;
+    padding: 1em;
+    width: calc(25% - 1px);
+    height: 70vh;
+}
+
+span.event-message:last-child {
+    color: #71c4d5;
+}
+
+#sticky {
+    position: fixed;
+    height: 100vh;
+    top: 0px;
+    padding: 5.5em 0;
+    /* border: 2px solid green; */
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    /* line-height: 20vh; */
+    /* background-color: #333; */
+ }
+
+span#stick {
+  /* background-color: #fff; */
+  border-radius: 6px;
+  width: 200px;
+  height: 350px;
+  margin-bottom: 6em;
+  margin-top: 7em;
+  /* color: #000; */
+  font-weight: 100;
+  font-size: 1.1em;
+  font-style: italic;
+}
+
+#stat2:after {
+    box-shadow: 0px 0px 10px #fff;
+}
