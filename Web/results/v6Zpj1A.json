@@ -1,0 +1,38 @@
+{
+  "events": [
+    {
+      "raw": "<span class=\"event-message\">Demo Started On Thu, December 15, 2016 - 7:27 PM</span>",
+      "title": "foo"
+    },   
+    {
+      "timestart" : 1481858229,
+      "id": 1,
+      "done": true,
+      "title": "Creating AWS Resources"
+    },
+    {
+      "timestart" : 1481858387,
+      "content": "<ul><li>Master Ready</li><li>Node 1 Ready</li><li>Node 2 Ready</li><li>Node 3 Ready</li></ul>",
+      "title": "Instances Booting"
+    }
+
+  ],
+  "metadata": {
+    "Masters": {
+      "type": "m3.medium",
+      "size": 1
+    },
+    "vcpu": 6,
+    "timestart": 1481858178,
+    "RAM": "24GiB",
+    "Storage": "250GB",
+    "Provider": "AWS",
+    "id": "v6Zpj1A",
+    "Minions": [
+      {
+        "type": "m4.large",
+        "size": 3
+      }
+    ]
+  }
+}
