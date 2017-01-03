@@ -1,0 +1,20 @@
+{
+	"metadata": {
+		"Masters": {
+			"type": "m3.medium",
+			"size": 1
+		},
+		"vcpu": 6,
+		"timestart": 1481858178,
+		"RAM": "24GiB",
+		"Storage": "250GB",
+		"Provider": "AWS",
+		"id": "v6Zpj1A",
+		"Minions": [
+			{
+				"type": "m4.large",
+				"size": 3
+			}
+		]
+	}
+}
