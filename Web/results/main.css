@@ -31,6 +31,9 @@ body {
 header {background-color: #fff;color: #888;height: 87px;flex: none;display: flex;justify-content: flex-start;flex-flow: row wrap;z-index: 1;}
 footer {background-color: #333;color: #ccc;height: 6em;padding: 2em;flex: none;z-index: 1;}
             
+          
+/********Header********/
+
 #logo img { width: 235px; margin-left: calc(17rem - 235px); }
 #metadata {display: flex;justify-content: space-around;flex-flow: row wrap;align-items: center;flex: 1 0 auto;}
 #metadata div {
@@ -47,6 +50,9 @@ main {
   flex-direction: row;
   flex: 1 0 auto;
 }
+
+
+/********Left Column********/
 
 #leftcolumn {
   flex: 0 0 17em;
@@ -66,7 +72,7 @@ main {
   
 }
 
-#leftcolumn div {
+#leftcolumn > div {
     font-size: 1.5em;
 }
 
@@ -88,6 +94,8 @@ main {
     padding: 0 1.2em 0 0;
 }
 
+/********Center Column********/
+
 #centercolumn {
   flex: 1 1 50%;
   padding: 1em 3em;
@@ -95,7 +103,8 @@ main {
   border-right: 4px solid rgba(224, 224, 224, 0.42);
 }
 
-.event-message {text-align: center;display: inherit;font-weight: 400;}
+.event-message {text-align: center; display: inherit; font-weight: 400; }
+.event-message:last-of-type { color: #71c4d5; }
 
 .card {
     position: relative;
@@ -115,11 +124,6 @@ main {
   right: -4em;
 }
 
-.card .card-title {
-    font-size: 1.5em;
-    font-weight: 300;
-}
-
 .card .card-content {
     padding: 20px;
     border-radius: 0 0 2px 2px;
@@ -129,7 +133,13 @@ main {
     align-items: center;
 }
 
-.card:last-child:after {
+.card .card-title {
+    font-size: 1.5em;
+    font-weight: 300;
+}
+
+div.card.running:after {
+    box-shadow: 0px 0px 10px #fff;
     animation: colorchange 2s;
     animation-iteration-count: infinite;
     animation-direction: forward;
@@ -141,22 +151,12 @@ main {
       100% {background: rgba(239, 239, 239, 0.6);}
     }
 
+/********Right Column********/
+
 #rightcolumn {
   flex: 0 0 38em;
   flex: 0 0 25%;
   background-color: #f3f2f2;
-}
-
-h2#stick {
-    position: fixed;
-    border: 2px solid #333;
-    padding: 1em;
-    width: calc(25% - 1px);
-    height: 70vh;
-}
-
-span.event-message:last-child {
-    color: #71c4d5;
 }
 
 #sticky {
@@ -175,7 +175,7 @@ span.event-message:last-child {
     /* background-color: #333; */
  }
 
-span#stick {
+#stick {
   /* background-color: #fff; */
   border-radius: 6px;
   width: 200px;
@@ -188,6 +188,11 @@ span#stick {
   font-style: italic;
 }
 
-#stat2:after {
-    box-shadow: 0px 0px 10px #fff;
+
+h2#stick {
+    position: fixed;
+    border: 2px solid #333;
+    padding: 1em;
+    width: calc(25% - 1px);
+    height: 70vh;
 }

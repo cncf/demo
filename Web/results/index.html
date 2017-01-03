@@ -8,35 +8,36 @@
 <body>
 
   <header>
-    <div id="logo"><img src="img/logo_cncf.png"></div>
     <template class="metadata">
+    <div id="logo"><img src="img/logo_cncf.png"></div>
     <div id="metadata">
-      <div id="uuid">Demo / ${id}</div>
-      <div id="aws">${Provider}</div>
-      <div id="masters">${Masters['size']} Master</div>
-      <div id="minions">${Minions[0]['size']} Minions </div>
+      <div id="uuid">Demo / ${ id }</div>
+      <div id="aws">${ Provider }</div>
+      <div id="masters">${ Masters['size'] } Master</div>
+      <div id="minions">${ Minions[0]['size'] } Minions </div>
     </div>
     </template>
   </header>
 
   <main>    
     <aside id="leftcolumn">     
-    <template class="metadata">
-     <div>${vcpu} vCPU Cores</div>
-      <div>${RAM} Memory</div>
-      <div>${Storage} Storage</div>
+      <template class="metadata">
+      <div>${ vcpu } vCPU Cores</div>
+      <div>${ RAM } Memory</div>
+      <div>${ Storage } Storage</div>
       <div id="buttons"><a href="#">More Info</a><a href="#">Fork Demo</a></div>
-    </template>
+      </template>
     </aside>
     
     <article id="centercolumn">
-    <template class="events">
-      <div class="card" id="stat${_index}">
+      <template class="events">
+      <div class="card ${ timeend ? 'ended' : 'running' }" id="stat${ _index }">
         <div class="card-content">
-         <span class="card-title">${title}</span><span class="card-times">${_time}</span>
+         <span class="card-title">${ title }</span>
+         <span class="card-times">${ humanize(g['events'][_index]['time'] - g['metadata']['timestart']) }</span>
         </div>
       </div>
-    </template>
+      </template>
     </article>  
 
     <aside id="rightcolumn">
@@ -74,76 +75,109 @@ const loadScripts = srcList => {
 
 }
 
+let clockSkew = 0;
+
 const humanize = t => { m = Math.floor(t / 60); return `${ (m > 0) ? m+' minutes,' : '' } ${ Math.floor(t % 60) } seconds` }
-const templates = document.getElementsByTagName('template');
-const Render = (template, contexts, data) => { 
+const Render = (template, contexts, g) => { 
   
-      result = '';
-      [].concat(contexts).forEach( (context, i) => {
-        
-        context['_index'] = i;        
-        context['_time'] = humanize(context['timestart'] - data['metadata']['timestart']);  
+  rendered = '';
+  [].concat(contexts).forEach( (context, _index) => {
 
-        if (context['raw']) { 
-        return result += context['raw'];
-          } else { 
-          with (context) { result += eval('`'+template.innerHTML+'`') } 
-          } 
-  
-      })
+    with (context) {
+      g['events'][_index]['time'] = g['events'][_index]['timeend'] || g['events'][_index]['timestart'];
+      rendered += context['raw'] ? raw : eval('`'+template.innerHTML+'`');
+    } 
 
-      return result;
+
+  })
+
+  return rendered;
 
 }
 
 
 const main = () => {
-  
+
   const urlParams = new URLSearchParams(window.location.search);  
   const url = urlParams.get('id') ? urlParams.get('id') + '.json' : 'v6Zpj1B.json';
+  //const url = 'https://s3.amazonaws.com/cncfdemo.io/results/v6Zpj1B.json';
+  const templates = document.getElementsByTagName('template');
 
+  headers = {};
   const handleErrors = response => {
-      if (!response.ok) {
-          throw Error(response.statusText);
-      }
-      return response;
+
+      headers = response.headers;
+      contentType = headers.get('Content-Type');
+    
+      if (!response.ok) throw Error(response.statusText);
+      if (!contentType === 'application/json') throw Error(contentType);
+      
+      return response.clone().json();
+      
   }
 
-  response = fetch(url)
-      .then(handleErrors)
-      .then(r => { return r.clone().json().catch(() => { response = false; }) } )
-      .catch(error => console.log(error) );
+  fetch(url)
+    .then(handleErrors)
+    .catch(Err => (console.log(Err) ))
+    .then(data => { if (!data) { console.log('Fetch Failed') } else { 
+    
+    console.log(data);
+    lastModified = headers.get('Last-modified');
+    console.log('lastModified: ', lastModified);
+   
+    Array.from(templates).forEach( template => {
 
-  response.then(data => { if (!data) { console.log("Fetch Failed") } else { 
-
-    console.log(data);    
-    Array.from(templates).forEach( x => {
-
-      contexts = data[x.className];
-      rendered = Render(x, contexts, data);
-      x.insertAdjacentHTML( 'beforebegin', rendered ); 
+      contexts = data[template.className];
+      rendered = Render(template, contexts, data);
+      //template.insertAdjacentHTML( 'beforebegin', rendered ); 
+      template.parentElement.innerHTML = rendered + template.outerHTML;
 
     })
 
-    const intervalID = window.setInterval( function (){
-                      current_event = data['events'].slice(-1)[0];
-                      if (current_event['timestart']) {
-                        current_event['timestart'] += 1;
-                        tick = humanize(current_event['timestart'] - data['metadata']['timestart']);
-                        event = Array.from(document.querySelectorAll('#centercolumn div')).slice(-1)[0];
-                        event ? event.querySelector('.card-times').innerText = tick : false;
-                        }
-                      }, 1000)
+    const ticker = window.setInterval( () => {
 
-  }})
+            clockSkew += 1;
 
+            running = document.querySelectorAll('div.card.running');
+            Array.from(running).forEach( event => {
+
+              index = event.id.split('stat')[1];
+              eventData = data['events'][index];
+
+              tick = humanize(eventData['time'] + clockSkew - data['metadata']['timestart']);
+              event.querySelector('.card-times').innerText = tick;
+
+              });
+              
+            }, 1000);
+
+
+      console.log('timer start: ', ticker);
+      
+    const refresh = window.setInterval( () => {
+      fetch(url, { method: 'HEAD' } )
+        .then(response => {
+          if (response.headers.get('Last-modified') !== lastModified) {
+            console.log('new!');
+            window.clearInterval(ticker);
+            window.clearInterval(refresh);
+            main();
+            }
+
+          })
+       
+        }, 6000)
+
+    }
+    
+    })
 
 }
 
+
 if (!window.fetch) { 
   loadScripts(polyfills)
-    .then(response => { console.log('Polyfills loaded: ', response); main(); }, 
-          Error => console.log(Error))  
+    .then(response => { console.log('Polyfills loaded: ', response); main(); }, Err => console.log(Err))  
 } else { main() }
 
 </script>
