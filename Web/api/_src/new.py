@@ -9,18 +9,18 @@ from hashids import Hashids
 import jsonschema
 from jsonschema import validate
 
-def loadSchemas():
-    schemas = [j for j in os.listdir('./Schemas') if j.endswith('.json')]
-    for schema in schemas:
-      with open(os.path.join('./Schemas', schema)) as json_file:
-        foo = json.load(json_file)
+def loadFiles(path='./Schemas'):
+    files = [j for j in os.listdir(path) if j.endswith('.json')]
+    for f in files:
+      with open(os.path.join(path, f)) as json_file:
+        foo = json.load(json_file)  # TODO: turn into dict
     return foo
 
 
-def respond(res=None, err=None):
+def respond(body=None, err=None):
     return {
         'statusCode': '400' if err else '200',
-        'body': err.message if err else json.dumps(res),
+        'body': err.message if err else json.dumps(body),
         'headers': {
             'Content-Type': 'application/json',
         },
@@ -29,38 +29,21 @@ def respond(res=None, err=None):
 
 def handler(event, context):
 
-    print("The context:")
-    print("*"*80)
-    print(context)
-    print("*"*80)
     print("Received event: " + json.dumps(event, indent=2))
-
-    #http_method = event.get('http_method')
-
-    schema = loadSchemas()
+    hashids = Hashids()
+    schema = loadFiles()
 
     try:
-
       validate(event, schema)
-      err = None
+    except (jsonschema.exceptions.SchemaError, jsonschema.exceptions.ValidationError) as err:
+      return respond(err=err)
 
-      hashids = Hashids()
-      uuid = hashids.encode(int(time.time()))
-
-    except jsonschema.exceptions.SchemaError as ve:
-
-      uuid = None
-      err = ve
-      print(ve.message)
-
-
-    return respond(uuid, err)
-
-
+    uuid = hashids.encode(int(time.time()))
+    return respond(body=uuid)
 
 if __name__ == '__main__':
 
   context = {}
-  event = {}
+  event = loadFiles('../_tests/new')
 
   print(handler(event, context))

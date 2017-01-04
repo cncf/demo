@@ -5,6 +5,7 @@
     "type": "object",
     "properties": {
         "Metadata": {
+           "required": ["Masters", "Minions", "Provider", "RAM", "vcpu", "Storage"],
             "properties": {
                 "Masters": {
                     "properties": {
