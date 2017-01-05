@@ -9,6 +9,9 @@ environments:
         - arn: arn:aws:s3:::*
           actions:
           - "*"
+        - arn: arn:aws:logs:*:*:*
+          actions:
+          - "*"
 
 lambda:
   description: POST Metadata to start a new demo run
