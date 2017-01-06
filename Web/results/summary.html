@@ -97,7 +97,6 @@ const main = () => {
 
   const urlParams = new URLSearchParams(window.location.search);
   const url = urlParams.get('id') ? urlParams.get('id') + '.json' : 'summary.json';
-  //const url = 'http://stats.cncfdemo.io/y2dNmMG';
   const templates = document.getElementsByTagName('template');
 
   headers = {};
@@ -129,22 +128,6 @@ const main = () => {
       template.parentElement.innerHTML = rendered + template.outerHTML;
 
     })
-
-
-
-
-    const refresh = window.setInterval( () => {
-      fetch(url, { method: 'HEAD' } )
-        .then(response => {
-          if (response.headers.get('Last-modified') !== lastModified) {
-            console.log('new!');
-            window.clearInterval(refresh);
-            main();
-            }
-
-          })
-
-        }, 10000)
 
 
     }

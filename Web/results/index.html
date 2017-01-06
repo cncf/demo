@@ -98,12 +98,13 @@ const Render = (template, contexts, g) => {
 
 }
 
-
+let status = 'running';
 const main = () => {
 
   const urlParams = new URLSearchParams(window.location.search);  
-  const url = urlParams.get('id') ? urlParams.get('id') + '.json' : 'v6Zpj1B.json';
-  //const url = 'http://stats.cncfdemo.io/y2dNmMG';
+  const id = urlParams.get('id') ? urlParams.get('id') : 'joOKmJg';
+  const base_url = 'http://stats.cncfdemo.io/';
+  const url = base_url + status + '/' + id;
   const templates = document.getElementsByTagName('template');
 
   headers = {};
@@ -112,7 +113,14 @@ const main = () => {
       headers = response.headers;
       contentType = headers.get('Content-Type');
     
-      if (!response.ok) throw Error(response.statusText);
+      if (!response.ok) {
+
+          if (response.status === 404 && status == 'running') 
+            { status = 'finished'; main(); }
+          else {
+            throw Error(response.statusText);
+          }
+        };
       if (!contentType === 'application/json') throw Error(contentType);
       
       return response.clone().json();
@@ -121,7 +129,7 @@ const main = () => {
 
   fetch(url)
     .then(handleErrors)
-    .catch(Err => (console.log(Err) ))
+    .catch(Err => console.log(Err))
     .then(data => { if (!data) { console.log('Fetch Failed') } else { 
     
     console.log(data);

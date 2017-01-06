@@ -40,7 +40,7 @@ def upsert(event, bucket):
     uuid, upsert = body.get('id'), body.get('upsert')
 
     try:
-      blob = bucket.Object(uuid).get()
+      blob = bucket.Object('running/' + uuid).get()
     except botocore.exceptions.ClientError as err:
       err.message = err.response['Error']
       return respond(err=err)
@@ -53,8 +53,9 @@ def upsert(event, bucket):
     upsert['timeend'] = None
 
     demo['events'].append(upsert)
+    demo['results'] = body.get('results') or demo.get('results')
 
-    store_data(bucket, uuid, json.dumps(demo))
+    store_data(bucket, 'running/' + uuid, json.dumps(demo))
     return respond(body=demo)
 
 
@@ -65,7 +66,7 @@ def stop(event, bucket):
     event_id = body.get('event_id')
 
     try:
-      blob = bucket.Object(uuid).get()
+      blob = bucket.Object('running/' + uuid).get()
     except botocore.exceptions.ClientError as err:
       err.message = err.response['Error']
       return respond(err=err)
@@ -81,9 +82,38 @@ def stop(event, bucket):
       err.message = 'Event to stop timer for not found'
       return respond(err=err)
 
-    store_data(bucket, uuid, json.dumps(demo))
+    store_data(bucket, 'running/' + uuid, json.dumps(demo))
     return respond(body=demo)
 
+
+def finish(event, bucket):
+
+    body = json.loads(event.get('body'))
+    uuid = body.get('id')
+
+    try:
+      blob = bucket.Object('running/' + uuid).get()
+    except botocore.exceptions.ClientError as err:
+      err.message = err.response['Error']
+      return respond(err=err)
+
+    now = int(time.time())  # Collision if two demos start at exactly same second
+    human = datetime.datetime.fromtimestamp(now).strftime('%a, %d %B %Y - %H:%M UTC')
+
+    demo = json.loads(blob['Body'].read())
+    demo['Metadata']['timeend'] = now
+
+    events = sorted(demo['events'], key= lambda k: k['id'])
+    events.append({ "title": "",
+                    "raw": r"""<span class="event-message">Demo Finished On {}</span>""".format(human),
+                    "id": 0
+                     })
+
+    demo['events'] = events
+
+    store_data(bucket, 'finished/' + uuid, json.dumps(demo))
+    bucket.Object('running/' + uuid).delete()
+    return respond(body=body)
 
 def new(event, bucket):
 
@@ -108,7 +138,7 @@ def new(event, bucket):
                      }]
 
 
-    store_data(bucket, body['Metadata']['id'], json.dumps(body))
+    store_data(bucket, 'running/' + body['Metadata']['id'], json.dumps(body))
     return respond(body=body)
 
 
