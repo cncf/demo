@@ -196,3 +196,46 @@ h2#stick {
     width: calc(25% - 1px);
     height: 70vh;
 }
+
+/** TABLE **/
+
+.table-wrap {
+    margin: 1.25rem;
+}
+
+.table-row {
+  display: flex;          
+  flex-direction: row; 
+  flex-grow: 0;          
+  flex-wrap: nowrap;       
+  width: 100%;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-top: 5px;
+
+  border-bottom: 2px solid #e0e0e0;
+  border-collapse: collapse;
+  justify-content: space-around;
+
+}
+
+.table-row.table-header {
+  color: #72c4d6;
+  background-color: #f9f9f9;
+  font-weight: bold;
+
+}
+
+.table-row > div, .table-row > h1 {
+  flex-grow: 1;
+  overflow: hidden;
+  white-space: wrap;
+  text-overflow: ellipsis;
+  justify-content: space-around;
+  align-items: center;
+  width: 10rem;
+  display: flex;
+  margin: 0.2rem 0;
+  /*border: 1px solid red;*/
+
+}

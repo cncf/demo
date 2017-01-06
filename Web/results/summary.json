@@ -1,0 +1,21 @@
+{  
+  "Results": [{
+    "Provider": "AWS",
+    "CPU": 6,
+    "Memory": 24,
+    "DistCC": 1061,
+    "HTTP_Requests": "2,432,234",
+    "Boinc_Jobs": 0
+  },
+  {
+    "Provider": "AWS",
+    "CPU": 7,
+    "Memory": 24,
+    "DistCC": 1061,
+    "HTTP_Requests": "2,432,234",
+    "Boinc_Jobs": 0
+
+  }]
+    
+  
+}
