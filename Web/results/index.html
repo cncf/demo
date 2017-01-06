@@ -8,20 +8,20 @@
 <body>
 
   <header>
-    <template class="metadata">
+    <template class="Metadata">
     <div id="logo"><img src="img/logo_cncf.png"></div>
     <div id="metadata">
       <div id="uuid">Demo / ${ id }</div>
       <div id="aws">${ Provider }</div>
       <div id="masters">${ Masters['size'] } Master</div>
-      <div id="minions">${ Minions[0]['size'] } Minions </div>
+      <div id="minions">${ Minions['size'] } Minions </div>
     </div>
     </template>
   </header>
 
   <main>    
     <aside id="leftcolumn">     
-      <template class="metadata">
+      <template class="Metadata">
       <div>${ vcpu } vCPU Cores</div>
       <div>${ RAM } Memory</div>
       <div>${ Storage } Storage</div>
@@ -34,7 +34,7 @@
       <div class="card ${ timeend ? 'ended' : 'running' }" id="stat${ _index }">
         <div class="card-content">
          <span class="card-title">${ title }</span>
-         <span class="card-times">${ humanize(g['events'][_index]['time'] - g['metadata']['timestart']) }</span>
+         <span class="card-times">${ humanize(g['events'][_index]['time']) }</span>
         </div>
       </div>
       </template>
@@ -75,16 +75,22 @@ const loadScripts = srcList => {
 
 }
 
+const now = Math.floor(Date.now() / 1000);
 let clockSkew = 0;
 
 const humanize = t => { m = Math.floor(t / 60); return `${ (m > 0) ? m+' minutes,' : '' } ${ Math.floor(t % 60) } seconds` }
+  
 const Render = (template, contexts, g) => { 
   
   rendered = '';
   [].concat(contexts).forEach( (context, _index) => {
 
     with (context) {
-      g['events'][_index]['time'] = g['events'][_index]['timeend'] || g['events'][_index]['timestart'];
+      
+      timestart = g['events'][_index]['timestart'];
+      timeend = g['events'][_index]['timeend'];
+
+      g['events'][_index]['time'] = Math.max(0, (timeend ? timeend : now) - timestart);
       rendered += context['raw'] ? raw : eval('`'+template.innerHTML+'`');
     } 
 
@@ -99,8 +105,8 @@ const Render = (template, contexts, g) => {
 const main = () => {
 
   const urlParams = new URLSearchParams(window.location.search);  
-  const url = urlParams.get('id') ? urlParams.get('id') + '.json' : 'v6Zpj1B.json';
-  //const url = 'https://s3.amazonaws.com/cncfdemo.io/results/v6Zpj1B.json';
+  //const url = urlParams.get('id') ? urlParams.get('id') + '.json' : 'v6Zpj1B.json';
+  const url = 'http://stats.cncfdemo.io/y2dNmMG';
   const templates = document.getElementsByTagName('template');
 
   headers = {};
@@ -129,10 +135,10 @@ const main = () => {
 
       contexts = data[template.className];
       rendered = Render(template, contexts, data);
-      //template.insertAdjacentHTML( 'beforebegin', rendered ); 
       template.parentElement.innerHTML = rendered + template.outerHTML;
 
     })
+
 
     const ticker = window.setInterval( () => {
 
@@ -144,7 +150,8 @@ const main = () => {
               index = event.id.split('stat')[1];
               eventData = data['events'][index];
 
-              tick = humanize(eventData['time'] + clockSkew - data['metadata']['timestart']);
+              eventData['time'] += 1;
+              tick = humanize(eventData['time'] );
               event.querySelector('.card-times').innerText = tick;
 
               });
@@ -153,7 +160,8 @@ const main = () => {
 
 
       console.log('timer start: ', ticker);
-      
+     
+     
     const refresh = window.setInterval( () => {
       fetch(url, { method: 'HEAD' } )
         .then(response => {
@@ -166,7 +174,8 @@ const main = () => {
 
           })
        
-        }, 6000)
+        }, 1000)
+       
 
     }
     

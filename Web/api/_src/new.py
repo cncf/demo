@@ -8,6 +8,7 @@ import jsonschema
 from jsonschema import validate
 from hashids import Hashids
 
+import botocore
 import boto3
 
 
@@ -29,10 +30,86 @@ def respond(body=None, err=None):
     }
 
 
-def store_data(Key, Body, Metadata = {'foo': 'bar'}, ContentType='application/json'):
-  s3 = boto3.resource('s3')
-  bucket = s3.Bucket('stats.cncfdemo.io')
-  bucket.put_object(ACL='public-read', Key=Key, Body=Body, ContentType=ContentType, Metadata=Metadata)
+def store_data(Bucket, Key, Body, Metadata = {'foo': 'bar'}, ContentType='application/json'):
+  Bucket.put_object(Key=Key, Body=Body, ContentType=ContentType, Metadata=Metadata, ACL='public-read')
+
+
+def upsert(event, bucket):
+
+    body = json.loads(event.get('body'))
+    uuid, upsert = body.get('id'), body.get('upsert')
+
+    try:
+      blob = bucket.Object(uuid).get()
+    except botocore.exceptions.ClientError as err:
+      err.message = err.response['Error']
+      return respond(err=err)
+
+    demo = json.loads(blob['Body'].read())
+    demo['events'] = sorted(demo['events'], key= lambda k: k['id'])
+
+    upsert['id'] = demo['events'][-1]['id'] + 1
+    upsert['timestart'] = int(time.time())
+    upsert['timeend'] = None
+
+    demo['events'].append(upsert)
+
+    store_data(bucket, uuid, json.dumps(demo))
+    return respond(body=demo)
+
+
+def stop(event, bucket):
+
+    body = json.loads(event.get('body'))
+    uuid = body.get('id')
+    event_id = body.get('event_id')
+
+    try:
+      blob = bucket.Object(uuid).get()
+    except botocore.exceptions.ClientError as err:
+      err.message = err.response['Error']
+      return respond(err=err)
+
+    demo = json.loads(blob['Body'].read())
+    events = sorted(demo['events'], key= lambda k: k['id'])
+
+    try:
+      next(iter(filter(lambda e : e['id'] == event_id, events)))['timeend'] = int(time.time())
+    except StopIteration:
+      err = type('err', (object,), {})
+      err = err()
+      err.message = 'Event to stop timer for not found'
+      return respond(err=err)
+
+    store_data(bucket, uuid, json.dumps(demo))
+    return respond(body=demo)
+
+
+def new(event, bucket):
+
+    body = json.loads(event.get('body'))
+    schema = load_files()
+
+    try:
+      validate(body, schema)
+    except (jsonschema.exceptions.SchemaError, jsonschema.exceptions.ValidationError) as err:
+      return respond(err=err)
+
+    hashids = Hashids(salt='grabfromenv')  # TODO: get the salt from env
+    now = int(time.time())  # Collision if two demos start at exactly same second
+    human = datetime.datetime.fromtimestamp(now).strftime('%a, %d %B %Y - %H:%M UTC')
+
+    body['Metadata']['id'] = hashids.encode(now)
+    body['Metadata']['timestart'] = now
+
+    body['events'] = [{ "title": "",
+                        "raw": r"""<span class="event-message">Demo Started On {}</span>""".format(human),
+                        "id": 0
+                     }]
+
+
+    store_data(bucket, body['Metadata']['id'], json.dumps(body))
+    return respond(body=body)
 
 
 def handler(event, context):
@@ -47,26 +124,10 @@ def handler(event, context):
       err.message = 'Body must be valid json'
       return respond(err=err)
 
-    hashids = Hashids(salt='grabfromenv')
-    schema = load_files()
+    path = event.get('path').split('/')[1] # lame
+    bucket = boto3.resource('s3').Bucket('stats.cncfdemo.io')
 
-    try:
-      validate(body, schema)
-    except (jsonschema.exceptions.SchemaError, jsonschema.exceptions.ValidationError) as err:
-      return respond(err=err)
-
-    now = int(time.time())  # Collision if two demos start at exactly same second
-    human = datetime.datetime.fromtimestamp(now).strftime('%a, %d %B %Y - %H:%M UTC')
-
-    body['Metadata']['id'] = hashids.encode(now)
-    body['Metadata']['timestart'] = now
-
-    body['events'] = [{ "title": "",
-                        "raw": r"""<span class="event-message">Demo Started On {}</span>""".format(human),
-                     }]
-
-    store_data(body['Metadata']['id'], json.dumps(body))
-    return respond(body=body)
+    return globals()[path](event, bucket)
 
 
 if __name__ == '__main__':
@@ -74,5 +135,6 @@ if __name__ == '__main__':
   context = {}
   event = load_files('../_tests/new')
   event['body'] = json.dumps(event['body'])
+  event['path'] = '/stop'
 
   print(handler(event, context))
