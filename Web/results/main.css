@@ -372,9 +372,13 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 .tty {
     background: #212121;
     color: #edede3;
-    margin: 0 1em;
-    padding: 0 1em;
+    /* margin: 1em; */
+    padding: 1em;
     overflow: scroll;
+}
+
+.tty li {
+    min-height: 1.5em;
 }
 
 .tty ol {
@@ -384,5 +388,7 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 }
 
 .content-extra {
-    /* margin-bottom: 1em; */
-    padding-bottom
+    /* margin: 1em 0; */
+    padding-bottom;
+    padding: 0 1em 1em 1em;
+    
