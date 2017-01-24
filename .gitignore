@@ -4,4 +4,6 @@
 *.swo
 *.egg-info/
 *.out
-
+*.zip
+*.pyc
+*.dist-info/

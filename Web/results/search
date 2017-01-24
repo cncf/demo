@@ -8,42 +8,40 @@
 
   <header>
     <template class="Metadata">
-    <div id="logo"><img src="img/logo_cncf.png"></div>
+    <a href="/"><div id="logo"><img src="img/logo_cncf.png"></div></a>
     <div id="metadata">
-      <div id="uuid">Demo / ${ id }</div>
+      <div id="uuid">Demo ／ ${ id }</div>
       <div id="aws">${ Provider }</div>
       <div id="masters">${ Masters['size'] } Master</div>
       <div id="minions">${ Minions['size'] } Minions </div>
+    </div>
+
+    <div id="command">This demo was run with the command: <span>cncfdemo bootstrap aws cluster --scale 3</span></div>
+
+    <div id="moreinfo">
+      <div id="uuid">${ vcpu } vCPU Cores</div>
+      <div id="ram">${ RAM } Memory</div>
+      <div id="masters">${ Storage } Storage</div>
     </div>
     </template>
   </header>
 
   <main>    
-    <aside id="leftcolumn">     
-      <template class="Metadata">
-      <div>${ vcpu } vCPU Cores</div>
-      <div>${ RAM } Memory</div>
-      <div>${ Storage } Storage</div>
-      <div id="buttons"><a href="#">More Info</a><a href="#">Fork Demo</a></div>
-      </template>
-    </aside>
+
     
     <article id="centercolumn">
       <template class="events">
       <div class="card ${ timeend ? 'ended' : 'running' }" id="stat${ _index }">
         <div class="card-content">
+         <span class="card-arrow">❯</span>
          <span class="card-title">${ title }</span>
          <span class="card-times">${ humanize(g['events'][_index]['time']) }</span>
         </div>
+        ${ content }
       </div>
       </template>
     </article>  
 
-    <aside id="rightcolumn">
-       <div id="sticky">
-         <span id="stick">explanation of whats going on in each step </span>
-       </div>
-    </aside>      
   </main>
 
   <footer><span>Copyright © 2017 The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our Trademark Usage page. Linux is a registered trademark of Linus Torvalds. Privacy Policy and Terms of Use</span></footer>
@@ -88,6 +86,9 @@ const Render = (template, contexts, g) => {
       timestart = g['events'][_index]['timestart'];
       timeend = g['events'][_index]['timeend'];
 
+      if (typeof context['content'] === 'undefined') { context['content'] = '' }
+
+
       g['events'][_index]['time'] = Math.max(0, (timeend ? timeend : now) - timestart);
       rendered += context['raw'] ? raw : eval('`'+template.innerHTML+'`');
     } 
@@ -99,13 +100,35 @@ const Render = (template, contexts, g) => {
 
 }
 
+
+const toggle = e => { 
+  e.stopPropagation();
+  console.log(e.currentTarget, e.target, e);
+  extra = e.currentTarget.querySelector('.content-extra');
+  if (extra) {
+    e.currentTarget.querySelector('.card-arrow').classList.toggle('rotate90');
+    extra.hidden = !extra.hidden;
+  }
+ }
+
+
 let status = 'running';
+
+
+const dataStore = () => {
+
+
+}
+
+
 const main = () => {
 
   const urlParams = new URLSearchParams(window.location.search);  
-  const id = urlParams.get('id') ? urlParams.get('id') : 'joOKmJg';
+  const id = urlParams.get('id') ? urlParams.get('id') : 'sample.json';
   const base_url = 'http://stats.cncfdemo.io/';
-  const url = base_url + status + '/' + id;
+
+  //const url = base_url + status + '/' + id;
+  const url = id;
   const templates = document.getElementsByTagName('template');
 
   headers = {};
@@ -134,6 +157,8 @@ const main = () => {
     .then(data => { if (!data) { console.log('Fetch Failed') } else { 
     
     console.log(data);
+    events = data['events'];
+
     lastModified = headers.get('Last-modified');
     console.log('lastModified: ', lastModified);
    
@@ -143,7 +168,15 @@ const main = () => {
       rendered = Render(template, contexts, data);
       template.parentElement.innerHTML = rendered + template.outerHTML;
 
+
     })
+
+    cards = document.querySelectorAll('.card');
+
+    Array.from(cards).forEach( card => { 
+      card.addEventListener('click', toggle);
+    });
+
 
 
     const ticker = window.setInterval( () => {
@@ -180,6 +213,7 @@ const main = () => {
           })
        
         }, 1000)
+
        
 
     }
