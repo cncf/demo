@@ -1,0 +1,22 @@
+---
+name: cncfdemo-summary
+environments:
+  dev:
+    profile: default
+    region: us-west-2
+    policy:
+      resources:
+        - arn: arn:aws:s3:::*
+          actions:
+          - "*"
+        - arn: arn:aws:logs:*:*:*
+          actions:
+          - "*"
+
+lambda:
+  description: cncfdemo summary view
+  handler: summary.handler
+  runtime: python2.7
+  memory_size: 256
+  timeout: 3
+

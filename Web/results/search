@@ -1,53 +1,50 @@
 <head>
 <title>cncfdemo</title>
-
-<!--<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,500,100,100italic,300italic,400italic,500italic,700italic,700" rel="stylesheet" type="text/css">-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" href="main.css">
 </head>
 
 <body>
 
   <header>
-    <template class="metadata">
-    <div id="logo"><img src="img/logo_cncf.png"></div>
+    <template class="Metadata">
+    <a href="/"><div id="logo"><img src="img/logo_cncf.png"></div></a>
     <div id="metadata">
-      <div id="uuid">Demo / ${ id }</div>
+      <div id="uuid">Demo ／ ${ id }</div>
       <div id="aws">${ Provider }</div>
       <div id="masters">${ Masters['size'] } Master</div>
-      <div id="minions">${ Minions[0]['size'] } Minions </div>
+      <div id="minions">${ Minions['size'] } Minions </div>
+    </div>
+
+    <div id="command">This demo was run with the command: <span>cncfdemo bootstrap aws cluster --scale 3</span></div>
+
+    <div id="moreinfo">
+      <div id="uuid">${ vcpu } vCPU Cores</div>
+      <div id="ram">${ RAM } Memory</div>
+      <div id="masters">${ Storage } Storage</div>
     </div>
     </template>
   </header>
 
   <main>    
-    <aside id="leftcolumn">     
-      <template class="metadata">
-      <div>${ vcpu } vCPU Cores</div>
-      <div>${ RAM } Memory</div>
-      <div>${ Storage } Storage</div>
-      <div id="buttons"><a href="#">More Info</a><a href="#">Fork Demo</a></div>
-      </template>
-    </aside>
+
     
     <article id="centercolumn">
       <template class="events">
       <div class="card ${ timeend ? 'ended' : 'running' }" id="stat${ _index }">
         <div class="card-content">
+         <span class="card-arrow">❯</span>
          <span class="card-title">${ title }</span>
-         <span class="card-times">${ humanize(g['events'][_index]['time'] - g['metadata']['timestart']) }</span>
+         <span class="card-times">${ humanize(g['events'][_index]['time']) }</span>
         </div>
+        ${ content }
       </div>
       </template>
     </article>  
 
-    <aside id="rightcolumn">
-       <div id="sticky">
-         <span id="stick">explanation of whats going on in each step </span>
-       </div>
-    </aside>      
   </main>
 
-  <footer><span>Copyright © 2016 The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our Trademark Usage page. Linux is a registered trademark of Linus Torvalds. Privacy Policy and Terms of Use</span></footer>
+  <footer><span>Copyright © 2017 The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our Trademark Usage page. Linux is a registered trademark of Linus Torvalds. Privacy Policy and Terms of Use</span></footer>
   
 </body>
 
@@ -75,16 +72,24 @@ const loadScripts = srcList => {
 
 }
 
-let clockSkew = 0;
+const now = Math.floor(Date.now() / 1000);
 
 const humanize = t => { m = Math.floor(t / 60); return `${ (m > 0) ? m+' minutes,' : '' } ${ Math.floor(t % 60) } seconds` }
+  
 const Render = (template, contexts, g) => { 
   
   rendered = '';
   [].concat(contexts).forEach( (context, _index) => {
 
     with (context) {
-      g['events'][_index]['time'] = g['events'][_index]['timeend'] || g['events'][_index]['timestart'];
+      
+      timestart = g['events'][_index]['timestart'];
+      timeend = g['events'][_index]['timeend'];
+
+      if (typeof context['content'] === 'undefined') { context['content'] = '' }
+
+
+      g['events'][_index]['time'] = Math.max(0, (timeend ? timeend : now) - timestart);
       rendered += context['raw'] ? raw : eval('`'+template.innerHTML+'`');
     } 
 
@@ -96,11 +101,34 @@ const Render = (template, contexts, g) => {
 }
 
 
+const toggle = e => { 
+  e.stopPropagation();
+  console.log(e.currentTarget, e.target, e);
+  extra = e.currentTarget.querySelector('.content-extra');
+  if (extra) {
+    e.currentTarget.querySelector('.card-arrow').classList.toggle('rotate90');
+    extra.hidden = !extra.hidden;
+  }
+ }
+
+
+let status = 'running';
+
+
+const dataStore = () => {
+
+
+}
+
+
 const main = () => {
 
   const urlParams = new URLSearchParams(window.location.search);  
-  const url = urlParams.get('id') ? urlParams.get('id') + '.json' : 'v6Zpj1B.json';
-  //const url = 'https://s3.amazonaws.com/cncfdemo.io/results/v6Zpj1B.json';
+  const id = urlParams.get('id') ? urlParams.get('id') : 'sample.json';
+  const base_url = 'http://stats.cncfdemo.io/';
+
+  //const url = base_url + status + '/' + id;
+  const url = id;
   const templates = document.getElementsByTagName('template');
 
   headers = {};
@@ -109,7 +137,14 @@ const main = () => {
       headers = response.headers;
       contentType = headers.get('Content-Type');
     
-      if (!response.ok) throw Error(response.statusText);
+      if (!response.ok) {
+
+          if (response.status === 404 && status == 'running') 
+            { status = 'finished'; main(); }
+          else {
+            throw Error(response.statusText);
+          }
+        };
       if (!contentType === 'application/json') throw Error(contentType);
       
       return response.clone().json();
@@ -118,10 +153,12 @@ const main = () => {
 
   fetch(url)
     .then(handleErrors)
-    .catch(Err => (console.log(Err) ))
+    .catch(Err => console.log(Err))
     .then(data => { if (!data) { console.log('Fetch Failed') } else { 
     
     console.log(data);
+    events = data['events'];
+
     lastModified = headers.get('Last-modified');
     console.log('lastModified: ', lastModified);
    
@@ -129,14 +166,21 @@ const main = () => {
 
       contexts = data[template.className];
       rendered = Render(template, contexts, data);
-      //template.insertAdjacentHTML( 'beforebegin', rendered ); 
       template.parentElement.innerHTML = rendered + template.outerHTML;
+
 
     })
 
+    cards = document.querySelectorAll('.card');
+
+    Array.from(cards).forEach( card => { 
+      card.addEventListener('click', toggle);
+    });
+
+
+
     const ticker = window.setInterval( () => {
 
-            clockSkew += 1;
 
             running = document.querySelectorAll('div.card.running');
             Array.from(running).forEach( event => {
@@ -144,7 +188,8 @@ const main = () => {
               index = event.id.split('stat')[1];
               eventData = data['events'][index];
 
-              tick = humanize(eventData['time'] + clockSkew - data['metadata']['timestart']);
+              eventData['time'] += 1;
+              tick = humanize(eventData['time'] );
               event.querySelector('.card-times').innerText = tick;
 
               });
@@ -153,7 +198,8 @@ const main = () => {
 
 
       console.log('timer start: ', ticker);
-      
+     
+     
     const refresh = window.setInterval( () => {
       fetch(url, { method: 'HEAD' } )
         .then(response => {
@@ -166,7 +212,9 @@ const main = () => {
 
           })
        
-        }, 6000)
+        }, 1000)
+
+       
 
     }
     

@@ -1,0 +1,91 @@
+{
+   "events":[
+      {
+         "raw":"<span class=\"event-message\">Demo Started On Tue, 10 January 2017 - 10:35 UTC</span>",
+         "title":""
+      },
+      {
+         "timestart":1484066198,
+         "timeend":1484066246,
+         "blurb": "cncfdemo configures a new <a href=\"https://github.com/cncf/demo/blob/master/cncfdemo-cli/cncfdemo/bootstrap/aws/execution_plans/vpc\">VPC</a> in your aws account and deploys an <a href=\"https://github.com/cncf/demo/blob/master/cncfdemo-cli/cncfdemo/bootstrap/aws/execution_plans/asg\">auto scaling group.</a>",
+         "title":"Creating AWS Resources",
+         "content":"<div class=\"content-extra\" hidden><pre class=\"tty\"><ol> <li>k-masters</li><li>======================================================================</li><li>The keypair 'cncf-aws' already exists.</li><li>Instance Profile k-masters already exists.</li><li>wait... OK</li><li>Role with name k-masters already exists.</li><li>Cannot exceed quota for InstanceSessionsPerInstanceProfile: 1</li><li>attach_role_policy... OK</li><li>waiting some more..</li><li>Launch Configuration by this name already exists - A launch configuration already exists with the name k-masters</li><li>AutoScalingGroup by this name already exists - A group with the name k-masters already exists</li><li></li><li>k-minions</li><li>======================================================================</li><li>The keypair 'cncf-aws' already exists.</li><li>Instance Profile k-minions already exists.</li><li>wait... OK</li><li>Role with name k-minions already exists.</li><li>Cannot exceed quota for InstanceSessionsPerInstanceProfile: 1</li><li>attach_role_policy... OK</li><li>waiting some more..</li><li>Launch Configuration by this name already exists - A launch configuration already exists with the name k-minions</li><li>AutoScalingGroup by this name already exists - A group with the name k-minions already exists</li><li></li><li>======================================================================</li><li></li><li>Waiting for master to be provisioned by cloud provider...</li><li>Master IP: 35.164.81.65</li><li></li><li>Waiting for ClusterReady...</li> </ol></pre></div>"
+
+      },
+      {
+         "timestart":1484066249,
+         "content":"<div class=\"content-extra\" hidden><pre class=\"tty\"><ol><li>Master Ready</li><li>Node 1 Ready</li><li>Node 2 Ready</li><li>Node 3 Ready</li></ol></pre></div>",
+         "timeend":1484066316,
+         "title":"Instances Booting"
+      },
+      {
+         "timestart":1484066330,
+         "timeend":1484066342,
+         "blurb": "An <a href=\"https://github.com/cncf/demo/tree/master/AddOns\">AddOns</a> container pulls in kube-dns, Prometheus, Grafana.",
+         "title":"Installing Kubernetes AddOns"
+      },
+      {  "raw": "<div class=\"hr\"><div></div><div>Cluster Ready, Deploying CNCF Demo</div></div>",
+         "title": "" 
+      },
+      {
+         "timestart":1484066346,
+         "timeend":1484066416,
+         "title":"Mongo Cluster Ready"
+      },
+      {
+         "timestart":1484066425,
+         "timeend":1484066441,
+         "title":"Countly Ready"
+      },
+      {  "raw": "<div class=\"hr\"><div></div></div>",
+         "title": "" 
+      },
+      {
+         "timestart":1484067139,
+         "timeend":1484068316,
+         "title":"DistCC Finished"
+      },
+      {
+         "timestart":1484068319,
+         "timeend":1484068342,
+         "title":"WRK Stopped (2063557 requests completed)"
+      },
+      {
+         "timestart":1484066445,
+         "timeend":1484067138,
+         "title":"Boinc Stopped (0 completed)"
+      },
+      {
+         "raw":"<div id=\"clickGrafana\">Click to load Grafana snapshot of this run</div>",
+         "title":""
+      }
+   ],
+   "results":{
+      "timestart":1484066195,
+      "HTTP_Requests":2063557,
+      "Boinc_Jobs":0,
+      "Memory":"24GiB",
+      "DistCC":1178,
+      "Provider":"AWS",
+      "CPU":6,
+      "id":"8OGEPrO",
+      "timeend":1484067138
+   },
+   "Metadata":{
+      "timestart":1484066195,
+      "Masters":{
+         "type":"m3.medium",
+         "size":1
+      },
+      "Provider":"AWS",
+      "vcpu":6,
+      "RAM":"24GiB",
+      "Storage":"250GB",
+      "id":"8OGEPrO",
+      "Minions":{
+         "type":"m4.large",
+         "size":3
+      },
+      "timeend":1484067138
+   }
+}
