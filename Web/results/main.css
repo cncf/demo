@@ -157,7 +157,7 @@ main {
     /* padding: 0em 3rem; */
     flex-flow: row wrap;
     width: 100vw;
-    /* min-height: 90vh; */
+    min-height: 90vh;
 }
 
 .event-message {text-align: center;display: inherit;}
