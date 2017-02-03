@@ -35,7 +35,7 @@ body {
   /* transition: all 0.25s 0s; */
 }
 
-header {background-color: #fff;flex: none;display: flex;justify-content: flex-start;flex-flow: row wrap;}
+header {background-color: #fff;/* flex: none; */display: flex;/* justify-content: flex-start; */flex-flow: row wrap;}
 footer {background-color: #333;color: #ccc;/* min-height: 10em; */padding: 1em;/* flex: none; *//* z-index: 1; */}
             
 header > h1 { color: rgba(0, 0, 0, 0.75); }    
@@ -69,12 +69,13 @@ header > h1 { color: rgba(0, 0, 0, 0.75); }
     padding: 0 12px;
     border-radius: 16px;
     background-color: #e4e4e4;
-    margin-left: 5px;
+    /* margin-left: 5px; */
 }
 
 #command {
     align-self: center;
     margin: 0 calc(17rem - 230px);
+    margin-top: auto;
 }
 
 #clickgrafana {
@@ -372,8 +373,8 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 .tty {
     background: #212121;
     color: #edede3;
-    margin: 0 1em;
-    padding: 0 1em;
+    /* margin: 1em; */
+    padding: 1em;
     overflow: scroll;
 }
 
@@ -383,6 +384,11 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
   padding: 0;
 }
 
+.tty li {
+    min-height: 1.5em;
+}
+
 .content-extra {
-    /* margin-bottom: 1em; */
-    padding-bottom
+    /* margin: 1em 0; */
+    padding: 0 1em 1em 1em;
+}
