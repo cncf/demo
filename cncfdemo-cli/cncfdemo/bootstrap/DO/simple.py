@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 import time
-i
-iidsfsmport requests
+import requests
 
 # TODO: paramatize constants, intergrate as subcomand of cncfdemo-cli, add flag for master
 
