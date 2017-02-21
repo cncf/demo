@@ -79,17 +79,8 @@ Getting started with the `cncfdemo` is a three-step process:
 1. Run `cncfdemo start`
 2. Browse to [countly.cncfdemo.io](countly.cncfdemo.io)
 3. Run `cncfdemo benchmark --time 5m --save-html`
- 
-### The `cncfdemo` command _shadows and complements_ the official Kubectl binary. 
 
-> ❯ cncfdemo create configmap example --from-file=path/to/directory
-
-> ❯ kubectl create configmap example --from-file=path/to/directory
-
-
-cncfdemo is written in Python and like Kubectl interacts with the [remote REST API server](http://kubernetes.io/docs/admin/accessing-the-api/). Unlike Kubectl, it supports HTTP only. Further differing from kubectl it is able to create new clusters on your favorite cloud provider (or even bare metal).
-
-### Complex, Scriptable Kubernetes Deployments & Jinja Templating 
+## Complex, Scriptable Kubernetes Deployments & Jinja Templating 
 
 In addition to the ability to quickly spin up new clusters from scratch the `cncfdemo` command comes with a built in demo of a complex multistep multicomponent deployment.
 
@@ -107,6 +98,7 @@ The following is going on behind the scenes:
 - Multiple instances of [Countly](https://count.ly/) are spun up against the mongo cluster
 - Countly service is exposed at a human readable subdomain [countly.cncfdemo.io](countly.cncfdemo.io) via Route53
 - HTTP Benchmarking is performed against the Countly subdomain via [WRK](https://github.com/wg/wrk) jobs
+- DistCC DaemonSet compiles a Linux Kernel across the entire cluster
 - Idle cluster capacity to search for a cure to the Zika virus is donated via [Boinc](https://hub.docker.com/r/zilman/boinc/) and [IBM WorldCommunityGrid](https://www.worldcommunitygrid.org/about_us/viewAboutUs.do)
 
 The demo described above is difficult and brittle to put together with regular `kubectl` usage. Editing YAML files by hand is time consuming and error prone. 
@@ -260,41 +252,6 @@ Required directories for CNI plugin:
  
  The [default cni plugin](https://github.com/containernetworking/cni/releases) binaries need to be placed in `/opt/cni/bin/`. We have opted to use Weave, its setup script adds weave binaries into this directory as well.
  
- Finally, we direct the Kubelet to use the above:
- 
-> KUBELET_ARGS="--network-plugin=cni --network-plugin-dir=/etc/cni/net.d --docker-endpoint=unix:///var/run/weave/weave.sock"
-
-
-### Weave Quorum
-
-Kubernetes will now rely on the Weave service to allocate the IPs in the overlay network.
-
-> PEERS=$(getent hosts minions.cncfdemo.k8s | awk '{ printf "%s ", $1 }')
->
-> MEMBERS=$(getent hosts minions.cncfdemo.k8s | wc -l)
->
-> /usr/local/bin/weave launch-router --ipalloc-init consensus=$MEMBERS ${PEERS}
-
-You can read further details on [Weave initialization strategies](https://www.weave.works/docs/net/latest/ipam/#quorum). We are using the consensus strategy. In keeping with our example:
-
-- PEERS=172.20.0.63 172.20.0.64
-- MEMBERS=2
-
-> Weave Net uses the estimate of the number of peers at initialization to compute a majority or quorum number – specifically floor(n/2) + 1.
-
-> If the actual number of peers is less than half the number stated, then they keep waiting for someone else to join in order to reach a quorum.
-
-Once the quorum has been reached you can see how the IP allocation has been divvied up between the members. 
-
-> weave status ipam
->
-> 82:85:7e:7f:71:f3(ip-172-20-0-63)        32768 IPs (50.0% of total)
->
-> ce:38:5e:9d:35:ab(ip-172-20-0-64)        32768 IPs (50.0% of total)
-
-<sub>For a deeper dive on how this mechanism works: [Distributed systems with (almost) no consensus](https://www.youtube.com/watch?v=117gWVShcGU).</sub>
-
-
 
 # Details of Sample Applications 
 ## Countly <a id="countly"></a>
