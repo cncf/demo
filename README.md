@@ -126,7 +126,7 @@ The demo was accomplished with [Jinja](http://jinja.pocoo.org/) templating, seve
 
 The Kubernetes project consists of half a dozen standalone binaries, copied to their appropriate location along with associated Systemd unit files*.
 
-<img src="https://raw.githubusercontent.com/cncf/demo/master/Docs/k8s-cube.png" width="300px">
+<img src="https://raw.githubusercontent.com/cncf/demo/master/docs/k8s-cube.png" width="300px">
 
 The first three belong on master nodes, kube-proxy and kubelet belong on minions, and kubectl is just an optional handy utility to have on the path.
 
@@ -144,7 +144,7 @@ So for example, an _upstream provided_ unit file for kube-apiserver exists at `/
 
 At boot Systemd will essentially merge role.conf into the original unit file, and start the kube-apiserver service based on whether or not a file exists at `/etc/sysconfig/kubernetes-masters` (This is called path based activation).
 
-<img src="https://raw.githubusercontent.com/cncf/demo/master/Docs/cloud-init.png" width="300px">
+<img src="https://raw.githubusercontent.com/cncf/demo/master/docs/cloud-init.png" width="300px">
 
 With this baked into a server image (by a tool like Packer) all that is left is to specify how many copies we want to run and tell cloud-init to create the file. This functionality is **common to basically any modern distro and cloud provider**, and library (like boto) or provisioning tool (like Terraform).
 
