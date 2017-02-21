@@ -126,6 +126,15 @@ The demo was accomplished with [Jinja](http://jinja.pocoo.org/) templating, seve
 
 The Kubernetes project consists of half a dozen standalone binaries, copied to their appropriate location along with associated Systemd unit files*.
 
+                        | Master | Minion 
+-------------- |------- |--------
+kube-apiserver          | ✔      |        |
+kube-controller-manager | ✔      |        |
+kube-scheduler          | ✔      |        |
+kube-proxy              |        | ✔      |
+kubelet                 |        | ✔      |
+kubectl (No service file)|        |        |
+
 <img src="https://raw.githubusercontent.com/cncf/demo/master/docs/k8s-cube.png" width="300px">
 
 The first three belong on master nodes, kube-proxy and kubelet belong on minions, and kubectl is just an optional handy utility to have on the path.
@@ -184,44 +193,10 @@ Kubernetes components are neatly split up into three distinct groups*.
 
 [etcd](https://github.com/coreos/etcd) is a reliable distributed key-value store, its where the cluster state is kept. The [Source of Truth](https://en.wikipedia.org/wiki/Single_source_of_truth). All other parts of Kubernetes are stateless. You could (and should) deploy and manage an etcd cluster completely independently, just as long as Kubernetes masters can connect and use it.
 
-A highly available etcd is well covered by many other guides. The cncf demo and this document eschew such a setup for simplicity's sake. Instead we opt for a single Kubernetes master with etcd installed and available on 127.0.0.1.
-
-<img src="https://github.com/cncf/demo/blob/master/docs/k8s-simpler.png" width="70%">
-
 Lets zoom in further on one of those circles representing a Kubernetes minion.
 
 
 <sub><sub>*AWS AutoScalingGroups, GCE "Managed Instance Groups", Azure "Scale Sets"</sub></sub>
-
-## _To thine own self be true_
-
-<sub>Contents of `/etc/sysconfig/kubernetes-minions`:</sub>
-
-```
-CLUSTER_NAME=cncfdemo
-CLOUD_PROVIDER=--cloud-provider=aws
-KUBELET_HOSTNAME=--hostname-override=ip-172-20-0-12.us-west-2.compute.internal
-```
-<sub><sub>In future kubernetes will autodetect the provider and switch to [EC2 instance-ids instead of resolvable hostnames](https://github.com/kubernetes/kubernetes/pull/7182/files) so latter two lines won't be needed.</sub></sub>
-
-This file is injected into the instance upon creation via user data.
-
-Kubernetes consists of half a dozen binaries with no dependencies, we include _all_ and create and _enable all_ corresponding services. Accordingly, systemd service files include a conditional along the lines of:
-
-> ConditionPathExists=/etc/sysconfig/kubernetes-minions
-
-> ConditionPathExists=!/etc/sysconfig/kubernetes-masters
-	
-Naturally for a master we create the file with the name 'kubernetes-masters' instead and flip the conditional in the service files.
-
-                        | Master | Minion 
--------------- |------- |--------
-kube-apiserver          | ✔      |        |
-kube-controller-manager | ✔      |        |
-kube-scheduler          | ✔      |        |
-kube-proxy              |        | ✔      |
-kubelet                 |        | ✔      |
-kubectl (No service file)|        |        |
 
 ## Cluster bootstrap via DNS discovery  
 
