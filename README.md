@@ -122,6 +122,44 @@ The demo was accomplished with [Jinja](http://jinja.pocoo.org/) templating, seve
 
 # Architecture <a id="arch"></a> <sub><sup>([back to TOC] (#toc))</sup></sub>
 
+## Image based Kubernetes deployments
+
+The Kubernetes project consists of half a dozen standalone binaries, copied to their appropriate location along with associated Systemd unit files*.
+
+<img src="k8s-cube.png" width="300px">
+
+The first three belong on master nodes, kube-proxy and kubelet belong on minions, and kubectl is just an optional handy utility to have on the path.
+
+Instead of cutting seperate images for masters and minions we rely on Cloud-init -- the defacto multi-distribution package that handles early initialization of a cloud instance -- and Systemd drop-in files to tag an instance as a master or minion. 
+
+### Systemd drop-in files
+
+The Kubernetes unit files are written upstream and should work on any distro that supports systemd. There's no need to edit them directly, they are as static as their associated binaries. 
+
+Instead, we want to override only specific directives from these unit files. Systemd has a mechanism that picks up drop-in files and appends or modifies a unit file's directives.
+
+So for example, an _upstream provided_ unit file for kube-apiserver exists at `/lib/systemd/system/kube-apiserver.service`, we simply _add_ a file at `/lib/systemd/system/kube-apiserver.service.d/role.conf` with the contents:
+
+> ConditionPathExists=/etc/sysconfig/kubernetes-master
+
+At boot Systemd will essentially merge role.conf into the original unit file, and start the kube-apiserver service based on whether or not a file exists at `/etc/sysconfig/kubernetes-masters` (This is called path based activation).
+
+<img src="cloud-init.png" width="300px">
+
+With this baked into a server image (by a tool like Packer) all that is left is to specify how many copies we want to run and tell cloud-init to create the file. This functionality is **common to basically any modern distro and cloud provider**, and library (like boto) or provisioning tool (like Terraform).
+
+For example on AWS:
+
+`aws ec2 run-instances --image-id ami-424242 --count 3 --user-data 'touch /etc/sysconfig/kubernetes-master'`
+
+#### Other useful settings cloud-init can override 
+
+* The clustername - Kubernetes clusters require a unique id
+* The url to pull the addons manager from (so it doesn't have to be baked into the image)
+* The master endpoint 
+	- not recommended but useful for testing; The preferable approach is to provision the cloud environment to route by convention masters.{clustername}.domainame
+* Other endpoints for customized images that include things like fluentd forwarding logs to S3, The cncfdemo backend API, 'etc.
+
 ## Kubernetes Architecture <a id="kubearch"></a> <img src="https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.png" width="42px">
 
 This document will walk you through setting up Kubernetes. This guide **_is_** for people looking for a fully automated command to bring up a Kubernetes cluster (In fact, this is the basis for the cncfdemo command utility and you can use that directly or learn how to make your own).
