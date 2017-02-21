@@ -1,0 +1,303 @@
+<head>
+<meta charset="utf-8">
+<title>cncfdemo</title>
+<link rel="stylesheet" type="text/css" href="main.css">
+</head>
+
+<body>
+
+  <header>
+    <a href="/"><div id="logo"><img src="img/logo_cncf.png"></div></a>
+    <h1>Results</h1>
+  </header>
+
+  <main>
+
+   <article id="resultscentercolumn">
+    
+      <div id="filter_toggle"> <a href="#filters" onClick="document.querySelector('.filters').classList.toggle('hidden')">filters</a> </div>
+
+      <div class="table-row table-header filters hidden">
+      
+         <div class="filter-wrapper"></div>
+
+         <div class="filter-wrapper">
+          <div class="filter"><input type="checkbox" id="provider" checked disabled /><label for="provider">AWS</label></div>
+         </div>
+
+         <div class="filter-wrapper">
+          <div class="filter"><input type="number" placeholder="1"></input><div>to</div><input type="number" placeholder="1"></input></div>  
+         </div>   
+
+         <div class="filter-wrapper">
+          <div class="filter"><input type="number" placeholder="1"></input><div>to</div><input type="number" placeholder="1"></input></div>  
+         </div>   
+
+ 
+         <div class="filter-wrapper">
+          <div class="filter"><input type="number" placeholder="1"></input><span>minutes</span><input type="number" placeholder="1"></input><span>seconds</span></div>  
+          <div class="filter"><span>to</span></div>  
+          <div class="filter"><input type="number" placeholder="1"></input><span>minutes</span><input type="number" placeholder="1"></input><span>seconds</span></div>  
+         </div> 
+
+ 
+         <div class="filter-wrapper">
+          <div class="filter wider"><input type="number" placeholder="1"></input></div>  
+          <div class="filter"><span>to</span></div>  
+          <div class="filter wider"><input type="number" placeholder="4"></input></div>  
+         </div>   
+
+ 
+         <div class="filter-wrapper"></div>   
+         <div class="filter-wrapper"></div>   
+
+      
+       </div>
+
+
+      <div class="table-row table-header">
+        <h1 id="timestart">Date</h1>
+        <h1 id="Provider">Provider</h1>
+        <h1 id="CPU">CPU Cores</h1>
+        <h1 id="Memory">Memory</h1>
+        <h1 id="DistCC">DistCC</h1>
+        <h1 id="HTTP_Requests">HTTP Reqs</h1>
+        <h1 id="Boinc_Jobs">Boinc</h1>
+        <h1 id="id">id</h1>
+      </div>
+
+    <div class="table-wrap">
+
+      <template class="Results">
+
+      <a href="search?id=${ id }">
+       <div class="table-row" id="results">
+        <div>${ new Date(timestart*1000).toISOString().split(':').slice(0,2).join(':') }</div>
+        <div>${ Provider }</div>
+        <div>${ CPU }</div>
+        <div>${ Memory }</div>
+        <div class="distcc">${ humanize(DistCC) }</div>
+        <div>${ HTTP_Requests }</div>
+        <div>${ Boinc_Jobs }</div>
+        <div>${ id }</div>
+      </div></a>
+      </template>
+      </div>
+
+
+      <div id="pageination"> 
+        <template class="Paginated">
+
+        ${ (page() != 1) ? `<a id="prev">❮</a>` : '' }
+
+        ${  _range(from_page('Results'), to_page('Results')).map( function(i) {  return `<a class="page ${i == page() ? 'current' : ''}" id="${i}">${i}</a>` } ).join(' ') }
+         
+        ${ (page() != total_pages('Results')) ? `<a id="next">❯</a>` : '' }
+
+        </template>
+
+      </div>
+
+      <p id="pages">
+      <template class="Paginated">
+        ${ Math.max(1, pageination_size*(page() - 1) + 1) } – ${ Math.min(page()*pageination_size, length('Results')) } of ${ length('Results') } Results  
+      </template>
+      </p>
+
+
+  </article>
+
+</main>
+
+  <footer><p>Copyright © 2016 The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our Trademark Usage page. Linux is a registered trademark of Linus Torvalds. Privacy Policy and Terms of Use</p></footer>
+
+</body>
+
+
+<script>
+
+const polyfills = ['js/fetch.js', 'js/url-search-params.js'];
+const loadScripts = srcList => {
+
+  const succeeded = new Set();
+  return new Promise( (ok, err) => {
+
+    srcList.forEach( src => {
+
+      const js = document.createElement('script'); js.src = src;
+      js.onerror = () => err(new Error('Failed to load script ' + src));
+      js.onload  = () => { succeeded.add(src); 
+                           (polyfills.filter(p => !succeeded.has(p)).length === 0) ? ok(succeeded) : 'wait'; }
+
+      document.head.appendChild(js);
+
+    })
+
+  })
+
+}
+
+const _range = (start, stop) => ([...Array(start+stop).keys()].slice(start, stop))
+
+const comparison = {
+    '>':  (a, b) => (a > b),
+    '<':  (a, b) => (a < b),
+    '=':  (a, b) => (a = b),
+    '>=': (a, b) => (a >= b),
+    '<=': (a, b) => (a <= b)
+};
+
+
+const filterGenerator = ( filters = urlParams.getAll('filter').map(f => f.split(' ')) ) => {
+  funcs = [];
+  filters.forEach( filter => {
+    
+    let [attribute, operator, predicate] = filter;
+    if (["<=", ">=", "=", "<", ">"].includes(operator) && predicate) {      
+      let compare = comparison[operator];
+      funcs.push(item => (compare(item[attribute], predicate)))
+    }
+
+  })
+
+  return funcs;
+   
+}
+
+ 
+const humanize = t => { m = Math.floor(t / 60); return `${ (m > 0) ? m+' minutes,' : '' } ${ Math.floor(t % 60) } seconds` }
+const Render = (template, contexts) => {
+
+  rendered = '';
+  [].concat(contexts).forEach( (context, _index) => {
+
+    if (!context) { console.log('context :', context); return; }
+    with (context) {
+      rendered += eval('`'+template.innerHTML+'`');
+    }
+
+
+  })
+
+  return rendered;
+
+}
+
+
+const pageinate = (data, from, to) => { return data.slice(from, to) }
+
+const React = e => { 
+
+      e.stopPropagation() && e.preventDefault(); 
+      console.log(e.target);
+
+      if (e.target.parentElement.classList.contains("table-header")) { 
+        
+        if (urlParams.get('sort_by') == e.target.id) { urlParams.get('sort') == 'asc' ? urlParams.set('sort', 'desc') : urlParams.set('sort', 'asc')  }
+          else { urlParams.set('sort_by', e.target.id); urlParams.set('sort', 'desc'); }
+        }
+
+      if (e.target.id == 'prev') { urlParams.set('page', State.page() - 1); }
+      if (e.target.id == 'next') { urlParams.set('page', State.page() + 1); }
+      if (e.target.classList.contains("page") && !e.target.classList.contains("current")) { urlParams.set('page', e.target.id); }
+      
+      State.Render(templates);
+      window.history.replaceState(null, null, window.location.pathname + '?' + urlParams.toString());
+
+
+      }
+
+const urlParams = new URLSearchParams(window.location.search);
+
+DEFAULTS = { 
+            'url': 'http://stats.cncfdemo.io/summary/summary.json',
+            'pageination_size': 5,
+            'page': 1,
+            'show_pages': 5,
+            'sort_by': 'timestart'
+           }
+
+
+const Store = _data => {
+
+    // TODO: Add Memoization, Cleanup
+    return {
+        _data,
+        
+        length(key) { return this.filter(key).length },
+        filter(key) { return filterGenerator().reduce( (interim, f) => (interim.filter(f)), this._data[key]) },
+
+        sort_attribute() { return urlParams.get('sort_by') || DEFAULTS.sort_by },
+        sort_by(key) { return this.filter(key).sort( (a, b) => (a[this.sort_attribute()] - b[this.sort_attribute()]) ) },
+        sort(key) { return urlParams.get('sort') == 'asc' ? this.sort_by(key) : this.sort_by(key).reverse() },
+      
+        'pageination_size': parseInt(urlParams.get('pageination_size')) || DEFAULTS.pageination_size,
+        page() { return parseInt(urlParams.get('page')) || DEFAULTS.page },
+
+        total_pages(key) { return Math.ceil(this.length(key) / this.pageination_size) },
+        from_page(key) { return Math.max(Math.min(this.total_pages(key) - DEFAULTS.show_pages, this.page() - Math.floor(DEFAULTS.show_pages / 2)) + 1, 1) },
+        to_page(key)   { return Math.min(this.from_page(key) + DEFAULTS.show_pages - 1, this.total_pages(key)) + 1 },
+
+        pageinated_data(key) { return pageinate(this.sort(key), (this.page() - 1)*this.pageination_size, this.page()*this.pageination_size) },
+        data(key) { return this._data[key] ? this.pageinated_data(key) : this },
+
+        Render(templates) { 
+
+            Array.from(templates).forEach( template => {
+
+                     
+            contexts = this.data(template.className);
+            console.log(contexts);
+            rendered = Render(template, contexts);
+            template.parentElement.innerHTML = rendered + template.outerHTML;
+
+          })
+        
+        }
+
+	};
+}
+
+
+const main = () => {
+
+  const url = urlParams.get('id') || DEFAULTS.url;
+  templates = document.getElementsByTagName('template');
+
+  headers = {};
+  const handleErrors = response => {
+
+      headers = response.headers;
+      contentType = headers.get('Content-Type');
+
+      if (!response.ok) throw Error(response.statusText);
+      if (!contentType === 'application/json') throw Error(contentType);
+
+      return response.clone().json();
+
+  }
+
+  fetch(url)
+    .then(handleErrors)
+    .catch(Err => (console.log(Err) ))
+    .then(data => { if (!data) { console.log('Fetch Failed') } else {
+
+    State = Store(data);
+    State.Render(templates);
+
+    document.querySelector('main').addEventListener('click', React);
+
+
+    }
+
+  })
+
+}
+
+
+if (!window.fetch) {
+  loadScripts(polyfills)
+    .then(response => { console.log('Polyfills loaded: ', response); main(); }, Err => console.log(Err))
+} else { main() }
+
+</script>

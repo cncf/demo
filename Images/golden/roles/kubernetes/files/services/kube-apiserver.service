@@ -1,0 +1,28 @@
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+ConditionPathExists=/etc/sysconfig/kubernetes-masters
+After=cloud-final.service
+After=etcd.service
+After=docker.service
+Wants=etcd.service
+Wants=docker.service
+
+[Service]
+EnvironmentFile=/etc/kubernetes/config
+EnvironmentFile=/etc/kubernetes/apiserver
+EnvironmentFile=/etc/sysconfig/kubernetes-masters
+ExecStart=/bin/kube-apiserver \
+            --etcd-servers=http://127.0.0.1:2379 \
+            $CLOUD_PROVIDER \
+            $KUBE_API_ADDRESS \
+            $KUBE_API_PORT \
+            $KUBE_SERVICE_RANGE \
+            $KUBE_LOGTOSTDERR \
+            $KUBE_API_ARGS
+ExecStartPost=-/bin/bash -c "until /usr/bin/curl -s http://127.0.0.1:8080; do echo \"waiting for API server...\"; sleep 5; done"
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

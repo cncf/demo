@@ -48,7 +48,7 @@ Given this breadth of supported deployment models using the same sample applicat
 Donated by Intel, a 1,000 node cluster of servers is running in Switch, Las Vegas, to be used by the CNCF community. Visit these links for a description of the cluster [project page] (https://cncf.io/cluster) or to be involved in the [cluster community] (https://github.com/cncf/cluster). 
 
 ## An Open Commitment
-The project output will be an open source Github repo that will become widely referenced within the CNCF community. All work will occur on a public repo, all externally referenced projects will be open source, and this project itself will be licensed under Apache 2.0. 
+The project output will be an open source GitHub repo that will become widely referenced within the CNCF community. All work will occur on a public repo, all externally referenced projects will be open source, and this project itself will be licensed under Apache 2.0. 
 
 ## Disclaimer
 Note that these are explicitly marketing demos, not reference stacks. The CNCF’s [Technical Oversight Committee] (https://github.com/cncf/toc) will over time be adopting additional projects and may eventually publish reference stacks. By contrast, this project is designed to take the shortest possible path to successful multi-cloud deployments of diverse applications.
@@ -102,7 +102,7 @@ The following is going on behind the scenes:
 - Grafana is deployed with preconfigured dashboards to expose metrics collected by Prometheus
 - ConfigMaps are created from autodetection of configuration files required by the applications being deployed
 - A sharded mongo cluster is provisioned 
-- One Shot Kuberentes Jobs initialize and configure the mongo cluster
+- One Shot Kubernetes Jobs initialize and configure the mongo cluster
 - A mongos service is exposed internally to the cluser
 - Multiple instances of [Countly](https://count.ly/) are spun up against the mongo cluster
 - Countly service is exposed at a human readable subdomain [countly.cncfdemo.io](countly.cncfdemo.io) via Route53
@@ -111,9 +111,9 @@ The following is going on behind the scenes:
 
 The demo described above is difficult and brittle to put together with regular `kubectl` usage. Editing YAML files by hand is time consuming and error prone. 
 
-### Behind the scences 
+### Behind the scenes 
 
-The demo was accomplished with [Jinja](http://jinja.pocoo.org/) templating, several [advanced kubernetes primitives & patterns](Advanced.md) that are currently in Alpha, and extending and adding some functionality to the `cncfdemo` wrapper - all in order to greatly simplify and reduce the number of commands required to accomplish a complex deployment.
+The demo was accomplished with [Jinja](http://jinja.pocoo.org/) templating, several [advanced kubernetes primitives & patterns](Kubernetes/Docs/Advanced.md) that are currently in Alpha, and extending and adding some functionality to the `cncfdemo` wrapper - all in order to greatly simplify and reduce the number of commands required to accomplish a complex deployment.
 
 ### Future Plans 
 
@@ -186,7 +186,7 @@ If you just want to try it out skip to the [Quick start](#quickstart).
 
 Kubernetes components are neatly split up into three distinct groups*.
 
-<img src="https://raw.githubusercontent.com/cncf/demo/master/Docs/arch.png" width="70%">
+<img src="https://github.com/cncf/demo/blob/master/docs/arch.png" width="70%">
 
 <sub>Diagram of a highly available kubernetes cluster</sub>
 
@@ -197,7 +197,6 @@ Lets zoom in further on one of those circles representing a Kubernetes minion.
 
 
 <sub><sub>*AWS AutoScalingGroups, GCE "Managed Instance Groups", Azure "Scale Sets"</sub></sub>
-
 
 ## Cluster bootstrap via DNS discovery  
 
@@ -230,7 +229,7 @@ For AWS the principles are outlined in _[Building a Dynamic DNS for Route 53 usi
 The process is reduced to the following; 
 
 - Configure CloudWatch to trigger a Lambda function on any and all AutoScalingGroup events
-- Lambda funtion simply sets a DNS record set of the private 'k8s' domain to reflect the list of healthy instances in that group
+- Lambda function simply sets a DNS record set of the private 'k8s' domain to reflect the list of healthy instances in that group
 
 As a result, an AutoScalingGroup with Tags:
 ```KubernetesCluster, Role```, will always have membership correctly reflected via '{Role}.{KubernetesCluster}.k8s' DNS lookups.
@@ -246,7 +245,7 @@ At this point you might be wondering why `minions.{KubernetesCluster}.k8s` is ne
 > Kubernetes allocates an IP address to each pod. When creating a cluster, you need to allocate a block of IPs for Kubernetes to use as Pod IPs. 
 <sub>-- [Kubernetes Docs](http://kubernetes.io/docs/getting-started-guides/scratch/#network)</sub> 
 
-<img src="https://raw.githubusercontent.com/cncf/demo/master/Docs/sdn.png" width="70%">
+<img src="https://github.com/cncf/demo/blob/master/docs/sdn.png" width="70%">
 
 In order to let Pod A (10.32.0.1) from one minion node (172.20.0.1) communicate with Pod B (10.32.0.3) on another minion node (172.20.0.2) we use an Overlay network. It is possible to achieve this sort of routing without an overlay network (and associated performance penalty) but an overlay is simpler to configure and more importantly it is **_portable_**.
 
@@ -268,7 +267,7 @@ Required directories for CNI plugin:
 
 ### Weave Quorum
 
-Kubernetes will now rely on the Weave service to allocate the ips in the oerlay network.
+Kubernetes will now rely on the Weave service to allocate the IPs in the overlay network.
 
 > PEERS=$(getent hosts minions.cncfdemo.k8s | awk '{ printf "%s ", $1 }')
 >
@@ -285,7 +284,7 @@ You can read further details on [Weave initialization strategies](https://www.we
 
 > If the actual number of peers is less than half the number stated, then they keep waiting for someone else to join in order to reach a quorum.
 
-Once the quorom has been reached you can see how the IP allocation has been divvied up between the members. 
+Once the quorum has been reached you can see how the IP allocation has been divvied up between the members. 
 
 > weave status ipam
 >
@@ -315,8 +314,8 @@ By setting `Host` to "mongos.default", the Countly application looks for its Mon
 - Patterns and Best Practices
 
   - How to adapt your app to run in Kubernetes (Countly example in detail)
-  - Clustred Datastores on top of Kubernetes (Mongo example in detail)
-  - Making use of spare capcity with Background Jobs (Boinc example in detail) 
+  - Clustered Datastores on top of Kubernetes (Mongo example in detail)
+  - Making use of spare capacity with Background Jobs (Boinc example in detail) 
 
 - Complex, Scriptable Kubernetes Deployments & Jinja Templating 
   
@@ -331,7 +330,7 @@ Should you split your app into multiple containers each running a single process
 
 The (typical engineer) answer is "it depends".
 
-Take a complex app like Countly for example. To package it up convinently, so a developer can quickly try it out on her laptop for instance, it is neccessary to bundle Mongo, Nginx, NodeJS, the Countly API server app, and the dashboard UI app.
+Take a complex app like Countly for example. To package it up conveniently, so a developer can quickly try it out on her laptop for instance, it is necessary to bundle Mongo, Nginx, NodeJS, the Countly API server app, and the dashboard UI app.
 
 ## Single process per container or... not
 
@@ -343,7 +342,7 @@ There's [several such supervisors](http://centos-vn.blogspot.com/2014/06/daemon-
 
 ##### Resolving the PID 1 problem
 
-There's a subtle problem of [Docker and PID 1 zombie reaping](http://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/) the aformentioned process supervisors alone don't solve. 
+There's a subtle problem of [Docker and PID 1 zombie reaping](http://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/) the aforementioned process supervisors alone don't solve. 
 
 The Ubuntu based [phusion baseimage](http://phusion.github.io/baseimage-docker/) works around this with a small (340 line) [my_init](https://github.com/phusion/baseimage-docker/blob/rel-0.9.16/image/bin/my_init) script.
 
@@ -377,7 +376,7 @@ exec /sbin/setuser countly /usr/bin/nodejs /opt/countly/api/api.js
 ```
 <sub>countly-api.sh is almost exactly like the file we replaced.</sub>
 
-This service file is executed by runit and clobbers the default config each time. The file `/etc/config/api.js` is not actually permenantly baked into the image but rather arrives via a Kubernetes configmap.
+This service file is executed by runit and clobbers the default config each time. The file `/etc/config/api.js` is not actually permanently baked into the image but rather arrives via a Kubernetes configmap.
 
 And here we've had to resort to a bit of a hack. [ConfigMap backed volumes mounted as root](https://github.com/cncf/demo/issues/28) is a known and open issue. At the moment there's no way to specify permissions. Hence, the chown line.
 
@@ -387,9 +386,9 @@ We've completely gotten rid of the Nginx service countly bundles as edge routing
 
 Whether or not we split apart the dashboard app and the API server is not a question of convenience or style. The API server clearly maps to a [replication controller](http://kubernetes.io/docs/user-guide/replication-controller/) and can be horizontally auto scaled with custom metrics (more on this later).
 
-The dashboard app for our purposes has no high availability requirment and is rarely used. However, even when idle, it is taking up resources on the pod and this waste is multipled across however many API servers we end up -- whereas we only need one dashboard app running at a time.
+The dashboard app for our purposes has no high availability requirement and is rarely used. However, even when idle, it is taking up resources on the pod and this waste is multiplied across however many API servers we end up -- whereas we only need one dashboard app running at a time.
 
-The clean way is to split it out further to one seperate pod on the side.
+The clean way is to split it out further to one separate pod on the side.
 
 As for mongo, both of these service contain a connection string we pass as a configmap like so:
 
@@ -403,11 +402,11 @@ mongodb: {
 ```
 
 
-#### Seperation of concerns 
+#### Separation of concerns 
 
-As a result, it is up to us to deploy and scale mongo seperatly from countly. Even if this particular mongo cluster is dedicated entirely to countly, and it should be, this seperation of concerns is good for maintainability and resilience. 
+As a result, it is up to us to deploy and scale mongo separately from countly. Even if this particular mongo cluster is dedicated entirely to countly, and it should be, this separation of concerns is good for maintainability and resilience. 
 
-This decoupling is healthy. For example, a bug in one of the horizontally scaled countly API servers that causes a crash would not take a mongo pod along with it and thus the impact on overall performance is contained. Instead it will crash and burn on the side, the liveliness tests will fail, and Kubernetes in turn will transparantly route away further requests to siblings while simultanousely launching a replacement. 
+This decoupling is healthy. For example, a bug in one of the horizontally scaled countly API servers that causes a crash would not take a mongo pod along with it and thus the impact on overall performance is contained. Instead it will crash and burn on the side, the liveliness tests will fail, and Kubernetes in turn will transparently route away further requests to siblings while simultaneously launching a replacement. 
 
 - graph showing how chaos-monkey style killing one of the countlies impacts overall writes, and for how long (fast recovery is cool)
 
@@ -535,7 +534,7 @@ Several factors influence the selection of a storage driver. However, these two 
 
 The docker docs don't take a position either. If one doesn't want to make assumptions about how many disks a machine has (laptops, bare metal servers with one drive, 'etc) direct LVM is out.
 
-AUFS [was the original backend](http://jpetazzo.github.io/assets/2015-03-03-not-so-deep-dive-into-docker-storage-drivers.html#28) used by docker but is not in the mainline kernel (it is however included by debian/ubuntu).
+AUFS [was the original backend](http://jpetazzo.github.io/assets/2015-03-03-not-so-deep-dive-into-docker-storage-drivers.html#28) used by docker but is not in the mainline kernel (it is however included by Debian/Ubuntu).
 
 Overlay is in mainline and supported as a Technology Preview by RHEL.
 
@@ -651,7 +650,7 @@ Kubernetes supports [CNI Network Plugins](http://kubernetes.io/docs/admin/networ
 
 Kubernetes 1.3.5 [broke the cni config](https://github.com/kubernetes/kubernetes/issues/30681) — as of that version it is necessary to pull in the [cni release binaries](https://github.com/containernetworking/cni/releases) into the cni bin folder.
 
-As of Kuberentes 1.4 the [flags to specify cni directories](https://github.com/kubernetes/kubernetes.github.io/pull/1516) changed and documentation was added pinning the minimum cni version to 0.2 and at least the `lo` binary.
+As of Kubernetes 1.4 the [flags to specify cni directories](https://github.com/kubernetes/kubernetes.github.io/pull/1516) changed and documentation was added pinning the minimum cni version to 0.2 and at least the `lo` binary.
 
 ### Other Dependencies
 
@@ -699,13 +698,13 @@ Bugs that will slowly but surely degrade a cluster and yet sneak past continuous
 
 Additionally the target is a moving one. Minor releases of kubernetes can still have undocumented changes and undocumented dependencies.
 
-If a [critical Add-Ons fails](https://github.com/kubernetes/kubernetes/issues/14232) seemingly identical clusters deployed minutes apart will have divergent behaviour. The cloud environments clusters slot into are also a source of state and therfore subtle edgecase that can confuse the controller and silently prevent it from deploying things.
+If a [critical Add-Ons fails](https://github.com/kubernetes/kubernetes/issues/14232) seemingly identical clusters deployed minutes apart will have divergent behaviour. The cloud environments clusters slot into are also a source of state and therfore subtle edge case that can confuse the controller and silently prevent it from deploying things.
 
 In short, this is a complex support matrix.
 
 A possible way to improve things is by introducing:
 
-- A set of host OS images with minimal changes baked in as neccessary for Kubernetes
+- A set of host OS images with minimal changes baked in as necessary for Kubernetes
 
 	- Continuously (weekly?) rebased on top of the latest official images 
 
@@ -717,4 +716,4 @@ A possible way to improve things is by introducing:
 - A deterministic demo app/deployment as a comprehensive smoketest & benchmark
 
 
-The community need to mix and match the multiple supported components with arbitrary neccessary for custom deployments can be benefit from a set of "blessed"  kubernetes-flavored host OS images and a more typical real-world artifcat to check their customizations against.
+The community need to mix and match the multiple supported components with arbitrary necessary for custom deployments can be benefit from a set of "blessed"  kubernetes-flavored host OS images and a more typical real-world artifact to check their customizations against.

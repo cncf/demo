@@ -1,0 +1,30 @@
+[Unit]
+Description=Kubernetes controller manager
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+ConditionPathExists=/etc/sysconfig/kubernetes-masters
+After=cloud-final.service
+After=etcd.service
+After=docker.service
+After=kube-apiserver.service
+Wants=etcd.service
+Wants=docker.service
+Wants=kube-apiserver.service
+
+[Service]
+EnvironmentFile=/etc/kubernetes/config
+EnvironmentFile=/etc/kubernetes/controller-manager
+EnvironmentFile=/etc/sysconfig/kubernetes-masters
+ExecStartPre=/bin/bash -c "until /usr/bin/curl -s http://masters.${CLUSTER_NAME}.k8s:8080; do echo \"waiting for master...\"; sleep 5; done"
+ExecStart=/bin/kube-controller-manager \
+            --master=http://127.0.0.1:8080 \
+            --cluster-name=${CLUSTER_NAME} \
+            $CLOUD_PROVIDER \
+            $KUBE_SERVICE_RANGE \
+            $KUBE_CLUSTER_CIDR_RANGE \
+            $KUBE_LOGTOSTDERR \
+            $KUBE_LOG_LEVEL \
+            $KUBE_CONTROLLER_ARGS
+Restart=on-failure
+RestartSec=5
+[Install]
+WantedBy=multi-user.target

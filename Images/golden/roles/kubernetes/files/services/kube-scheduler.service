@@ -1,0 +1,24 @@
+[Unit]
+Description=Kubernetes scheduler
+ConditionPathExists=/etc/sysconfig/kubernetes-masters
+After=etcd.service
+After=cloud-final.service
+After=docker.service
+After=kube-apiserver.service
+Wants=etcd.service
+Wants=docker.service
+Wants=kube-apiserver.service
+
+[Service]
+EnvironmentFile=/etc/kubernetes/config
+EnvironmentFile=/etc/sysconfig/kubernetes-masters
+ExecStartPre=/bin/bash -c "until /usr/bin/curl -s http://masters.${CLUSTER_NAME}.k8s:8080; do echo \"waiting for master...\"; sleep 5; done"
+ExecStart=/bin/kube-scheduler \
+            --master=http://127.0.0.1:8080 \
+            $KUBE_LOGTOSTDERR \
+            $KUBE_LOG_LEVEL
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

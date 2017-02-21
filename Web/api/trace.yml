@@ -1,0 +1,22 @@
+---
+name: cncfdemo-start
+environments:
+  dev:
+    profile: default
+    region: us-west-2
+    policy:
+      resources:
+        - arn: arn:aws:s3:::*
+          actions:
+          - "*"
+        - arn: arn:aws:logs:*:*:*
+          actions:
+          - "*"
+
+lambda:
+  description: POST Metadata to start a new demo run
+  handler: new.handler
+  runtime: python2.7
+  memory_size: 256
+  timeout: 3
+

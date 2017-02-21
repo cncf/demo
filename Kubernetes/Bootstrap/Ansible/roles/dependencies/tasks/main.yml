@@ -1,8 +1,0 @@
----
-- yum: state=present name={{ item }}
-  with_items:
-   - docker
-   - etcd
-   - conntrack-tools
-   - socat
-   - bridge-utils
