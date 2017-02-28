@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# http://ifconfig.co
+
+IP=$(curl --silent http://whatismyip.akamai.com/)
+
+if [[ $IP =~ .*:.* ]]
+then
+   echo "0.0.0.0/0"
+   exit
+fi
+
+echo $IP/32
