@@ -32,7 +32,7 @@ variable "instance-type" {
     bastion = "t2.nano"
     etcd = "m3.medium"
     worker = "m3.medium"
-  }
+    ap-southeast-2}
 }
 variable "internal-tld" {}
 variable "k8s" {
@@ -52,7 +52,8 @@ variable "vpc-existing" {
     subnet-ids-private = ""
   }
 }
-
+variable "dir-ssl" { default = "/cncf/data/.cfssl" }
+ 
 # outputs
 output "azs" { value = "${ var.aws["azs"] }" }
 output "bastion-ip" { value = "${ module.bastion.ip }" }
@@ -67,3 +68,33 @@ output "s3-bucket" { value = "${ var.s3-bucket }" }
 output "subnet-ids-private" { value = "${ module.vpc.subnet-ids-private }" }
 output "subnet-ids-public" { value = "${ module.vpc.subnet-ids-public }" }
 output "worker-autoscaling-group-name" { value = "${ module.worker.autoscaling-group-name }" }
+
+# Gen Certs
+resource "ssl_certs" "ssl_gen" {
+
+  tags {
+    builtWith = "terraform"
+    KubernetesCluster = "${ var.name }"
+    Name = "kz8s-${ var.name }"
+    version = "${ var.hyperkube-tag }"
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+DIR_SSL=${ var.dir-ssl } \
+AWS_REGION=${ var.region } \
+INTERNAL_TLD=${ var.internal-tld } \
+K8S_SERVICE_IP=${ var.k8s-service-ip } \
+${ path.module }/init-cfssl
+
+SERVICE_CLUSTER_IP_RANGE=${ var.service-cluster-ip-range } \
+EOF
+
+  }
+
+  region = "${ var.region }"
+}
+
+resource "null_resource" "dummy_dependency" {
+  depends_on = [ "ssl_certs.ssl_gen" ]
+}
