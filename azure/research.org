@@ -1,0 +1,80 @@
+# -*- org-use-property-inheritance: t; -*-                                                                                                                                                                                                                     
+#+TITLE: Azure Support
+#+AUTHOR: Hippie Hacker                                                                                                                                                                                                                                      
+#+EMAIL: hh@ii.coop                                                                                                                                                                                                                                             
+#+CREATOR: ii.coop                                                                                                                                                                                                                                           
+#+DATE: March 1st, 2017                                                                                                                                                                                                                                     
+#+NOTPROPERTY: header-args :dir ".."                                                                                                                                                                                                                              
+#+NOTPROPERTY: header-args:shell :prologue ". .env_prod ; . ~/.rvm/scripts/rvm"                                                                                                                                                                                   
+#+PROPERTY: header-args:shell :session none :exports both :cache yes
+
+The [[https://www.terraform.io/docs/providers/azure/][Terraform Azure Provider]] needs a publish_settings file 
+
+* Azure Equivalence for Existing EC2
+
+** Locating the Equivalent CentOS Image
+
+Currently the cncf/demo [[https://github.com/cncf/demo/commit/62b4ee750cea96ac18d9998cebed36660b3d5864#diff-165521d9e758a5a743ea42c6fd528156R10][uses the latest CentOS7 AMI]], so let's go find that at Azure.
+
+#+NAME:list azure default images 
+#+BEGIN_SRC shell
+az vm image list -o table 
+#+END_SRC
+
+#+RESULTS[f42a28cef38b0b7c3346005ad6b0128d06d069b1]: list azure default images
+| Offer         | Publisher              | Sku                | Urn                                                            | UrnAlias            | Version   |
+| ------------- | ---------------------- | ------------------ | -------------------------------------------------------------- | ------------------- | --------- |
+| WindowsServer | MicrosoftWindowsServer | 2016-Datacenter    | MicrosoftWindowsServer:WindowsServer:2016-Datacenter:latest    | Win2016Datacenter   | latest    |
+| WindowsServer | MicrosoftWindowsServer | 2012-R2-Datacenter | MicrosoftWindowsServer:WindowsServer:2012-R2-Datacenter:latest | Win2012R2Datacenter | latest    |
+| WindowsServer | MicrosoftWindowsServer | 2008-R2-SP1        | MicrosoftWindowsServer:WindowsServer:2008-R2-SP1:latest        | Win2008R2SP1        | latest    |
+| WindowsServer | MicrosoftWindowsServer | 2012-Datacenter    | MicrosoftWindowsServer:WindowsServer:2012-Datacenter:latest    | Win2012Datacenter   | latest    |
+| UbuntuServer  | Canonical              | 14.04.4-LTS        | Canonical:UbuntuServer:14.04.4-LTS:latest                      | UbuntuLTS           | latest    |
+| CentOS        | OpenLogic              | 7.2                | OpenLogic:CentOS:7.2:latest                                    | CentOS              | latest    |
+| openSUSE      | SUSE                   | 13.2               | SUSE:openSUSE:13.2:latest                                      | openSUSE            | latest    |
+| RHEL          | RedHat                 | 7.2                | RedHat:RHEL:7.2:latest                                         | RHEL                | latest    |
+| SLES          | SUSE                   | 12-SP1             | SUSE:SLES:12-SP1:latest                                        | SLES                | latest    |
+| Debian        | credativ               | 8                  | credativ:Debian:8:latest                                       | Debian              | latest    |
+| CoreOS        | CoreOS                 | Stable             | CoreOS:CoreOS:Stable:latest                                    | CoreOS              | latest    |
+
+We are looking for CentOS, and looks like the default Publisher is OpenLogic. Let's see what SKU's they have in westus.
+
+#+NAME: list OpenLogic CentOS sku offers
+#+BEGIN_SRC shell
+az vm image list-skus -o table --publisher OpenLogic --location westus --offer CentOS
+#+END_SRC
+
+#+RESULTS[bd6ed1e6f2fc3c614c736373beafd146068045f4]: list OpenLogic CentOS sku offers
+| Location   |   Name |
+| ---------- | ------ |
+| westus     |    6.5 |
+| westus     |    6.6 |
+| westus     |    6.7 |
+| westus     |    6.8 |
+| westus     |    7.0 |
+| westus     |    7.1 |
+| westus     |    7.2 |
+| westus     |   7.2n |
+| westus     |    7.3 |
+
+I prefer not to use 'latest' anywhere, let's grab the precise version of CentOS 7.3.
+
+#+NAME: list OpenLogic CentOS 7.3 Versions
+#+BEGIN_SRC shell
+az vm image list --offer centos -o table --publisher openlogic --sku 7.3 --all
+#+END_SRC
+
+#+RESULTS[7a0228f7fd750965697c45a561145ee0cb58e207]: list OpenLogic CentOS 7.3 Versions
+| Offer   | Publisher   | Sku   | Urn                               | Version      |
+| ------- | ----------- | ----- | --------------------------------- | ------------ |
+| CentOS  | OpenLogic   | 7.3   | OpenLogic:CentOS:7.3:7.3.20161221 | 7.3.20161221 |
+
+I'm comfortable using this image as our base.
+
+* Summary
+
+# Local Variables:
+# eval: (require (quote ob-shell))
+# eval: (require (quote ob-lisp))
+# eval: (org-babel-do-load-languages 'org-babel-load-languages '((js . t) (shell . t)))
+# eval: (setenv "PATH" (concat (concat (getenv "HOME") "/bin:") (getenv "PATH") ))
+# End:
