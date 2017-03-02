@@ -82,8 +82,15 @@ ${ var.aws["region" ] } \
 ${ var.internal-tld } \
 ${ var.k8s-service-ip }
 EOF
+ }
 
-  }
+  provisioner "local-exec" {
+    when = "destroy"
+    on_failure = "continue"
+    command = <<EOF
+rm -rf ${ var.dir-ssl }
+EOF
+ }
 
 }
 
@@ -96,8 +103,6 @@ resource "null_resource" "aws_keypair" {
 
   provisioner "local-exec" {
     command = <<EOF
-rm -rf ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
-aws --region ${ var.aws["region"] } ec2 delete-key-pair --key-name ${ var.aws["key-name"] } || true
 aws --region ${ var.aws ["region"] } ec2 create-key-pair \
  --key-name  ${ var.aws["key-name"] } \
  --query 'KeyMaterial' \
@@ -105,7 +110,15 @@ aws --region ${ var.aws ["region"] } ec2 create-key-pair \
  > ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
 chmod 400 ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
 EOF
+ }
 
-  }
+  provisioner "local-exec" {
+    when = "destroy"
+    on_failure = "continue"
+    command = <<EOF
+aws --region ${ var.aws["region"] } ec2 delete-key-pair --key-name ${ var.aws["key-name"] } || true
+rm -rf ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
+    EOF
+ }
 
 }
