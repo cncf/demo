@@ -3,13 +3,13 @@ data "template_file" "kubeconfig" {
 kubectl config set-cluster cluster-${ var.name } \
   --embed-certs=true \
   --server=https://${ var.master-elb } \
-  --certificate-authority=${ path.cwd }/${ var.ca-pem }
+  --certificate-authority=${ var.ca-pem }
 
 kubectl config set-credentials admin-${ var.name } \
   --embed-certs=true \
-  --certificate-authority=${ path.cwd }/${ var.ca-pem } \
-  --client-key=${ path.cwd }/${ var.admin-key-pem } \
-  --client-certificate=${ path.cwd }/${ var.admin-pem }
+  --certificate-authority=${ var.ca-pem } \
+  --client-key=${ var.admin-key-pem } \
+  --client-certificate=${ var.admin-pem }
 
 kubectl config set-context ${ var.name } \
   --cluster=cluster-${ var.name } \
@@ -35,11 +35,11 @@ LOCAL_EXEC
     command = <<LOCAL_EXEC
 kubectl config set-cluster cluster-${ var.name } \
   --server=https://${ var.master-elb } \
-  --certificate-authority=${ path.cwd }/${ var.ca-pem } &&\
+  --certificate-authority=${ var.ca-pem } &&\
 kubectl config set-credentials admin-${ var.name } \
-  --certificate-authority=${ path.cwd }/${ var.ca-pem } \
-  --client-key=${ path.cwd }/${ var.admin-key-pem } \
-  --client-certificate=${ path.cwd }/${ var.admin-pem } &&\
+  --certificate-authority=${ var.ca-pem } \
+  --client-key=${ var.admin-key-pem } \
+  --client-certificate=${ var.admin-pem } &&\
 kubectl config set-context ${ var.name } \
   --cluster=cluster-${ var.name } \
   --user=admin-${ var.name } &&\
