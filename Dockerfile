@@ -1,6 +1,6 @@
 FROM golang:alpine
 MAINTAINER "Denver Williams <denver@ii.coop>"
-ENV TERRAFORM_VERSION=0.8.7
+ENV TERRAFORM_VERSION=0.9.0-beta2
 ENV KUBECTL_VERSION=v1.5.2
 ENV ARC=amd64
 ENV AWS_CONFIG_FILE=/cncf/data/awsconfig
