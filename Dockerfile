@@ -17,12 +17,9 @@ RUN wget -O /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-rel
 chmod +x /usr/local/bin/kubectl
 
 # Install Terraform 
-ENV TF_DEV=true
-WORKDIR $GOPATH/src/github.com/hashicorp/terraform
-RUN git clone https://github.com/hashicorp/terraform.git ./ && \
-    git checkout v${TERRAFORM_VERSION} && \
-    /bin/bash scripts/build.sh
-WORKDIR $GOPATH
+RUN wget https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_"${TERRAFORM_VERSION}"_linux_$ARC.zip
+RUN unzip terraform*.zip -d /usr/bin
+
 
 # Install CFSSL
 RUN go get -u github.com/cloudflare/cfssl/cmd/cfssl && \
