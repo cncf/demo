@@ -53,7 +53,9 @@ variable "vpc-existing" {
   }
 }
 variable "dir-ssl" { default = "/cncf/data/.cfssl" }
- 
+variable "dir-key-pair" { default = "/cncf/data"}
+
+
 # outputs
 output "azs" { value = "${ var.aws["azs"] }" }
 output "bastion-ip" { value = "${ module.bastion.ip }" }
@@ -76,9 +78,9 @@ resource "null_resource" "ssl_gen" {
     command = <<EOF
 ${ path.module }/init-cfssl \
 ${ var.dir-ssl } \
-AWS_REGION=${ var.aws["region" ] } \
-INTERNAL_TLD=${ var.internal-tld } \
-K8S_SERVICE_IP=${ var.k8s-service-ip }
+${ var.aws["region" ] } \
+${ var.internal-tld } \
+${ var.k8s-service-ip }
 EOF
 
   }
@@ -87,4 +89,23 @@ EOF
 
 resource "null_resource" "dummy_dependency" {
   depends_on = [ "null_resource.ssl_gen" ]
+}
+
+# Add AWS Keypair
+resource "null_resource" "aws_keypair" {
+
+  provisioner "local-exec" {
+    command = <<EOF
+rm -rf ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
+aws --region ${ var.aws["region"] } ec2 delete-key-pair --key-name ${ var.aws["key-name"] } || true
+aws --region ${ var.aws ["region"] } ec2 create-key-pair \
+ --key-name  ${ var.aws["key-name"] } \
+ --query 'KeyMaterial' \
+ --output text \
+ > ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
+chmod 400 ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
+EOF
+
+  }
+
 }
