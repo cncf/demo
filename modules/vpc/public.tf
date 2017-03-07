@@ -1,3 +1,4 @@
+/*
 resource "aws_internet_gateway" "main" {
   vpc_id = "${ aws_vpc.main.id }"
 
@@ -40,3 +41,4 @@ resource "aws_route_table_association" "public" {
   route_table_id = "${ aws_vpc.main.main_route_table_id }"
   subnet_id = "${ element(aws_subnet.public.*.id, count.index) }"
 }
+*/

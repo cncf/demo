@@ -1,22 +1,24 @@
-resource "aws_vpc" "main" {
-  cidr_block = "${ var.cidr }"
+#resource "null_resource" "dummy_dependency" {
+#  depends_on = [
+#    "aws_vpc.main",
+#    "aws_nat_gateway.nat"
+#  ]
+#}
 
-  enable_dns_hostnames = true
-  enable_dns_support = true
 
-  tags {
-    builtWith = "terraform"
-    KubernetesCluster = "${ var.name }"
-    kz8s = "${ var.name }"
-    Name = "kz8s-${ var.name }"
-    version = "${ var.hyperkube-tag }"
-    visibility = "private,public"
-  }
-}
+resource "azurerm_virtual_network" "main" {
+  name                = "virtualNetwork"
+  resource_group_name = "${ var.name }"
+  address_space       = ["${ var.cidr }"]
+  location            = "West US"
+  dns_servers         = ["10.0.0.4", "10.0.0.5"]
 
-resource "null_resource" "dummy_dependency" {
-  depends_on = [
-    "aws_vpc.main",
-    "aws_nat_gateway.nat"
-  ]
+  #tags {
+   #builtWith = "terraform"
+   #KubernetesCluster = "${ var.name }"
+   #z8s = "${ var.name }"
+   #Name = "kz8s-${ var.name }"
+   #version = "${ var.hyperkube-tag }"
+   #visibility = "private,public"
+  #}
 }

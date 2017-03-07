@@ -32,6 +32,7 @@ COPY Demo /cncf/Demo
 COPY modules /cncf/modules
 COPY io.tf modules.tf modules_override.tf vpc-existing.tfvars terraform.tfvars wait-for-cluster init-cfssl /cncf/
 COPY entrypoint.sh /cncf/
+COPY runme /cncf/
 RUN chmod +x /cncf/entrypoint.sh
 
 

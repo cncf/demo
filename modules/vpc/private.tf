@@ -1,3 +1,4 @@
+/*
 resource "aws_eip" "nat" { vpc = true }
 
 resource "aws_nat_gateway" "nat" {
@@ -50,3 +51,4 @@ resource "aws_route_table_association" "private" {
   route_table_id = "${ aws_route_table.private.id }"
   subnet_id = "${ element(aws_subnet.private.*.id, count.index) }"
 }
+*/

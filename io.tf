@@ -1,9 +1,19 @@
-provider "aws" { region = "${ var.aws["region"] }" }
+# Configure the Microsoft Azure Provider
+provider "azurerm" { }
+
+# Create a resource group
+resource "azurerm_resource_group" "main" {
+  name     = "${ var.azure["resource-group"] }"
+  location = "${ var.azure["location"] }"
+
+  }
+
 
 # variables
-variable "aws" {
+variable "azure" {
   default = {
-    account-id = ""
+    resource-group = "deploy"
+    location = "West US"
     azs = ""
     key-name = ""
     region = ""
@@ -57,68 +67,68 @@ variable "dir-key-pair" { default = "/cncf/data"}
 
 
 # outputs
-output "azs" { value = "${ var.aws["azs"] }" }
-output "bastion-ip" { value = "${ module.bastion.ip }" }
-output "cluster-domain" { value = "${ var.cluster-domain }" }
-output "dns-service-ip" { value = "${ var.dns-service-ip }" }
-output "etcd1-ip" { value = "${ element( split(",", var.etcd-ips), 0 ) }" }
-output "external-elb" { value = "${ module.etcd.external-elb }" }
-output "internal-tld" { value = "${ var.internal-tld }" }
-output "name" { value = "${ var.name }" }
-output "region" { value = "${ var.aws["region"] }" }
-output "s3-bucket" { value = "${ var.s3-bucket }" }
-output "subnet-ids-private" { value = "${ module.vpc.subnet-ids-private }" }
-output "subnet-ids-public" { value = "${ module.vpc.subnet-ids-public }" }
-output "worker-autoscaling-group-name" { value = "${ module.worker.autoscaling-group-name }" }
+#output "azs" { value = "${ var.aws["azs"] }" }
+#output "bastion-ip" { value = "${ module.bastion.ip }" }
+#output "cluster-domain" { value = "${ var.cluster-domain }" }
+#output "dns-service-ip" { value = "${ var.dns-service-ip }" }
+#output "etcd1-ip" { value = "${ element( split(",", var.etcd-ips), 0 ) }" }
+#output "external-elb" { value = "${ module.etcd.external-elb }" }
+#output "internal-tld" { value = "${ var.internal-tld }" }
+#output "name" { value = "${ var.name }" }
+#output "region" { value = "${ var.aws["region"] }" }
+#output "s3-bucket" { value = "${ var.s3-bucket }" }
+#output "subnet-ids-private" { value = "${ module.vpc.subnet-ids-private }" }
+#output "subnet-ids-public" { value = "${ module.vpc.subnet-ids-public }" }
+#output "worker-autoscaling-group-name" { value = "${ module.worker.autoscaling-group-name }" }
 
 # Gen Certs
-resource "null_resource" "ssl_gen" {
+# resource "null_resource" "ssl_gen" {
 
-  provisioner "local-exec" {
-    command = <<EOF
-${ path.module }/init-cfssl \
-${ var.dir-ssl } \
-${ var.aws["region" ] } \
-${ var.internal-tld } \
-${ var.k8s-service-ip }
-EOF
- }
+#   provisioner "local-exec" {
+#     command = <<EOF
+# ${ path.module }/init-cfssl \
+# ${ var.dir-ssl } \
+# ${ var.aws["region" ] } \
+# ${ var.internal-tld } \
+# ${ var.k8s-service-ip }
+# EOF
+#  }
 
-  provisioner "local-exec" {
-    when = "destroy"
-    on_failure = "continue"
-    command = <<EOF
-rm -rf ${ var.dir-ssl }
-EOF
- }
+#   provisioner "local-exec" {
+#     when = "destroy"
+#     on_failure = "continue"
+#     command = <<EOF
+# rm -rf ${ var.dir-ssl }
+# EOF
+#  }
 
-}
+# }
 
-resource "null_resource" "dummy_dependency" {
-  depends_on = [ "null_resource.ssl_gen" ]
-}
+# resource "null_resource" "dummy_dependency" {
+#   depends_on = [ "null_resource.ssl_gen" ]
+# }
 
 # Add AWS Keypair
-resource "null_resource" "aws_keypair" {
+#resource "null_resource" "aws_keypair" {
 
-  provisioner "local-exec" {
-    command = <<EOF
-aws --region ${ var.aws ["region"] } ec2 create-key-pair \
- --key-name  ${ var.aws["key-name"] } \
- --query 'KeyMaterial' \
- --output text \
- > ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
-chmod 400 ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
-EOF
- }
+#  provisioner "local-exec" {
+#    command = <<EOF
+#aws --region ${ var.aws ["region"] } ec2 create-key-pair \
+# --key-name  ${ var.aws["key-name"] } \
+# --query 'KeyMaterial' \
+# --output text \
+# > ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
+#chmod 400 ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
+#EOF
+# }
 
-  provisioner "local-exec" {
-    when = "destroy"
-    on_failure = "continue"
-    command = <<EOF
-aws --region ${ var.aws["region"] } ec2 delete-key-pair --key-name ${ var.aws["key-name"] } || true
-rm -rf ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
-    EOF
- }
+#  provisioner "local-exec" {
+#    when = "destroy"
+#    on_failure = "continue"
+#    command = <<EOF
+#aws --region ${ var.aws["region"] } ec2 delete-key-pair --key-name ${ var.aws["key-name"] } || true
+#rm -rf ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
+#    EOF
+# }
 
-}
+#}
