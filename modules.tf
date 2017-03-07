@@ -16,12 +16,12 @@ module "aszures3" {
 
 module "vpc" {
    source = "./modules/vpc"
-   #depends-id = ""
 
+   #depends-id = ""
    #azs = "${ var.aws["azs"] }"
-   cidr = "${ var.cidr["vpc"] }"
    #hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
    name = "${ var.azure["resource-group"] }"
+   cidr = "${ var.cidr["vpc"] }"
  }
 
 /*
@@ -54,33 +54,35 @@ module "route53" {
   vpc-id = "${ module.vpc.id }"
 }
 */
-/*
+
 module "etcd" {
   source = "./modules/etcd"
-  depends-id = "${ module.route53.depends-id }"
-
-  ami-id = "${ var.coreos-aws["ami"] }"
-  bucket-prefix = "${ var.s3-bucket }"
-  cluster-domain = "${ var.cluster-domain }"
-  hyperkube-image = "${ var.k8s["hyperkube-image"] }"
-  hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
-  dns-service-ip = "${ var.dns-service-ip }"
-  etcd-ips = "${ var.etcd-ips }"
-  etcd-security-group-id = "${ module.security.etcd-id }"
-  external-elb-security-group-id = "${ module.security.external-elb-id }"
-  instance-profile-name = "${ module.iam.instance-profile-name-master }"
-  instance-type = "${ var.instance-type["etcd"] }"
-  internal-tld = "${ var.internal-tld }"
-  key-name = "${ var.aws["key-name"] }"
-  name = "${ var.name }"
-  pod-ip-range = "${ var.cidr["pods"] }"
-  region = "${ var.aws["region"] }"
-  service-cluster-ip-range = "${ var.cidr["service-cluster"] }"
-  subnet-ids-private = "${ module.vpc.subnet-ids-private }"
-  subnet-ids-public = "${ module.vpc.subnet-ids-public }"
-  vpc-id = "${ module.vpc.id }"
+  # depends-id = "${ module.route53.depends-id }"
+  location = "${ var.azure["location"] }"
+  subnet-id = "${ module.vpc.subnet-id }"
+  name = "${ var.azure["resource-group"] }"
+  # ami-id = "${ var.coreos-aws["ami"] }"
+  # bucket-prefix = "${ var.s3-bucket }"
+  # cluster-domain = "${ var.cluster-domain }"
+  # hyperkube-image = "${ var.k8s["hyperkube-image"] }"
+  # hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
+  # dns-service-ip = "${ var.dns-service-ip }"
+  # etcd-ips = "${ var.etcd-ips }"
+  # etcd-security-group-id = "${ module.security.etcd-id }"
+  # external-elb-security-group-id = "${ module.security.external-elb-id }"
+  # instance-profile-name = "${ module.iam.instance-profile-name-master }"
+  # instance-type = "${ var.instance-type["etcd"] }"
+  # internal-tld = "${ var.internal-tld }"
+  # key-name = "${ var.aws["key-name"] }"
+  # name = "${ var.name }"
+  # pod-ip-range = "${ var.cidr["pods"] }"
+  # region = "${ var.aws["region"] }"
+  # service-cluster-ip-range = "${ var.cidr["service-cluster"] }"
+  # subnet-ids-private = "${ module.vpc.subnet-ids-private }"
+  # subnet-ids-public = "${ module.vpc.subnet-ids-public }"
+  # vpc-id = "${ module.vpc.id }"
 }
-*/
+
 /*
 module "bastion" {
   source = "./modules/bastion"
