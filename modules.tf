@@ -15,13 +15,14 @@ module "aszures3" {
 
 
 module "vpc" {
-   source = "./modules/vpc"
+  source = "./modules/vpc"
 
    #depends-id = ""
    #azs = "${ var.aws["azs"] }"
    #hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
-   name = "${ var.azure["resource-group"] }"
-   cidr = "${ var.cidr["vpc"] }"
+
+  cidr = "${ var.cidr["vpc"] }"
+  name = "${ var.azure["resource-group"] }"
  }
 
 /*
@@ -43,24 +44,25 @@ module "iam" {
   name = "${ var.name }"
 }
 */
-/*
+
 module "route53" {
   source = "./modules/route53"
-  depends-id = "${ module.iam.depends-id }"
-
+  # depends-id = "${ module.iam.depends-id }"
+  name = "${ var.azure["resource-group"] }"
   etcd-ips = "${ var.etcd-ips }"
   internal-tld = "${ var.internal-tld }"
-  name = "${ var.name }"
-  vpc-id = "${ module.vpc.id }"
-}
-*/
-
-module "etcd" {
-  source = "./modules/etcd"
-  # depends-id = "${ module.route53.depends-id }"
   location = "${ var.azure["location"] }"
-  subnet-id = "${ module.vpc.subnet-id }"
-  name = "${ var.azure["resource-group"] }"
+  #name = "${ var.name }"
+  #vpc-id = "${ module.vpc.id }"
+}
+
+ module "etcd" {
+   source = "./modules/etcd"
+   # depends-id = "${ module.route53.depends-id }"
+   location = "${ var.azure["location"] }"
+   subnet-id = "${ module.vpc.subnet-id }"
+   name = "${ var.azure["resource-group"] }"
+
   # ami-id = "${ var.coreos-aws["ami"] }"
   # bucket-prefix = "${ var.s3-bucket }"
   # cluster-domain = "${ var.cluster-domain }"
