@@ -5,6 +5,7 @@ variable "storage-account" {}
 variable "storage-primary-endpoint" {}
 variable "storage-container" {}
 variable "availability-id" {}
+variable "external-lb" {}
 
 # variable "ami-id" {}
 # variable "bucket-prefix" {}

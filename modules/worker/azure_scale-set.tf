@@ -31,6 +31,7 @@ resource "azurerm_virtual_machine_scale_set" "test" {
       ip_configuration {
         name = "TestIPConfiguration"
         subnet_id = "${ var.subnet-id }"
+        load_balancer_backend_address_pool_ids = ["${ var.external-lb }"] 
       }
   }
 

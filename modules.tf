@@ -116,6 +116,7 @@ module "worker" {
   storage-primary-endpoint = "${ azurerm_storage_account.test.primary_blob_endpoint }"
   storage-container = "${ azurerm_storage_container.test.name }"
   availability-id = "${ azurerm_availability_set.test.id }"
+  external-lb = "${ module.etcd.external-lb }"
   # depends-id = "${ module.route53.depends-id }"
 
   # ami-id = "${ var.coreos-aws["ami"] }"
