@@ -1,17 +1,15 @@
-/*
-module "aszures3" {
-  source = "./modules/s3"
-  depends-id = "${ module.vpc.depends-id }"
+# module "s3" {
+#   source = "./modules/s3"
+#   # depends-id = "${ module.vpc.depends-id }"
 
-  bucket-prefix = "${ var.s3-bucket }"
-  hyperkube-image = "${ var.k8s["hyperkube-image"] }"
-  hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
-  internal-tld = "${ var.internal-tld }"
-  name = "${ var.name }"
-  region = "${ var.aws["region"] }"
-  service-cluster-ip-range = "${ var.cidr["service-cluster"] }"
-}
- */
+#   # bucket-prefix = "${ var.s3-bucket }"
+#   # hyperkube-image = "${ var.k8s["hyperkube-image"] }"
+#   # hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
+#   # internal-tld = "${ var.internal-tld }"
+#   name = "${ var.name }"
+#   region = "${ var.aws["region"] }"
+#   service-cluster-ip-range = "${ var.cidr["service-cluster"] }"
+# }
 
 
 module "vpc" {

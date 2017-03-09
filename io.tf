@@ -106,34 +106,34 @@ variable "dir-key-pair" { default = "/cncf/data"}
 #output "subnet-ids-public" { value = "${ module.vpc.subnet-ids-public }" }
 #output "worker-autoscaling-group-name" { value = "${ module.worker.autoscaling-group-name }" }
 output "fqdn-k8s" { value = "${ module.etcd.fqdn-lb}" }
-# Gen Certs
-# resource "null_resource" "ssl_gen" {
+#Gen Certs
+resource "null_resource" "ssl_gen" {
 
-#   provisioner "local-exec" {
-#     command = <<EOF
-# ${ path.module }/init-cfssl \
-# ${ var.dir-ssl } \
-# ${ var.aws["region" ] } \
-# ${ var.internal-tld } \
-# ${ var.k8s-service-ip }
-# EOF
-# }
+  provisioner "local-exec" {
+    command = <<EOF
+${ path.module }/init-cfssl \
+${ var.dir-ssl } \
+${ azurerm_resource_group.main.location } \
+${ var.internal-tld } \
+${ var.k8s-service-ip }
+EOF
+  }
 
-#   provisioner "local-exec" {
-#     when = "destroy"
-#     on_failure = "continue"
-#     command = <<EOF
-# rm -rf ${ var.dir-ssl }
-# EOF
-#  }
+  provisioner "local-exec" {
+    when = "destroy"
+    on_failure = "continue"
+    command = <<EOF
+rm -rf ${ var.dir-ssl }
+EOF
+  }
 
-# }
+}
 
-# resource "null_resource" "dummy_dependency" {
-#   depends_on = [ "null_resource.ssl_gen" ]
-# }
+resource "null_resource" "dummy_dependency" {
+  depends_on = [ "null_resource.ssl_gen" ]
+}
 
-# Add AWS Keypair
+#Add AWS Keypair
 #resource "null_resource" "aws_keypair" {
 
 #  provisioner "local-exec" {
