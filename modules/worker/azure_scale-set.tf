@@ -1,13 +1,7 @@
-resource "azurerm_storage_container" "test" {
-  name                  = "vhds"
-  resource_group_name = "${ var.name }"
-  storage_account_name  = "${ var.storage-account }"
-  container_access_type = "private"
-}
-
 resource "azurerm_virtual_machine_scale_set" "test" {
   name = "mytestscaleset-1"
   location = "${ var.location }"
+  # availability_set_id   = "${ var.availability-id }"
   resource_group_name = "${ var.name }"
   upgrade_policy_mode = "Manual"
 
@@ -44,7 +38,7 @@ resource "azurerm_virtual_machine_scale_set" "test" {
     name = "osDiskProfile"
     caching       = "ReadWrite"
     create_option = "FromImage"
-    vhd_containers = ["${ var.storage-primary-endpoint }${azurerm_storage_container.test.name}"]
+    vhd_containers = ["${ var.storage-primary-endpoint }${ var.storage-container }"]
   }
 
   storage_profile_image_reference {

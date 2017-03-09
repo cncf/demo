@@ -3,6 +3,8 @@ variable "subnet-id" {}
 variable "name" {}
 variable "storage-account" {}
 variable "storage-primary-endpoint" {}
+variable "storage-container" {}
+variable "availability-id" {}
 
 # variable "ami-id" {}
 # variable "bucket-prefix" {}

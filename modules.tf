@@ -64,6 +64,7 @@ module "route53" {
    name = "${ var.azure["resource-group"] }"
    storage-account = "${ azurerm_storage_account.test.name }"
    storage-primary-endpoint = "${ azurerm_storage_account.test.primary_blob_endpoint }"
+   storage-container = "${ azurerm_storage_container.test.name }"
    availability-id = "${ azurerm_availability_set.test.id }"
   # ami-id = "${ var.coreos-aws["ami"] }"
   # bucket-prefix = "${ var.s3-bucket }"
@@ -113,6 +114,8 @@ module "worker" {
   name = "${ var.azure["resource-group"] }"
   storage-account = "${ azurerm_storage_account.test.name }"
   storage-primary-endpoint = "${ azurerm_storage_account.test.primary_blob_endpoint }"
+  storage-container = "${ azurerm_storage_container.test.name }"
+  availability-id = "${ azurerm_availability_set.test.id }"
   # depends-id = "${ module.route53.depends-id }"
 
   # ami-id = "${ var.coreos-aws["ami"] }"

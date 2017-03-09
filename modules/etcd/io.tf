@@ -4,6 +4,7 @@ variable "name" {}
 variable "availability-id" {}
 variable "storage-account" {}
 variable "storage-primary-endpoint" {}
+variable "storage-container" {}
 
 
 # variable "ami-id" {}

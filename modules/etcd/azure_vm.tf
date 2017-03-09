@@ -10,17 +10,10 @@ resource "azurerm_network_interface" "test" {
   }
 }
 
-resource "azurerm_storage_container" "test" {
-  name                  = "vhds"
-  resource_group_name = "${ var.name }"
-  storage_account_name  = "${ var.storage-account }"
-  container_access_type = "private"
-}
-
 resource "azurerm_virtual_machine" "test" {
   name                  = "acctvm"
   location              = "West US"
-  #availability_set_id   = "${ var.availability-id }"
+  availability_set_id   = "${ var.availability-id }"
   resource_group_name = "${ var.name }"
   network_interface_ids = ["${azurerm_network_interface.test.id}"]
   vm_size               = "Standard_A0"
@@ -34,17 +27,9 @@ resource "azurerm_virtual_machine" "test" {
 
   storage_os_disk {
     name          = "myosdisk1"
-    vhd_uri       = "${ var.storage-primary-endpoint }${azurerm_storage_container.test.name}/myosdisk1.vhd"
+    vhd_uri       = "${ var.storage-primary-endpoint }${ var.storage-container }/myosdisk1.vhd"
     caching       = "ReadWrite"
     create_option = "FromImage"
-  }
-
-  storage_data_disk {
-    name          = "datadisk0"
-    vhd_uri       = "${ var.storage-primary-endpoint }${azurerm_storage_container.test.name}/datadisk0.vhd"
-    disk_size_gb  = "1023"
-    create_option = "empty"
-    lun           = 0
   }
 
   os_profile {
