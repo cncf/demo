@@ -1,3 +1,61 @@
+resource "azurerm_storage_container" "test" {
+  name                  = "vhds"
+  resource_group_name = "${ var.name }"
+  storage_account_name  = "${ var.storage-account }"
+  container_access_type = "private"
+}
+
+resource "azurerm_virtual_machine_scale_set" "test" {
+  name = "mytestscaleset-1"
+  location = "${ var.location }"
+  resource_group_name = "${ var.name }"
+  upgrade_policy_mode = "Manual"
+
+  sku {
+    name = "Standard_A0"
+    tier = "Standard"
+    capacity = 2
+  }
+
+  os_profile {
+    computer_name_prefix = "testvm"
+    admin_username = "myadmin"
+    admin_password = "Passwword1234"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+    #ssh_keys {
+    #  path = "/home/myadmin/.ssh/authorized_keys"
+    #  key_data = "${file("~/.ssh/demo_key.pub")}"
+    #}
+  }
+
+  network_profile {
+      name = "TestNetworkProfile"
+      primary = true
+      ip_configuration {
+        name = "TestIPConfiguration"
+        subnet_id = "${ var.subnet-id }"
+      }
+  }
+
+  storage_profile_os_disk {
+    name = "osDiskProfile"
+    caching       = "ReadWrite"
+    create_option = "FromImage"
+    vhd_containers = ["${ var.storage-primary-endpoint }${azurerm_storage_container.test.name}"]
+  }
+
+  storage_profile_image_reference {
+    publisher = "CoreOS"
+    offer     = "CoreOS"
+    sku       = "Stable"
+    version   = "1298.5.0"
+  }
+}
+
+/*
 resource "aws_launch_configuration" "worker" {
   ebs_block_device {
     device_name = "/dev/xvdf"
@@ -24,7 +82,7 @@ resource "aws_launch_configuration" "worker" {
 
   /*lifecycle {
     create_before_destroy = true
-  }*/
+  }
 }
 
 resource "aws_autoscaling_group" "worker" {
@@ -95,3 +153,4 @@ resource "null_resource" "dummy_dependency" {
     "aws_launch_configuration.worker",
   ]
 }
+*/

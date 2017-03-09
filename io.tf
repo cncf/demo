@@ -8,6 +8,23 @@ resource "azurerm_resource_group" "main" {
 
   }
 
+resource "azurerm_storage_account" "test" {
+  name                = "accsa123123"
+  resource_group_name = "${azurerm_resource_group.main.name}"
+  location            = "${azurerm_resource_group.main.location}"
+  account_type        = "Standard_LRS"
+
+  # tags {
+  #   environment = "staging"
+  # }
+}
+
+resource "azurerm_availability_set" "test" {
+  name = "acceptanceTestAvailabilitySet1"
+  location = "${ var.azure["location"] }"
+  resource_group_name = "${azurerm_resource_group.main.name}"
+
+}
 
 # variables
 variable "azure" {
@@ -67,6 +84,7 @@ variable "dir-key-pair" { default = "/cncf/data"}
 
 
 # outputs
+#output "availability-id" { value = "${ azurerm_availability_set.test.id }" }
 #output "azs" { value = "${ var.aws["azs"] }" }
 #output "bastion-ip" { value = "${ module.bastion.ip }" }
 #output "cluster-domain" { value = "${ var.cluster-domain }" }
@@ -92,7 +110,7 @@ variable "dir-key-pair" { default = "/cncf/data"}
 # ${ var.internal-tld } \
 # ${ var.k8s-service-ip }
 # EOF
-#  }
+# }
 
 #   provisioner "local-exec" {
 #     when = "destroy"
