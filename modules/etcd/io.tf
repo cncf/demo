@@ -1,6 +1,9 @@
 variable "location" {}
 variable "subnet-id" {}
 variable "name" {}
+variable "availability-id" {}
+variable "storage-account" {}
+variable "storage-primary-endpoint" {}
 
 
 # variable "ami-id" {}
