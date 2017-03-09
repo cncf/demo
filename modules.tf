@@ -86,23 +86,30 @@ module "route53" {
   # vpc-id = "${ module.vpc.id }"
 }
 
-/*
+
 module "bastion" {
   source = "./modules/bastion"
-  depends-id = "${ module.etcd.depends-id }"
-
-  ami-id = "${ var.coreos-aws["ami"] }"
-  bucket-prefix = "${ var.s3-bucket }"
-  cidr-allow-ssh = "${ var.cidr["allow-ssh"] }"
-  instance-type = "${ var.instance-type["bastion"] }"
-  internal-tld = "${ var.internal-tld }"
-  key-name = "${ var.aws["key-name"] }"
-  name = "${ var.name }"
-  security-group-id = "${ module.security.bastion-id }"
-  subnet-ids = "${ module.vpc.subnet-ids-public }"
-  vpc-id = "${ module.vpc.id }"
+#   depends-id = "${ module.etcd.depends-id }"
+  location = "${ var.azure["location"] }"
+  subnet-id = "${ module.vpc.subnet-id }"
+  name = "${ var.azure["resource-group"] }"
+  storage-primary-endpoint = "${ azurerm_storage_account.test.primary_blob_endpoint }"
+  storage-container = "${ azurerm_storage_container.test.name }"
+  availability-id = "${ azurerm_availability_set.test.id }"
 }
-*/
+
+
+#   ami-id = "${ var.coreos-aws["ami"] }"
+#   bucket-prefix = "${ var.s3-bucket }"
+#   cidr-allow-ssh = "${ var.cidr["allow-ssh"] }"
+#   instance-type = "${ var.instance-type["bastion"] }"
+#   internal-tld = "${ var.internal-tld }"
+#   key-name = "${ var.aws["key-name"] }"
+#   name = "${ var.name }"
+#   security-group-id = "${ module.security.bastion-id }"
+#   subnet-ids = "${ module.vpc.subnet-ids-public }"
+#   vpc-id = "${ module.vpc.id }"
+#}
 
 module "worker" {
   source = "./modules/worker"
