@@ -6,7 +6,7 @@ ENV ARC=amd64
 ENV AWS_CONFIG_FILE=/cncf/data/awsconfig
 ENV KUBECONFIG=/cncf/data/kubeconfig
 # Install AWS CLI + Deps 
-RUN apk add --update git bash util-linux wget tar curl build-base jq python py-pip groff less && \
+RUN apk add --update git bash util-linux wget tar curl build-base jq python py-pip groff less openssh && \
 pip install awscli && \
 	apk --purge -v del py-pip && \
 	rm /var/cache/apk/*
@@ -33,6 +33,8 @@ COPY modules /cncf/modules
 COPY io.tf modules.tf modules_override.tf vpc-existing.tfvars terraform.tfvars wait-for-cluster init-cfssl /cncf/
 COPY entrypoint.sh /cncf/
 COPY runme /cncf/
+RUN mkdir -p /cncf/data/.ssh
+RUN ssh-keygen -t rsa -f /cncf/data/.ssh/id_rsa -N ''
 RUN chmod +x /cncf/entrypoint.sh
 
 

@@ -56,7 +56,7 @@ module "route53" {
 
  module "etcd" {
    source = "./modules/etcd"
-   # depends-id = "${ module.route53.depends-id }"
+   #depends-id = "${ module.route53.depends-id }"
    location = "${ var.azure["location"] }"
    subnet-id = "${ module.vpc.subnet-id }"
    name = "${ var.azure["resource-group"] }"
@@ -89,7 +89,6 @@ module "route53" {
 
 module "bastion" {
   source = "./modules/bastion"
-#   depends-id = "${ module.etcd.depends-id }"
   location = "${ var.azure["location"] }"
   subnet-id = "${ module.vpc.subnet-id }"
   name = "${ var.azure["resource-group"] }"

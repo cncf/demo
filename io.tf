@@ -134,27 +134,25 @@ resource "null_resource" "dummy_dependency" {
   depends_on = [ "null_resource.ssl_gen" ]
 }
 
-#Add AWS Keypair
-#resource "null_resource" "aws_keypair" {
+# #Create Keypair
+# resource "null_resource" "aws_keypair" {
 
 #  provisioner "local-exec" {
 #    command = <<EOF
-#aws --region ${ var.aws ["region"] } ec2 create-key-pair \
-# --key-name  ${ var.aws["key-name"] } \
-# --query 'KeyMaterial' \
-# --output text \
-# > ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
-#chmod 400 ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
-#EOF
+# ssh-keygen -t rsa -f /cncf/data/.ssh/id_rsa -N ''
+# EOF
+#  }
+
+#   provisioner "local-exec" {
+#     when = "destroy"
+#     on_failure = "continue"
+#     command = <<EOF
+# rm -rf /cncf/data/.ssh/id*
+# EOF
+#   }
+
 # }
 
-#  provisioner "local-exec" {
-#    when = "destroy"
-#    on_failure = "continue"
-#    command = <<EOF
-#aws --region ${ var.aws["region"] } ec2 delete-key-pair --key-name ${ var.aws["key-name"] } || true
-#rm -rf ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
-#    EOF
+# resource "null_resource" "dummy_dependency2" {
+#   depends_on = [ "null_resource.aws_keypair" ]
 # }
-
-#}

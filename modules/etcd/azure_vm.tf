@@ -34,14 +34,17 @@ resource "azurerm_virtual_machine" "test" {
 
   os_profile {
     computer_name  = "hostname"
-    admin_username = "testadmin"
+    admin_username = "dlx"
     admin_password = "Password1234!"
   }
 
   os_profile_linux_config {
-    disable_password_authentication = false
+    disable_password_authentication = true
+    ssh_keys {
+      path = "/home/dlx/.ssh/authorized_keys"
+      key_data = "${file("/cncf/data/.ssh/id_rsa.pub")}"
   }
-
+ }
 }
 
 # resource "aws_instance" "etcd" {
