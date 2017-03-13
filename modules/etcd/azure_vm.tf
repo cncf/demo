@@ -36,6 +36,7 @@ resource "azurerm_virtual_machine" "test" {
     computer_name  = "hostname"
     admin_username = "dlx"
     admin_password = "Password1234!"
+    custom_data = "${ element(data.template_file.cloud-config.*.rendered, count.index) }"
   }
 
   os_profile_linux_config {
