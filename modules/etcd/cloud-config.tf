@@ -15,7 +15,7 @@ data "template_file" "cloud-config" {
     hyperkube-tag = "${ var.hyperkube-tag }"
     internal-tld = "${ var.internal-tld }"
     pod-ip-range = "${ var.pod-ip-range }"
-    region = "${ var.region }"
+    location = "${ var.location }"
     service-cluster-ip-range = "${ var.service-cluster-ip-range }"
     # ssl-tar = "ssl/k8s-apiserver.tar"
   }
