@@ -44,6 +44,8 @@ resource "azurerm_virtual_machine" "tes2t" {
     computer_name  = "hostname"
     admin_username = "dlx"
     admin_password = "Password1234!"
+    #custom_data = "${base64encode("touch /tmp/afile")}"
+    custom_data = "${file("${path.module}/user-data2.yml")}"
   }
 
   os_profile_linux_config {
@@ -54,6 +56,13 @@ resource "azurerm_virtual_machine" "tes2t" {
     }
   }
 }
+
+# data "template_file" "user-data" {
+#   template = "${ file( "${ path.module }/user-data.yml" )}"
+#   vars {
+#     internal-tld = "${ var.internal-tld }"
+#   }
+# }
 
 # resource "aws_instance" "bastion" {
 #   ami = "${ var.ami-id }"

@@ -9,7 +9,7 @@ resource "azurerm_resource_group" "main" {
   }
 
 resource "azurerm_storage_account" "test" {
-  name                = "accsa123123"
+  name                = "accsa1231234"
   resource_group_name = "${azurerm_resource_group.main.name}"
   location            = "${azurerm_resource_group.main.location}"
   account_type        = "Standard_LRS"

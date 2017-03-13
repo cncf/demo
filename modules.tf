@@ -95,6 +95,7 @@ module "bastion" {
   storage-primary-endpoint = "${ azurerm_storage_account.test.primary_blob_endpoint }"
   storage-container = "${ azurerm_storage_container.test.name }"
   availability-id = "${ azurerm_availability_set.test.id }"
+  internal-tld = "${ var.internal-tld }"
 }
 
 

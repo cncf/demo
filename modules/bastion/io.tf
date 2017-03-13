@@ -3,7 +3,7 @@
 # variable "cidr-allow-ssh" {}
 # variable "depends-id" {}
 # variable "instance-type" {}
-# variable "internal-tld" {}
+variable "internal-tld" {}
 # variable "key-name" {}
 # variable "security-group-id" {}
 # variable "subnet-ids" {}
