@@ -11,7 +11,7 @@ resource "azurerm_virtual_network" "main" {
   resource_group_name = "${ var.name }"
   address_space       = ["${ var.cidr }"]
   location            = "West US"
-  dns_servers         = ["10.0.0.4", "10.0.0.5"]
+  #dns_servers         = ["10.0.0.4", "10.0.0.5"]
 
   #tags {
    #builtWith = "terraform"

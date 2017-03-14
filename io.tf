@@ -107,6 +107,7 @@ variable "dir-key-pair" { default = "/cncf/data"}
 #output "worker-autoscaling-group-name" { value = "${ module.worker.autoscaling-group-name }" }
 output "fqdn-k8s" { value = "${ module.etcd.fqdn-lb}" }
 output "bastion-ip" { value = "${ module.bastion.bastion-ip}" }
+output "dns" { value = "${ module.route53.internal-name-servers }" }
 #Gen Certs
 resource "null_resource" "ssl_gen" {
 
