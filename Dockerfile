@@ -33,8 +33,6 @@ COPY modules /cncf/modules
 COPY io.tf modules.tf modules_override.tf vpc-existing.tfvars terraform.tfvars wait-for-cluster init-cfssl /cncf/
 COPY entrypoint.sh /cncf/
 COPY runme /cncf/
-RUN mkdir -p /cncf/data/.ssh
-RUN ssh-keygen -t rsa -f /cncf/data/.ssh/id_rsa -N ''
 RUN chmod +x /cncf/entrypoint.sh
 
 
