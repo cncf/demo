@@ -1,21 +1,24 @@
 resource "azurerm_network_interface" "test" {
-  name                = "acctni"
+  count = "${ length( split(",", var.etcd-ips) ) }"
+  name                = "etcd-interface${ count.index + 1 }"
   location            = "${ var.location }"
   resource_group_name = "${ var.name }"
 
   ip_configuration {
-    name                          = "testconfiguration1"
+    name                          = "etcd-nic${ count.index + 1 }"
     subnet_id                     = "${ var.subnet-id }"
-    private_ip_address_allocation = "dynamic"
+    private_ip_address_allocation = "static"
+    private_ip_address            = "${ element(split(",", var.etcd-ips), count.index) }"
   }
 }
 
 resource "azurerm_virtual_machine" "test" {
-  name                  = "acctvm"
+  count = "${ length( split(",", var.etcd-ips) ) }"
+  name                  = "etcd-vms${ count.index + 1 }"
   location              = "West US"
   availability_set_id   = "${ var.availability-id }"
   resource_group_name = "${ var.name }"
-  network_interface_ids = ["${azurerm_network_interface.test.id}"]
+  network_interface_ids = ["${ element(azurerm_network_interface.test.*.id, count.index) }"] 
   vm_size               = "Standard_A0"
 
   storage_image_reference {
@@ -26,14 +29,14 @@ resource "azurerm_virtual_machine" "test" {
   }
 
   storage_os_disk {
-    name          = "myosdisk1"
-    vhd_uri       = "${ var.storage-primary-endpoint }${ var.storage-container }/myosdisk1.vhd"
+    name          = "etcd-disks${ count.index + 1 }"
+    vhd_uri       = "${ var.storage-primary-endpoint }${ var.storage-container }/etcd-vhd${ count.index + 1 }.vhd"
     caching       = "ReadWrite"
     create_option = "FromImage"
   }
 
   os_profile {
-    computer_name  = "hostname"
+    computer_name  = "etcd-master${ count.index + 1 }"
     admin_username = "dlx"
     admin_password = "Password1234!"
     custom_data = "${ element(data.template_file.cloud-config.*.rendered, count.index) }"
