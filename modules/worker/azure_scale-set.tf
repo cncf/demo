@@ -15,6 +15,7 @@ resource "azurerm_virtual_machine_scale_set" "test" {
     computer_name_prefix = "testvm"
     admin_username = "dlx"
     admin_password = "Passwword1234"
+    custom_data = "${ data.template_file.cloud-config.rendered }"
   }
 
   os_profile_linux_config {

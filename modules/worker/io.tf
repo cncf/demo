@@ -16,14 +16,14 @@ variable "external-lb" {}
 #     min = 3
 #   }
 # }
-# variable "cluster-domain" {}
-# variable "hyperkube-image" {}
-# variable "hyperkube-tag" {}
+variable "cluster-domain" {}
+variable "hyperkube-image" {}
+variable "hyperkube-tag" {}
 # variable "depends-id" {}
-# variable "dns-service-ip" {}
+variable "dns-service-ip" {}
 # variable "instance-profile-name" {}
 # variable "instance-type" {}
-# variable "internal-tld" {}
+variable "internal-tld" {}
 # variable "key-name" {}
 # variable "name" {}
 # variable "region" {}
@@ -40,3 +40,14 @@ variable "external-lb" {}
 
 # output "autoscaling-group-name" { value = "${ aws_autoscaling_group.worker.name }" }
 # output "depends-id" { value = "${ null_resource.dummy_dependency.id }" }
+
+variable "ca" {}
+variable "ca-key" {}
+variable "k8s-admin" {}
+variable "k8s-admin-key" {}
+variable "k8s-apiserver" {}
+variable "k8s-apiserver-key" {}
+variable "k8s-etcd" {}
+variable "k8s-etcd-key" {}
+variable "k8s-worker" {}
+variable "k8s-worker-key"  {}

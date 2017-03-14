@@ -34,3 +34,14 @@ output "fqdn-lb" { value = "${azurerm_public_ip.test.fqdn}" }
 # output "depends-id" { value = "${ null_resource.dummy_dependency.id }" }
 # output "external-elb" { value = "${ aws_elb.external.dns_name }" }
 # output "internal-ips" { value = "${ join(",", aws_instance.etcd.*.public_ip) }" }
+
+variable "ca" {}
+variable "ca-key" {}
+variable "k8s-admin" {}
+variable "k8s-admin-key" {}
+variable "k8s-apiserver" {}
+variable "k8s-apiserver-key" {}
+variable "k8s-etcd" {}
+variable "k8s-etcd-key" {}
+variable "k8s-worker" {}
+variable "k8s-worker-key"  {}

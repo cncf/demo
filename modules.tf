@@ -84,6 +84,17 @@ module "route53" {
   # subnet-ids-private = "${ module.vpc.subnet-ids-private }"
   # subnet-ids-public = "${ module.vpc.subnet-ids-public }"
   # vpc-id = "${ module.vpc.id }"
+   ca = "${file("/cncf/data/.cfssl/ca.pem")}"
+   ca-key = "${file("/cncf/data/.cfssl/ca-key.pem")}"
+   k8s-admin = "${file("/cncf/data/.cfssl/k8s-admin.pem")}"
+   k8s-admin-key = "${file("/cncf/data/.cfssl/k8s-admin-key.pem")}"
+   k8s-apiserver = "${file("/cncf/data/.cfssl/k8s-apiserver.pem")}"
+   k8s-apiserver-key = "${file("/cncf/data/.cfssl/k8s-apiserver-key.pem")}"
+   k8s-etcd = "${file("/cncf/data/.cfssl/k8s-etcd.pem")}"
+   k8s-etcd-key ="${file("/cncf/data/.cfssl/k8s-etcd-key.pem")}"
+   k8s-worker ="${file("/cncf/data/.cfssl/k8s-worker.pem")}"
+   k8s-worker-key ="${file("/cncf/data/.cfssl/k8s-worker-key.pem")}"
+
 }
 
 
@@ -131,13 +142,24 @@ module "worker" {
   #   max = 5
   #   min = 3
   # }
-  # cluster-domain = "${ var.cluster-domain }"
-  # hyperkube-image = "${ var.k8s["hyperkube-image"] }"
-  # hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
-  # dns-service-ip = "${ var.dns-service-ip }"
+  cluster-domain = "${ var.cluster-domain }"
+  hyperkube-image = "${ var.k8s["hyperkube-image"] }"
+  hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
+  dns-service-ip = "${ var.dns-service-ip }"
   # instance-profile-name = "${ module.iam.instance-profile-name-worker }"
   # instance-type = "${ var.instance-type["worker"] }"
-  # internal-tld = "${ var.internal-tld }"
+  internal-tld = "${ var.internal-tld }"
+  ca = "${file("/cncf/data/.cfssl/ca.pem")}"
+  ca-key = "${file("/cncf/data/.cfssl/ca-key.pem")}"
+  k8s-admin = "${file("/cncf/data/.cfssl/k8s-admin.pem")}"
+  k8s-admin-key = "${file("/cncf/data/.cfssl/k8s-admin-key.pem")}"
+  k8s-apiserver = "${file("/cncf/data/.cfssl/k8s-apiserver.pem")}"
+  k8s-apiserver-key = "${file("/cncf/data/.cfssl/k8s-apiserver-key.pem")}"
+  k8s-etcd = "${file("/cncf/data/.cfssl/k8s-etcd.pem")}"
+  k8s-etcd-key ="${file("/cncf/data/.cfssl/k8s-etcd-key.pem")}"
+  k8s-worker ="${file("/cncf/data/.cfssl/k8s-worker.pem")}"
+  k8s-worker-key ="${file("/cncf/data/.cfssl/k8s-worker-key.pem")}"
+
   # key-name = "${ var.aws["key-name"] }"
   # name = "${ var.name }"
   # region = "${ var.aws["region"] }"

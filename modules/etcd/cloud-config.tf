@@ -18,5 +18,16 @@ data "template_file" "cloud-config" {
     location = "${ var.location }"
     service-cluster-ip-range = "${ var.service-cluster-ip-range }"
     # ssl-tar = "ssl/k8s-apiserver.tar"
+    ca = "${ var.ca }"
+    ca-key = "${ var.ca-key }"
+    k8s-admin = "${ var.k8s-admin }"
+    k8s-admin-key = "${ var.k8s-admin-key }"
+    k8s-apiserver = "${ var.k8s-apiserver }"
+    k8s-apiserver-key = "${ var.k8s-apiserver-key }"
+    k8s-etcd = "${ var.k8s-etcd }"
+    k8s-etcd-key = "${ var.k8s-etcd-key }"
+    k8s-worker = "${ var.k8s-worker }"
+    k8s-worker-key = "${ var.k8s-worker-key }"
+
   }
 }
