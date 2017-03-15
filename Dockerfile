@@ -27,11 +27,8 @@ RUN go get -u github.com/cloudflare/cfssl/cmd/cfssl && \
 go get -u github.com/cloudflare/cfssl/cmd/...
 
 WORKDIR /cncf
-COPY AddOns /cncf/AddOns
-COPY Demo /cncf/Demo
-COPY modules /cncf/modules
-COPY io.tf modules.tf modules_override.tf vpc-existing.tfvars terraform.tfvars wait-for-cluster init-cfssl /cncf/
 COPY entrypoint.sh /cncf/
+COPY aws /aws/
 RUN chmod +x /cncf/entrypoint.sh
 
 

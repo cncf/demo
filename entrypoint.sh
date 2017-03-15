@@ -22,16 +22,8 @@ fi
 # Run CMD
 if [ "$@" = "" ] ; then
     echo $@ not handled yet
-elif [ "$1" = "deploy-cloud" ] ; then
-    make all || true # more logic later
-    kubectl proxy
-elif [ "$1" = "destroy" ] ; then
-    #make .addons
-    #kubectl delete -f .addons/ --recursive || true
-    # kubernetes creates a load balancer on it's own
-    # we need to destroy it before terraform destroy
-    make terraform.tfvars
-    terraform get
-    make clean
-    #make destroy
+elif [ "$1" = "deploy-aws" ] ; then
+    cd /aws && terraform get && terrafrom apply
+elif [ "$1" = "destroy-aws" ] ; then
+    cd /aws && terraform destroy -force
 fi
