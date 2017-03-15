@@ -6,6 +6,7 @@ variable "internal-tld" {}
 variable "name" {}
 variable "region" {}
 variable "service-cluster-ip-range" {}
+variable "dir-ssl" {}
 
 output "bucket-prefix" { value = "${ var.bucket-prefix }" }
 output "depends-id" { value = "${ null_resource.dummy_dependency.id }" }

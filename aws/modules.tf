@@ -9,6 +9,7 @@ module "s3" {
   name = "${ var.name }"
   region = "${ var.aws["region"] }"
   service-cluster-ip-range = "${ var.cidr["service-cluster"] }"
+  dir-ssl = "${ var.dir-ssl }"
 }
 
 module "vpc" {

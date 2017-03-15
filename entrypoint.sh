@@ -10,7 +10,7 @@ set -e
 if [ -f /cncf/data/awsconfig  ] ; then
     echo "Creds Already Exist Don't Gen"
 else
-    cat <<EOF >data/awsconfig
+    cat <<EOF >/cncf/data/awsconfig
 [default]
 output = ${AWS_DEFAULT_OUTPUT:-json}
 region = ${AWS_DEFAULT_REGION:-ap-southeast-2}
@@ -23,7 +23,7 @@ fi
 if [ "$@" = "" ] ; then
     echo $@ not handled yet
 elif [ "$1" = "deploy-aws" ] ; then
-    cd /aws && terraform get && terrafrom apply
+    terraform get /aws && terraform apply /aws
 elif [ "$1" = "destroy-aws" ] ; then
-    cd /aws && terraform destroy -force
+    terraform destroy /aws -force
 fi

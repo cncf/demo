@@ -26,10 +26,11 @@ RUN go get -u github.com/cloudflare/cfssl/cmd/cfssl && \
 #Add Terraform Modules
 go get -u github.com/cloudflare/cfssl/cmd/...
 
-WORKDIR /cncf
+WORKDIR /cncf/data
 COPY entrypoint.sh /cncf/
 COPY aws /aws/
 RUN chmod +x /cncf/entrypoint.sh
 
-#ENTRYPOINT ["/cncf/entrypoint.sh"]
-CMD ["/bin/bash"]
+ENTRYPOINT ["/cncf/entrypoint.sh"]
+CMD ["deploy-aws"]
+#CMD ["/bin/bash"]

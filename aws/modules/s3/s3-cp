@@ -33,13 +33,16 @@ BUCKET=$1
 [ -z "$HYPERKUBE" ] && usage
 [ -z "$INTERNAL_TLD" ] && usage
 [ -z "$REGION" ] && usage
+[ -z "$DIR_SSL"] && usage
 
 # print environment and parameter
 echo "❤ s3-cp using these settings"
 echo envvar HYPERKUBE=${HYPERKUBE}
 echo envvar INTERNAL_TLD=${INTERNAL_TLD}
 echo envvar REGION=${REGION}
+echo envvar DIR_SSL=${DIR_SSL}
 echo parameter BUCKET=${BUCKET}
+
 # FIXME: move this into tfvars
 #echo envvar DIR_SSL=data/.cfssl
 echo "✓ Print environment variables and parameters success"
@@ -47,7 +50,6 @@ echo "✓ Print environment variables and parameters success"
 set -o nounset
 set -o pipefail
 
-DIR_SSL=data/.cfssl
 # verify directories exist
 [ -d "$DIR_SSL" ] || (echo "✗ $DIR_SSL doesn't exist" && exit 1)
 
