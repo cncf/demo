@@ -33,4 +33,3 @@ RUN chmod +x /cncf/entrypoint.sh
 
 ENTRYPOINT ["/cncf/entrypoint.sh"]
 CMD ["aws"]
-#CMD ["/bin/bash"]
