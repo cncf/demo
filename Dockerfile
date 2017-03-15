@@ -31,6 +31,5 @@ COPY entrypoint.sh /cncf/
 COPY aws /aws/
 RUN chmod +x /cncf/entrypoint.sh
 
-
 #ENTRYPOINT ["/cncf/entrypoint.sh"]
 CMD ["/bin/bash"]
