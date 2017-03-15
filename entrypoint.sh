@@ -22,8 +22,8 @@ fi
 # Run CMD
 if [ "$@" = "" ] ; then
     echo $@ not handled yet
-elif [ "$1" = "deploy-aws" ] ; then
-    terraform get /aws && terraform apply /aws
-elif [ "$1" = "destroy-aws" ] ; then
-    terraform destroy /aws -force
+elif [ "$1" = "aws" ] ; then
+    terraform get /aws && time terraform apply /aws
+elif [ "$1" = "aws-destroy" ] ; then
+    time terraform destroy -force /aws
 fi

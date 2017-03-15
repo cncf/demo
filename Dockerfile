@@ -32,5 +32,5 @@ COPY aws /aws/
 RUN chmod +x /cncf/entrypoint.sh
 
 ENTRYPOINT ["/cncf/entrypoint.sh"]
-CMD ["deploy-aws"]
+CMD ["aws"]
 #CMD ["/bin/bash"]
