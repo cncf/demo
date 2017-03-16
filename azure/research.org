@@ -19,7 +19,11 @@ Currently the cncf/demo [[https://github.com/cncf/demo/commit/62b4ee750cea96ac18
 #+NAME:list azure default images 
 #+BEGIN_SRC shell
 az vm image list -o table 
-#+END_SRC
+#+ENce_principal.json
+Retrying role assignment creation: 1/36
+Retrying role assignment creation: 2/36
+Retrying role assignment creation: 3/36
+v_SRC
 
 #+RESULTS[f42a28cef38b0b7c3346005ad6b0128d06d069b1]: list azure default images
 | Offer         | Publisher              | Sku                | Urn                                                            | UrnAlias            | Version   |
@@ -41,7 +45,11 @@ We are looking for CentOS, and looks like the default Publisher is OpenLogic. Le
 #+NAME: list OpenLogic CentOS sku offers
 #+BEGIN_SRC shell
 az vm image list-skus -o table --publisher OpenLogic --location westus --offer CentOS
-#+END_SRC
+#+ENce_principal.json
+Retrying role assignment creation: 1/36
+Retrying role assignment creation: 2/36
+Retrying role assignment creation: 3/36
+v_SRC
 
 #+RESULTS[bd6ed1e6f2fc3c614c736373beafd146068045f4]: list OpenLogic CentOS sku offers
 | Location   |   Name |
@@ -61,7 +69,11 @@ I prefer not to use 'latest' anywhere, let's grab the precise version of CentOS 
 #+NAME: list OpenLogic CentOS 7.3 Versions
 #+BEGIN_SRC shell
 az vm image list --offer centos -o table --publisher openlogic --sku 7.3 --all
-#+END_SRC
+#+ENce_principal.json
+Retrying role assignment creation: 1/36
+Retrying role assignment creation: 2/36
+Retrying role assignment creation: 3/36
+v_SRC
 
 #+RESULTS[7a0228f7fd750965697c45a561145ee0cb58e207]: list OpenLogic CentOS 7.3 Versions
 | Offer   | Publisher   | Sku   | Urn                               | Version      |
@@ -69,6 +81,97 @@ az vm image list --offer centos -o table --publisher openlogic --sku 7.3 --all
 | CentOS  | OpenLogic   | 7.3   | OpenLogic:CentOS:7.3:7.3.20161221 | 7.3.20161221 |
 
 I'm comfortable using this image as our base.
+
+
+* Communicating to Azure from Terraform
+
+The [[https://github.com/Azure/azure-cli][Azure-CLI]] can be utilized to create creds for terraform.
+
+We need to get it installed into the container
+
+
+[[https://azure.microsoft.com/en-us/blog/run-azure-cli-as-a-docker-container-avoid-installation-and-setup/][Run Azure CLI as a Docker Container]]
+
+#+BEGIN_SRC shell
+$ docker run -v $(pwd)/.azure-cli-creds:/root -it azuresdk/azure-cli-python az login
+To sign in, use a web browser to open the page https://aka.ms/devicelogin and enter the code GLKE7GL6F to authenticate.
+[
+  {
+    "cloudName": "AzureCloud",
+    "id": "5358e673-95e7-4cd8-9791-ca28dd5e3cbb",
+    "isDefault": true,
+    "name": "Free Trial",
+    "state": "Enabled",
+    "tenantId": "9996322a-93ac-43ae-80be-887a3e8194a1",
+    "user": {
+      "name": "azure@ii.coop",
+      "type": "user"
+    }
+  }
+]
+
+#+END_SRC
+
+#+BEGIN_SRC shell
+ARM_SUBSCRIPTION_ID=$(az account list | jq '. | map([.id] | join("\n")) | join("\n")' | sed 's/"//g')
+az account set --subscription="${ARM_SUBSCRIPTION_ID}"
+az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/${ARM_SUBSCRIPTION_ID}" | tee servicePrincipalProfile.json
+ARM_CLIENT_ID=$(jq -r .appId servicePrincipalProfile.json)
+ARM_CLIENT_SECRET=$(jq -r .password servicePrincipalProfile.json)
+ARM_TENANT_ID=$(jq -r .tenant servicePrincipalProfile.json)
+#+END_SRC
+
+#+NAME: list my lb
+#+BEGIN_SRC shell :format js
+az network lb list --output table
+#+END_SRC
+
+#+RESULTS[50522849401e494e714a1f3cb413e3a936dd0cb3]: list my lb
+| Location   | Name             | ProvisioningState   | ResourceGroup   | ResourceGuid                         |
+| ---------- | ---------------- | ------------------- | --------------- | ------------------------------------ |
+| westus     | TestLoadBalancer | Succeeded           | deploy          | 93247839-cdcd-4d24-b461-acafafc59833 |
+
+
+#+NAME: my my lb
+#+BEGIN_SRC shell :format js
+az network lb show --name TestLoadBalancer --resource-group test
+#az network lb show TestLoadBalancer
+#+END_SRC
+
+#+NAME: list resource group
+#+BEGIN_SRC shell
+az group list -o table
+#+END_SRC
+
+#+RESULTS[e1c878abc4d0ba479f12a7c7ae192f70a58feec1]: list resource group
+| Name   | Location   | Status    |
+| ------ | ---------- | --------- |
+| deploy | westus     | Succeeded |
+
+#+NAME: my my lb
+#+BEGIN_SRC shell :format js
+az network lb show --name TestLoadBalancer --resource-group deploy -o table
+#az network lb show TestLoadBalancer
+#+END_SRC
+
+#+RESULTS[75c3b3395ca9f70185e880e4c9b14338b7287472]: my my lb
+| Location   | Name             | ProvisioningState   | ResourceGroup   | ResourceGuid                         |
+| ---------- | ---------------- | ------------------- | --------------- | ------------------------------------ |
+| westus     | TestLoadBalancer | Succeeded           | deploy          | 93247839-cdcd-4d24-b461-acafafc59833 |
+
+
+#+BEGIN_SRC 
+
+openssl x509 -in .cfssl/k8s-admin.pem -noout -text
+openssl x509 -in .cfssl/k8s-apiserver.pem -noout -text
+
+
+#+END_SRC
+
+#+BEGIN_SRC shell
+az group delete --name deploy --yes
+
+#+END_SRC
 
 * Summary
 
