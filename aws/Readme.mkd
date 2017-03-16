@@ -10,9 +10,7 @@
   - IAMFullAccess
   - IAMUserChangePassword
 
-* update data/terraform.tfvars
-
-Contains config.
+* optionally update config data/terraform.tfvars
 
 ## export AWS Authentication
 
@@ -24,7 +22,9 @@ export AWS_SECRET_ACCESS_KEY="YOUR_AWS_SECRET_KEY"
 ## create AWS Kubernetes Endpoint
 
 ```
-docker run -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -v $(pwd)/data:/cncf/data create/aws
+docker run -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+           -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+           -v $(pwd)/data:/cncf/data create/aws
 ```
 
 ## configure kubectl on local system
@@ -73,5 +73,7 @@ users:
 ## destroy AWS Kubernetes Endpoint
 
 ```
-docker run -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -v $(pwd)/data:/cncf/data terminate/aws
+docker run -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY \
+           -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+           -v $(pwd)/data:/cncf/data terminate/aws
 ```
