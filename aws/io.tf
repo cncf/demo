@@ -84,14 +84,6 @@ ${ var.k8s-service-ip }
 EOF
  }
 
-  provisioner "local-exec" {
-    when = "destroy"
-    on_failure = "continue"
-    command = <<EOF
-rm -rf ${ var.dir-ssl }
-EOF
- }
-
 }
 
 resource "null_resource" "dummy_dependency" {
@@ -110,7 +102,17 @@ aws --region ${ var.aws ["region"] } ec2 create-key-pair \
  > ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
 chmod 400 ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
 EOF
- }
+  }
+
+}
+
+resource "null_resource" "dummy_dependency2" {
+  depends_on = [ "null_resource.aws_keypair" ]
+}
+
+
+# Clean-up Destroy
+resource "null_resource" "cleanup" {
 
   provisioner "local-exec" {
     when = "destroy"
@@ -118,7 +120,17 @@ EOF
     command = <<EOF
 aws --region ${ var.aws["region"] } ec2 delete-key-pair --key-name ${ var.aws["key-name"] } || true
 rm -rf ${ var.dir-key-pair }/${ var.aws["key-name"] }.pem
-    EOF
- }
+rm -rf ${ var.dir-ssl }
+rm -rf /cncf/data/terraform.tfstate*
+rm -rf /cncf/data/kubeconfig
+rm -rf /cncf/data/awsconfig
+rm -rf /cncf/data/.terraform
+rm -rf /cncf/data/tmp
+EOF
+  }
 
+}
+
+resource "null_resource" "dummy_dependency3" {
+  depends_on = [ "null_resource.cleanup" ]
 }

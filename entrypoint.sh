@@ -3,6 +3,9 @@
 # RUN ENTRYPOINT.
 
 set -e
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
 # AWS_CONFIG_FILE
 # AWS_DEFAULT_OUTPUT
 # AWS_SHARED_CREDENTIALS_FILE
@@ -23,7 +26,7 @@ fi
 if [ "$@" = "" ] ; then
     echo $@ not handled yet
 elif [ "$1" = "aws" ] ; then
-    terraform get /aws && time terraform apply /aws
+    terraform get /aws && time terraform apply /aws && printf "${RED}\n#Commands to Configue Kubectl \n\n" && printf 'sudo chown -R $(whoami):$(whoami) $(pwd)/data/ \n\n' && printf 'export KUBECONFIG=$(pwd)/data/kubeconfig \n\n'${NC}
 elif [ "$1" = "aws-destroy" ] ; then
     time terraform destroy -force /aws
 fi
