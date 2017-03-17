@@ -25,6 +25,7 @@ s3-bucket = "751789298977-test-ap-southeast-2"
 etcd-ips = "10.0.10.10,10.0.10.11,10.0.10.12"
 dir-ssl = "/cncf/data/.cfssl"
 # # This is merged in with terraform.tfvars for override/existing VPC purposes.  Only to be used in conjunction with modules_override.tf
+# etcd-url = "https://discovery.etcd.io/660fef748f3d3350492ae5939e00ecf4"
 
 # # The existing VPC CIDR range, ensure that the the etcd, controller and worker IPs are in this range
 # cidr.vpc = "10.0.0.0/16"
