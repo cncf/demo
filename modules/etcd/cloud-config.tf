@@ -4,6 +4,7 @@ data "template_file" "cloud-config" {
 
   vars {
     # bucket = "${ var.bucket-prefix }"
+    etcd-url = "${ var.etcd-url }"
     cluster-domain = "${ var.cluster-domain }"
     cluster-token = "etcd-cluster-${ var.name }"
     dns-service-ip = "${ var.dns-service-ip }"
@@ -17,17 +18,8 @@ data "template_file" "cloud-config" {
     pod-ip-range = "${ var.pod-ip-range }"
     location = "${ var.location }"
     service-cluster-ip-range = "${ var.service-cluster-ip-range }"
-    # ssl-tar = "ssl/k8s-apiserver.tar"
-    ca = "${ var.ca }"
-    ca-key = "${ var.ca-key }"
-    k8s-admin = "${ var.k8s-admin }"
-    k8s-admin-key = "${ var.k8s-admin-key }"
-    k8s-apiserver = "${ var.k8s-apiserver }"
-    k8s-apiserver-key = "${ var.k8s-apiserver-key }"
-    k8s-etcd = "${ var.k8s-etcd }"
-    k8s-etcd-key = "${ var.k8s-etcd-key }"
-    k8s-worker = "${ var.k8s-worker }"
-    k8s-worker-key = "${ var.k8s-worker-key }"
+    k8s-apiserver-tar64 = "${ base64encode(var.k8s-apiserver-tar) }"
+    node-ip = "${ element(azurerm_network_interface.test.*.private_ip_address, count.index) }"
 
   }
 }

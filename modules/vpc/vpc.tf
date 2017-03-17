@@ -11,9 +11,7 @@ resource "azurerm_virtual_network" "main" {
   resource_group_name = "${ var.name }"
   address_space       = ["${ var.cidr }"]
   location            = "West US"
-  #dns_servers         = ["10.0.0.4", "10.0.0.5"]
-
-  #tags {
+  # tags {
    #builtWith = "terraform"
    #KubernetesCluster = "${ var.name }"
    #z8s = "${ var.name }"
@@ -22,3 +20,4 @@ resource "azurerm_virtual_network" "main" {
    #visibility = "private,public"
   #}
 }
+

@@ -88,6 +88,7 @@ variable "vpc-existing" {
 }
 variable "dir-ssl" { default = "/cncf/data/.cfssl" }
 variable "dir-key-pair" { default = "/cncf/data"}
+variable "etcd-url" { default = "https://discovery.etcd.io/563aa09b1ab1d81773c5d0c25ed355aa" }
 
 
 # outputs
@@ -107,7 +108,7 @@ variable "dir-key-pair" { default = "/cncf/data"}
 #output "worker-autoscaling-group-name" { value = "${ module.worker.autoscaling-group-name }" }
 output "fqdn-k8s" { value = "${ module.etcd.fqdn-lb}" }
 output "bastion-ip" { value = "${ module.bastion.bastion-ip}" }
-output "dns" { value = "${ module.route53.internal-name-servers }" }
+output "k8s-admin" { value = "${ k8s-admin}"}
 #Gen Certs
 resource "null_resource" "ssl_gen" {
 
@@ -140,6 +141,7 @@ resource "null_resource" "aws_keypair" {
 
  provisioner "local-exec" {
    command = <<EOF
+mkdir -p /cncf/data/.ssh
 ssh-keygen -t rsa -f /cncf/data/.ssh/id_rsa -N ''
 EOF
  }
@@ -148,10 +150,10 @@ EOF
     when = "destroy"
     on_failure = "continue"
     command = <<EOF
-rm -rf /cncf/data/.ssh/id*
-EOF
-  }
-
+   rm -rf /cncf/data/.ssh/id*
+   EOF
+ }
+  
 }
 
 resource "null_resource" "dummy_dependency2" {

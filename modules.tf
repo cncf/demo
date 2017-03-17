@@ -15,10 +15,9 @@
 module "vpc" {
   source = "./modules/vpc"
 
-   #depends-id = ""
-   #azs = "${ var.aws["azs"] }"
-   #hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
-
+  #depends-id = ""
+  #azs = "${ var.aws["azs"] }"
+  #hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
   cidr = "${ var.cidr["vpc"] }"
   name = "${ var.azure["resource-group"] }"
  }
@@ -43,6 +42,7 @@ module "iam" {
 }
 */
 
+/*
 module "route53" {
   source = "./modules/route53"
   # depends-id = "${ module.iam.depends-id }"
@@ -53,6 +53,7 @@ module "route53" {
   #name = "${ var.name }"
   #vpc-id = "${ module.vpc.id }"
 }
+*/
 
  module "etcd" {
    source = "./modules/etcd"
@@ -84,16 +85,9 @@ module "route53" {
   # subnet-ids-private = "${ module.vpc.subnet-ids-private }"
   # subnet-ids-public = "${ module.vpc.subnet-ids-public }"
   # vpc-id = "${ module.vpc.id }"
-   ca = "${file("/cncf/data/.cfssl/ca.pem")}"
-   ca-key = "${file("/cncf/data/.cfssl/ca-key.pem")}"
-   k8s-admin = "${file("/cncf/data/.cfssl/k8s-admin.pem")}"
-   k8s-admin-key = "${file("/cncf/data/.cfssl/k8s-admin-key.pem")}"
-   k8s-apiserver = "${file("/cncf/data/.cfssl/k8s-apiserver.pem")}"
-   k8s-apiserver-key = "${file("/cncf/data/.cfssl/k8s-apiserver-key.pem")}"
-   k8s-etcd = "${file("/cncf/data/.cfssl/k8s-etcd.pem")}"
-   k8s-etcd-key ="${file("/cncf/data/.cfssl/k8s-etcd-key.pem")}"
-   k8s-worker ="${file("/cncf/data/.cfssl/k8s-worker.pem")}"
-   k8s-worker-key ="${file("/cncf/data/.cfssl/k8s-worker-key.pem")}"
+   etcd-url = "${ var.etcd-url }"
+   k8s-apiserver-tar = "${file("/cncf/data/.cfssl/k8s-apiserver.tar")}"
+
 
 }
 

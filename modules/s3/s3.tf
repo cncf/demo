@@ -17,6 +17,7 @@ HYPERKUBE=${ var.hyperkube-image }:${ var.hyperkube-tag } \
 INTERNAL_TLD=${ var.internal-tld } \
 REGION=${ var.region } \
 SERVICE_CLUSTER_IP_RANGE=${ var.service-cluster-ip-range } \
+DIR_SSL=${ var.ssl-dir }
 ${ path.module }/s3-cp ${ var.bucket-prefix }
 EOF
 

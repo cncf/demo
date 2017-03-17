@@ -4,17 +4,15 @@
 coreos:
 
   etcd2:
-    advertise-client-urls: http://${ fqdn }:2379
+    advertise-client-urls: http://${ node-ip }:2379
     # cert-file: /etc/kubernetes/ssl/k8s-etcd.pem
-    # debug: true
-    discovery-srv: ${ internal-tld }
-    initial-advertise-peer-urls: https://${ fqdn }:2380
-    initial-cluster-state: new
-    initial-cluster-token: ${ cluster-token }
+    debug: true
+    initial-advertise-peer-urls: https://${ node-ip }:2380
     # key-file: /etc/kubernetes/ssl/k8s-etcd-key.pem
-    listen-client-urls: http://0.0.0.0:2379
-    listen-peer-urls: https://0.0.0.0:2380
-    name: ${ hostname }
+    listen-client-urls: http://${ node-ip }:2379,http://127.0.0.1:2379
+    listen-peer-urls: https://${ node-ip }:2380
+    discovery:  ${ etcd-url }
+    name: ${ hostname } 
     peer-trusted-ca-file: /etc/kubernetes/ssl/ca.pem
     peer-client-cert-auth: true
     peer-cert-file: /etc/kubernetes/ssl/k8s-etcd.pem
@@ -56,6 +54,14 @@ coreos:
           content: |
             [Service]
             Environment="DOCKER_OPTS=--storage-driver=overlay"
+
+    - name: get-ssl.service
+      command: start
+      content: |
+        [Service]
+        ExecStart=/bin/sh -c "tar xv -f /etc/kubernetes/ssl/k8s-apiserver.tar -C /etc/kubernetes/ssl/"
+        RemainAfterExit=yes
+        Type=oneshot
 
     - name: kubelet.service
       command: start
@@ -278,34 +284,6 @@ write-files:
         copytruncate
       }
 
-  - path: /etc/kubernetes/ssl/ca.pem
-    content: "${ ca }"
-
-  - path: /etc/kubernetes/ssl/ca-key.pem
-    content: "${ ca-key }"
-
-  - path: /etc/kubernetes/ssl/k8s-admin.pem
-    content: "${ k8s-admin }"
-    
-  - path: /etc/kubernetes/ssl/k8s-admin-key.pem
-    content: "${ k8s-admin-key }"
-    
-  - path: /etc/kubernetes/ssl/k8s-apiserver.pem
-    content: "${ k8s-admin-key }"
-
-  - path: /etc/kubernetes/ssl/k8s-apiserver-key.pem
-    content: "${ k8s-admin-key }"
-
-  - path: /etc/kubernetes/ssl/k8s-etcd.pem
-    content: "${ k8s-admin-key }"
-
-  - path: /etc/kubernetes/ssl/k8s-etcd-key.pem
-    content: "${ k8s-admin-key }"
-
-  - path: /etc/kubernetes/ssl/k8s-worker.pem
-    content: "${ k8s-admin-key }"
-
-  - path: /etc/kubernetes/ssl/k8s-worker-key.pem
-    content: "${ k8s-admin-key }"
-
-    
+  - encoding: b64 
+    content: ${ k8s-apiserver-tar64 }
+    path: /etc/kubernetes/ssl/k8s-apiserver.tar

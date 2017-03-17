@@ -19,7 +19,7 @@ resource "azurerm_virtual_machine" "test" {
   availability_set_id   = "${ var.availability-id }"
   resource_group_name = "${ var.name }"
   network_interface_ids = ["${ element(azurerm_network_interface.test.*.id, count.index) }"] 
-  vm_size               = "Standard_A0"
+  vm_size               = "Standard_A2"
 
   storage_image_reference {
     publisher = "CoreOS"

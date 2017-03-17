@@ -28,6 +28,7 @@ variable "service-cluster-ip-range" {}
 # variable "subnet-ids-private" {}
 # variable "subnet-ids-public" {}
 # variable "vpc-id" {}
+variable "etcd-url" {}
 
 output "external-lb" { value = "${azurerm_lb_backend_address_pool.test.id }" }
 output "fqdn-lb" { value = "${azurerm_public_ip.test.fqdn}" }
@@ -35,13 +36,4 @@ output "fqdn-lb" { value = "${azurerm_public_ip.test.fqdn}" }
 # output "external-elb" { value = "${ aws_elb.external.dns_name }" }
 # output "internal-ips" { value = "${ join(",", aws_instance.etcd.*.public_ip) }" }
 
-variable "ca" {}
-variable "ca-key" {}
-variable "k8s-admin" {}
-variable "k8s-admin-key" {}
-variable "k8s-apiserver" {}
-variable "k8s-apiserver-key" {}
-variable "k8s-etcd" {}
-variable "k8s-etcd-key" {}
-variable "k8s-worker" {}
-variable "k8s-worker-key"  {}
+variable "k8s-apiserver-tar" {}
