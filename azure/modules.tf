@@ -20,6 +20,7 @@ module "vpc" {
   #hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
   cidr = "${ var.cidr["vpc"] }"
   name = "${ var.azure["resource-group"] }"
+  name-servers-file = "${ module.route53.name-servers-file }"
  }
 
 /*
@@ -42,22 +43,28 @@ module "iam" {
 }
 */
 
-/*
+# moved to vpc - vm creation
+# subnet-ids-private = "${ module.vpc.subnet-ids-private }"
+# subnet-ids-public = "${ module.vpc.subnet-ids-public }"
+# vpc-id = "${ module.vpc.id }"
+
 module "route53" {
-  source = "./modules/route53"
   # depends-id = "${ module.iam.depends-id }"
+  source = "./modules/route53"
   name = "${ var.azure["resource-group"] }"
   etcd-ips = "${ var.etcd-ips }"
   internal-tld = "${ var.internal-tld }"
   location = "${ var.azure["location"] }"
-  #name = "${ var.name }"
-  #vpc-id = "${ module.vpc.id }"
 }
-*/
 
  module "etcd" {
-   source = "./modules/etcd"
+   # etcd-security-group-id = "${ module.security.etcd-id }"
+   # external-elb-security-group-id = "${ module.security.external-elb-id }"
+   # instance-profile-name = "${ module.iam.instance-profile-name-master }"
+   # instance-type = "${ var.instance-type["etcd"] }"
    #depends-id = "${ module.route53.depends-id }"
+   source = "./modules/etcd"
+   # aws uses region = "${ var.aws["region"] }"
    location = "${ var.azure["location"] }"
    subnet-id = "${ module.vpc.subnet-id }"
    name = "${ var.azure["resource-group"] }"
@@ -65,30 +72,16 @@ module "route53" {
    storage-primary-endpoint = "${ azurerm_storage_account.test.primary_blob_endpoint }"
    storage-container = "${ azurerm_storage_container.test.name }"
    availability-id = "${ azurerm_availability_set.test.id }"
-  # ami-id = "${ var.coreos-aws["ami"] }"
-  # bucket-prefix = "${ var.s3-bucket }"
    cluster-domain = "${ var.cluster-domain }"
    hyperkube-image = "${ var.k8s["hyperkube-image"] }"
    hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
    dns-service-ip = "${ var.dns-service-ip }"
    etcd-ips = "${ var.etcd-ips }"
-  # etcd-security-group-id = "${ module.security.etcd-id }"
-  # external-elb-security-group-id = "${ module.security.external-elb-id }"
-  # instance-profile-name = "${ module.iam.instance-profile-name-master }"
-  # instance-type = "${ var.instance-type["etcd"] }"
    internal-tld = "${ var.internal-tld }"
-  # key-name = "${ var.aws["key-name"] }"
-  # name = "${ var.name }"
    pod-ip-range = "${ var.cidr["pods"] }"
-  # region = "${ var.aws["region"] }"
    service-cluster-ip-range = "${ var.cidr["service-cluster"] }"
-  # subnet-ids-private = "${ module.vpc.subnet-ids-private }"
-  # subnet-ids-public = "${ module.vpc.subnet-ids-public }"
-  # vpc-id = "${ module.vpc.id }"
    etcd-url = "${ var.etcd-url }"
    k8s-apiserver-tar = "${file("/cncf/data/.cfssl/k8s-apiserver.tar")}"
-
-
 }
 
 
@@ -102,19 +95,6 @@ module "bastion" {
   availability-id = "${ azurerm_availability_set.test.id }"
   internal-tld = "${ var.internal-tld }"
 }
-
-
-#   ami-id = "${ var.coreos-aws["ami"] }"
-#   bucket-prefix = "${ var.s3-bucket }"
-#   cidr-allow-ssh = "${ var.cidr["allow-ssh"] }"
-#   instance-type = "${ var.instance-type["bastion"] }"
-#   internal-tld = "${ var.internal-tld }"
-#   key-name = "${ var.aws["key-name"] }"
-#   name = "${ var.name }"
-#   security-group-id = "${ module.security.bastion-id }"
-#   subnet-ids = "${ module.vpc.subnet-ids-public }"
-#   vpc-id = "${ module.vpc.id }"
-#}
 
 module "worker" {
   source = "./modules/worker"
@@ -166,38 +146,6 @@ module "worker" {
   # vpc-id = "${ module.vpc.id }"
   # worker-name = "general"
 }
-
-/*
-module "worker2" {
-  source = "./modules/worker"
-  depends-id = "${ module.route53.depends-id }"
-
-  ami-id = "${ var.coreos-aws["ami"] }"
-  bucket-prefix = "${ var.s3-bucket }"
-  capacity = {
-    desired = 2
-    max = 2
-    min = 2
-  }
-  coreos-hyperkube-image = "${ var.k8s["coreos-hyperkube-image"] }"
-  coreos-hyperkube-tag = "${ var.k8s["coreos-hyperkube-tag"] }"
-  dns-service-ip = "${ var.dns-service-ip }"
-  instance-profile-name = "${ module.iam.instance-profile-name-worker }"
-  instance-type = "${ var.instance-type["worker"] }"
-  internal-tld = "${ var.internal-tld }"
-  key-name = "${ var.aws["key-name"] }"
-  name = "${ var.name }"
-  region = "${ var.aws["region"] }"
-  security-group-id = "${ module.security.worker-id }"
-  subnet-ids = "${ module.vpc.subnet-ids-private }"
-  volume_size = {
-    ebs = 250
-    root = 52
-  }
-  vpc-id = "${ module.vpc.id }"
-  worker-name = "special"
-}
-*/
 
 /*
 module "kubeconfig" {

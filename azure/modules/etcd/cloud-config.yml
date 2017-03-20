@@ -4,14 +4,16 @@
 coreos:
 
   etcd2:
-    advertise-client-urls: http://${ node-ip }:2379
+    advertise-client-urls: http://${ fqdn }:2379
     # cert-file: /etc/kubernetes/ssl/k8s-etcd.pem
     debug: true
-    initial-advertise-peer-urls: https://${ node-ip }:2380
+    discovery-srv: ${ internal-tld }
+    initial-advertise-peer-urls: https://${ fqdn }:2380
+    initial-cluster-state: new
+    initial-cluster-token: ${ cluster-token }
     # key-file: /etc/kubernetes/ssl/k8s-etcd-key.pem
-    listen-client-urls: http://${ node-ip }:2379,http://127.0.0.1:2379
+    listen-client-urls: http://${ node-ip }:2379
     listen-peer-urls: https://${ node-ip }:2380
-    discovery:  ${ etcd-url }
     name: ${ hostname } 
     peer-trusted-ca-file: /etc/kubernetes/ssl/ca.pem
     peer-client-cert-auth: true
@@ -133,7 +135,7 @@ write-files:
           - --admission-control=ServiceAccount
           - --allow-privileged=true
           - --client-ca-file=/etc/kubernetes/ssl/ca.pem
-          - --cloud-provider=aws
+          - --cloud-provider=azure
           - --etcd-servers=http://etcd.${ internal-tld }:2379
           - --insecure-bind-address=0.0.0.0
           - --secure-port=443

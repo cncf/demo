@@ -8,7 +8,7 @@ resource "azurerm_network_interface" "test" {
     name                          = "etcd-nic${ count.index + 1 }"
     subnet_id                     = "${ var.subnet-id }"
     private_ip_address_allocation = "static"
-    private_ip_address            = "${ element(split(",", var.etcd-ips), count.index) }"
+    private_ip_address            = "${ element( split(",", var.etcd-ips), count.index ) }"
   }
 }
 

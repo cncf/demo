@@ -10,9 +10,9 @@ cidr = {
   service-cluster = "10.3.0.0/24"
   vpc = "10.0.0.0/16"
 }
-coreos-aws = {
-  ami = "CoreOS Linux (Stable)"
-}
+
+# Add CoreOS Versions etc
+
 k8s = {
     hyperkube-image = "quay.io/coreos/hyperkube"
     hyperkube-tag = "v1.4.7_coreos.0"

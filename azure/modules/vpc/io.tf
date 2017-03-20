@@ -3,6 +3,7 @@ variable "cidr" {}
 #variable "hyperkube-tag" {}
 #variable "depends-id" {}
 variable "name" {}
+variable "name-servers-file" {}
 #variable "region" {}
 
 #output "depends-id" { value = "${null_resource.dummy_dependency.id}" }

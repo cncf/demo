@@ -3,6 +3,38 @@ resource "azurerm_dns_zone" "test" {
   resource_group_name = "${ var.name }"
 }
 
+#Name Servers 
+resource "null_resource" "ns_to_ip_files" {
+  # Error running plan: 1 error(s) occurred:
+  # * module.route53.null_resource.ns_to_ip_list: null_resource.ns_to_ip_list: value of 'count' cannot be computed
+  # FIXME: hardcoding to  4
+  count = 2
+  depends_on = [ "azurerm_dns_zone.test" ]
+  provisioner "local-exec" {
+    # filename = "/dev/null"
+    command = <<EOF
+# grab ip for this nameserver into a file
+dig +short ${ element(azurerm_dns_zone.test.name_servers,count.index) } > ${ var.name-servers-file }.${ count.index }.ip
+EOF
+  }
+}
+
+resource "null_resource" "ip_files_to_csv" {
+  depends_on = [ "null_resource.ns_to_ip_files" ]
+  provisioner "local-exec" {
+    # filename = "/dev/null"
+    command = <<EOF
+# collect them all into a csv 
+# wait for them all to appear
+sleep 4
+cat ${ var.name-servers-file }.*.ip \
+| sed -n -e 'H;$${x;s/\n/,/g;s/^,//;p;}' \
+| tr -d '\n' \
+> ${ var.name-servers-file}
+EOF
+  }
+}
+
 resource "azurerm_dns_a_record" "A-etcd" {
   name = "etcd"
   zone_name = "${azurerm_dns_zone.test.name}"
