@@ -7,9 +7,9 @@ variable "storage-container" {}
 variable "availability-id" {}
 variable "external-lb" {}
 variable "cluster-domain" {}
-variable "hyperkube-image" {}
-variable "hyperkube-tag" {}
 variable "dns-service-ip" {}
 variable "internal-tld" {}
 variable "admin-username" {}
 variable "k8s-worker-tar"  {}
+variable "kubelet-image-url" {}
+variable "kubelet-image-tag" {}

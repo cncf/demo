@@ -50,9 +50,9 @@ coreos:
         [Unit]
         ConditionFileIsExecutable=/usr/lib/coreos/kubelet-wrapper
         [Service]
-        Environment="KUBELET_ACI=${ hyperkube-image }"
-        Environment="KUBELET_VERSION=${ hyperkube-tag }"
-        Environment="RKT_OPTS=\
+        Environment="KUBELET_IMAGE_URL=${ kubelet-image-url }"
+        Environment="KUBELET_IMAGE_TAG=${ kubelet-image-tag }"
+        Environment="RKT_RUN_ARGS=\
           --volume dns,kind=host,source=/etc/resolv.conf \
           --mount volume=dns,target=/etc/resolv.conf \
           --volume rkt,kind=host,source=/opt/bin/host-rkt \
@@ -125,7 +125,7 @@ write-files:
         hostNetwork: true
         containers:
         - name: kube-proxy
-          image: ${ hyperkube-image }:${ hyperkube-tag }
+          image: ${ kubelet-image-url }:${ kubelet-image-tag }
           command:
           - /hyperkube
           - proxy

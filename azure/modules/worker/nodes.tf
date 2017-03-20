@@ -132,7 +132,7 @@ resource "aws_autoscaling_group" "worker" {
 
   tag {
     key = "version"
-    value = "${ var.hyperkube-tag }"
+    value = "${ var.kubelet-image-tag }"
     propagate_at_launch = true
   }
 

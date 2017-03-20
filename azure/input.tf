@@ -27,13 +27,17 @@ variable "instance-type" {
   }
 }
 variable "internal-tld" {}
+
+# Set from https://quay.io/repository/coreos/hyperkube?tab=tags
 variable "k8s" {
   default = {
-    hyperkube-image = "quay.io/coreos/hyperkube"
-    hyperkube-tag = "v1.5.1_coreos.0"
+    kubelet-image-url = "quay.io/coreos/hyperkube"
+    kubelet-image-tag = "v1.5.1_coreos.0"
   }
 }
+
 variable "k8s-service-ip" { default = "10.3.0.1" }
+
 variable "vpc-existing" {
   default = {
     id = ""

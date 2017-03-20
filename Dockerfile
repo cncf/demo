@@ -6,9 +6,7 @@ ENV ARC=amd64
 ENV AWS_CONFIG_FILE=/cncf/data/awsconfig
 ENV KUBECONFIG=/cncf/data/kubeconfig
 # Install AWS CLI + Deps 
-RUN apk add --update git bash util-linux wget tar curl build-base jq python py-pip groff less openssh && \
-pip install awscli && \
-	apk --purge -v del py-pip && \
+RUN apk add --update git bash util-linux wget tar curl build-base jq openssh bind-tools && \
 	rm /var/cache/apk/*
 
 

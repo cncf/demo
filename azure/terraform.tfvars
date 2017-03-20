@@ -5,11 +5,11 @@ cidr = {
   vpc = "10.0.0.0/16"
 }
 
-# Add CoreOS Versions etc
+# Add Kubelet Versions etc
 
 k8s = {
-    hyperkube-image = "quay.io/coreos/hyperkube"
-    hyperkube-tag = "v1.4.7_coreos.0"
+  kubelet-image-url = "quay.io/coreos/hyperkube"
+  kubelet-image-tag = "v1.5.1_coreos.0"
 }
 
 dns-service-ip = "10.3.0.10"
