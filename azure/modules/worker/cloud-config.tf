@@ -9,16 +9,6 @@ data "template_file" "cloud-config" {
     hyperkube-tag = "${ var.hyperkube-tag }"
     internal-tld = "${ var.internal-tld }"
     location = "${ var.location }"
-    ca = "${ var.ca }"
-    ca-key = "${ var.ca-key }"
-    k8s-admin = "${ var.k8s-admin }"
-    k8s-admin-key = "${ var.k8s-admin-key }"
-    k8s-apiserver = "${ var.k8s-apiserver }"
-    k8s-apiserver-key = "${ var.k8s-apiserver-key }"
-    k8s-etcd = "${ var.k8s-etcd }"
-    k8s-etcd-key = "${ var.k8s-etcd-key }"
-    k8s-worker = "${ var.k8s-worker }"
-    k8s-worker-key = "${ var.k8s-worker-key }"
-    # ssl-tar = "/ssl/k8s-worker.tar"
+    k8s-worker-tar = "${ base64encode(var.k8s-worker-tar) }"
   }
 }

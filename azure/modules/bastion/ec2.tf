@@ -30,7 +30,7 @@ resource "azurerm_virtual_machine" "tes2t" {
     publisher = "CoreOS"
     offer     = "CoreOS"
     sku       = "Stable"
-    version   = "1298.5.0"
+    version   = "1298.6.0"
   }
 
   storage_os_disk {

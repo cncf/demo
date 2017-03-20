@@ -211,6 +211,7 @@ az vm image list --offer CoreOS -o table --publisher CoreOS --sku Stable --all
 | CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1235.8.0  |  1235.8.0 |
 | CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1235.9.0  |  1235.9.0 |
 | CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1298.5.0  |  1298.5.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1298.6.0  |  1298.6.0 |
 | CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:494.3.0   |   494.3.0 |
 | CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:494.4.0   |   494.4.0 |
 | CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:494.5.0   |   494.5.0 |
@@ -239,7 +240,6 @@ az vm image list --offer CoreOS -o table --publisher CoreOS --sku Stable --all
 | CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:899.13.0  |  899.13.0 |
 | CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:899.15.0  |  899.15.0 |
 | CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:899.17.0  |  899.17.0 |
-
 
 I think we want:
 

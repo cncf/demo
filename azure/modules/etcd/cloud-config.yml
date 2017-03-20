@@ -12,7 +12,7 @@ coreos:
     initial-cluster-state: new
     initial-cluster-token: ${ cluster-token }
     # key-file: /etc/kubernetes/ssl/k8s-etcd-key.pem
-    listen-client-urls: http://${ node-ip }:2379
+    listen-client-urls: http://${ node-ip }:2379,http://127.0.0.1:2379
     listen-peer-urls: https://${ node-ip }:2380
     name: ${ hostname } 
     peer-trusted-ca-file: /etc/kubernetes/ssl/ca.pem
@@ -287,5 +287,5 @@ write-files:
       }
 
   - encoding: b64 
-    content: ${ k8s-apiserver-tar64 }
+    content: ${ k8s-apiserver-tar }
     path: /etc/kubernetes/ssl/k8s-apiserver.tar

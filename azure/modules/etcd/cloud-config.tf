@@ -18,7 +18,7 @@ data "template_file" "cloud-config" {
     pod-ip-range = "${ var.pod-ip-range }"
     location = "${ var.location }"
     service-cluster-ip-range = "${ var.service-cluster-ip-range }"
-    k8s-apiserver-tar64 = "${ base64encode(var.k8s-apiserver-tar) }"
+    k8s-apiserver-tar = "${ base64encode(var.k8s-apiserver-tar) }"
     node-ip = "${ element(azurerm_network_interface.test.*.private_ip_address, count.index) }"
 
   }

@@ -41,13 +41,4 @@ variable "internal-tld" {}
 # output "autoscaling-group-name" { value = "${ aws_autoscaling_group.worker.name }" }
 # output "depends-id" { value = "${ null_resource.dummy_dependency.id }" }
 
-variable "ca" {}
-variable "ca-key" {}
-variable "k8s-admin" {}
-variable "k8s-admin-key" {}
-variable "k8s-apiserver" {}
-variable "k8s-apiserver-key" {}
-variable "k8s-etcd" {}
-variable "k8s-etcd-key" {}
-variable "k8s-worker" {}
-variable "k8s-worker-key"  {}
+variable "k8s-worker-tar"  {}

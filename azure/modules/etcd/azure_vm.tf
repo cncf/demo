@@ -25,7 +25,7 @@ resource "azurerm_virtual_machine" "test" {
     publisher = "CoreOS"
     offer     = "CoreOS"
     sku       = "Stable"
-    version   = "1298.5.0"
+    version   = "latest"
   }
 
   storage_os_disk {

@@ -36,6 +36,14 @@ coreos:
             Restart=always
             RestartSec=10
 
+    - name: get-ssl.service
+      command: start
+      content: |
+        [Service]
+        ExecStart=/bin/sh -c "tar xv -f /etc/kubernetes/ssl/k8s-worker.tar -C /etc/kubernetes/ssl/"
+        RemainAfterExit=yes
+        Type=oneshot
+
     - name: kubelet.service
       command: start
       content: |
@@ -158,32 +166,6 @@ write-files:
         copytruncate
       }
       
-  - path: /etc/kubernetes/ssl/ca.pem
-    content: "${ ca }"
-
-  - path: /etc/kubernetes/ssl/ca-key.pem
-    content: "${ ca-key }"
-
-  - path: /etc/kubernetes/ssl/k8s-admin.pem
-    content: "${ k8s-admin }"
-    
-  - path: /etc/kubernetes/ssl/k8s-admin-key.pem
-    content: "${ k8s-admin-key }"
-    
-  - path: /etc/kubernetes/ssl/k8s-apiserver.pem
-    content: "${ k8s-apiserver }"
-
-  - path: /etc/kubernetes/ssl/k8s-apiserver-key.pem
-    content: "${ k8s-apiserver-key }"
-
-  - path: /etc/kubernetes/ssl/k8s-etcd.pem
-    content: "${ k8s-etcd }"
-
-  - path: /etc/kubernetes/ssl/k8s-etcd-key.pem
-    content: "${ k8s-etcd-key }"
-
-  - path: /etc/kubernetes/ssl/k8s-worker.pem
-    content: "${ k8s-worker }"
-
-  - path: /etc/kubernetes/ssl/k8s-worker-key.pem
-    content: "${ k8s-worker-key }"
+  - encoding: b64 
+    content: ${ k8s-worker-tar }
+    path: /etc/kubernetes/ssl/k8s-worker.tar
