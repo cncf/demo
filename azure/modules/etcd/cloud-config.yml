@@ -91,7 +91,7 @@ coreos:
         ExecStart=/usr/lib/coreos/kubelet-wrapper \
           --allow-privileged=true \
           --api-servers=http://127.0.0.1:8080 \
-          --cloud-provider=aws \
+          --cloud-provider=azure \
           --cluster-dns=${ dns-service-ip } \
           --cluster-domain=${ cluster-domain } \
           --config=/etc/kubernetes/manifests \
@@ -188,7 +188,7 @@ write-files:
           command:
           - /hyperkube
           - controller-manager
-          - --cloud-provider=aws
+          - --cloud-provider=azure
           - --leader-elect=true
           - --master=http://127.0.0.1:8080
           - --root-ca-file=/etc/kubernetes/ssl/ca.pem

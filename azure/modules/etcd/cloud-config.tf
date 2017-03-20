@@ -4,7 +4,6 @@ data "template_file" "cloud-config" {
 
   vars {
     # bucket = "${ var.bucket-prefix }"
-    etcd-url = "${ var.etcd-url }"
     cluster-domain = "${ var.cluster-domain }"
     cluster-token = "etcd-cluster-${ var.name }"
     dns-service-ip = "${ var.dns-service-ip }"

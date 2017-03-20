@@ -41,7 +41,6 @@ module "route53" {
    internal-tld = "${ var.internal-tld }"
    pod-ip-range = "${ var.cidr["pods"] }"
    service-cluster-ip-range = "${ var.cidr["service-cluster"] }"
-   etcd-url = "${ var.etcd-url }"
    k8s-apiserver-tar = "${file("/cncf/data/.cfssl/k8s-apiserver.tar")}"
    # etcd-security-group-id = "${ module.security.etcd-id }"
    # external-elb-security-group-id = "${ module.security.external-elb-id }"

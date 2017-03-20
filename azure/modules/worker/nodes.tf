@@ -13,7 +13,7 @@ resource "azurerm_virtual_machine_scale_set" "test" {
 
   os_profile {
     computer_name_prefix = "testvm"
-    admin_username = "dlx"
+    admin_username = "${ var.admin-username }"
     admin_password = "Passwword1234"
     custom_data = "${ data.template_file.cloud-config.rendered }"
   }
@@ -21,7 +21,7 @@ resource "azurerm_virtual_machine_scale_set" "test" {
   os_profile_linux_config {
     disable_password_authentication = true
     ssh_keys {
-     path = "/home/dlx/.ssh/authorized_keys"
+     path = "/home/${ var.admin-username }/.ssh/authorized_keys"
      key_data = "${file("/cncf/data/.ssh/id_rsa.pub")}"
     }
   }

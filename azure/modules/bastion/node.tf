@@ -42,7 +42,7 @@ resource "azurerm_virtual_machine" "tes2t" {
 
   os_profile {
     computer_name  = "hostname"
-    admin_username = "dlx"
+    admin_username = "${ var.admin-username }"
     admin_password = "Password1234!"
     custom_data = "${ data.template_file.user-data.rendered }"
     #custom_data = "${file("${path.module}/user-data2.yml")}"
@@ -51,7 +51,7 @@ resource "azurerm_virtual_machine" "tes2t" {
   os_profile_linux_config {
     disable_password_authentication = true
     ssh_keys {
-     path = "/home/dlx/.ssh/authorized_keys"
+     path = "/home/${ var.admin-username }/.ssh/authorized_keys"
      key_data = "${file("/cncf/data/.ssh/id_rsa.pub")}"
     }
   }
@@ -63,42 +63,3 @@ data "template_file" "user-data" {
     internal-tld = "${ var.internal-tld }"
   }
 }
-
-# resource "aws_instance" "bastion" {
-#   ami = "${ var.ami-id }"
-#   associate_public_ip_address = true
-#   iam_instance_profile = "${ aws_iam_instance_profile.bastion.name }"
-#   instance_type = "${ var.instance-type }"
-#   key_name = "${ var.key-name }"
-
-#   # TODO: force private_ip to prevent collision with etcd machines
-
-#   source_dest_check = false
-#   subnet_id = "${ element( split(",", var.subnet-ids), 0 ) }"
-
-#   tags  {
-#     builtWith = "terraform"
-#     kz8s = "${ var.name }"
-#     depends-id = "${ var.depends-id }"
-#     Name = "kz8s-bastion"
-#     role = "bastion"
-#   }
-
-#   user_data = "${ data.template_file.user-data.rendered }"
-
-#   vpc_security_group_ids = [
-#     "${ var.security-group-id }",
-#   ]
-# }
-
-# data "template_file" "user-data" {
-#   template = "${ file( "${ path.module }/user-data.yml" )}"
-
-#   vars {
-#     internal-tld = "${ var.internal-tld }"
-#   }
-# }
-
-# resource "null_resource" "dummy_dependency" {
-#   depends_on = [ "aws_instance.bastion" ]
-# }
