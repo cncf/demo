@@ -170,8 +170,8 @@ openssl x509 -in .cfssl/k8s-apiserver.pem -noout -text
 
 #+BEGIN_SRC shell
 az group delete --name deploy --yes
-
 #+END_SRC
+
 ** CoreOS
 
 We might start with CoreOS to focus on getting cloud up now, then look at images.

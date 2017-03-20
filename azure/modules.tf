@@ -5,30 +5,19 @@ module "vpc" {
   name-servers-file = "${ module.route53.name-servers-file }"
  }
 
-/*
-module "azuresecurity" {
-  source = "./modules/security"
-
-  cidr-allow-ssh = "${ var.cidr["allow-ssh"] }"
-  cidr-vpc = "${ var.cidr["vpc"] }"
-  name = "${ var.name }"
-  vpc-id = "${ module.vpc.id }"
-}
-*/
-
 module "route53" {
   source = "./modules/route53"
   name = "${ var.azure["resource-group"] }"
   etcd-ips = "${ var.etcd-ips }"
   internal-tld = "${ var.internal-tld }"
-  location = "${ var.azure["location"] }"
 }
 
  module "etcd" {
    source = "./modules/etcd"
-   location = "${ var.azure["location"] }"
-   subnet-id = "${ module.vpc.subnet-id }"
    name = "${ var.azure["resource-group"] }"
+   location = "${ var.azure["location"] }"
+   admin-username = "${ var.admin-username }"
+   subnet-id = "${ module.vpc.subnet-id }"
    storage-account = "${ azurerm_storage_account.test.name }"
    storage-primary-endpoint = "${ azurerm_storage_account.test.primary_blob_endpoint }"
    storage-container = "${ azurerm_storage_container.test.name }"
@@ -49,9 +38,10 @@ module "route53" {
 
 module "bastion" {
   source = "./modules/bastion"
-  location = "${ var.azure["location"] }"
-  subnet-id = "${ module.vpc.subnet-id }"
   name = "${ var.azure["resource-group"] }"
+  location = "${ var.azure["location"] }"
+  admin-username = "${ var.admin-username }"
+  subnet-id = "${ module.vpc.subnet-id }"
   storage-primary-endpoint = "${ azurerm_storage_account.test.primary_blob_endpoint }"
   storage-container = "${ azurerm_storage_container.test.name }"
   availability-id = "${ azurerm_availability_set.test.id }"
@@ -60,9 +50,10 @@ module "bastion" {
 
 module "worker" {
   source = "./modules/worker"
-  location = "${ var.azure["location"] }"
-  subnet-id = "${ module.vpc.subnet-id }"
   name = "${ var.azure["resource-group"] }"
+  location = "${ var.azure["location"] }"
+  admin-username = "${ var.admin-username }"
+  subnet-id = "${ module.vpc.subnet-id }"
   storage-account = "${ azurerm_storage_account.test.name }"
   storage-primary-endpoint = "${ azurerm_storage_account.test.primary_blob_endpoint }"
   storage-container = "${ azurerm_storage_container.test.name }"
@@ -86,5 +77,16 @@ module "kubeconfig" {
   ca-pem = "${ var.dir-ssl }/ca.pem"
   master-elb = "${ module.etcd.external-elb }"
   name = "${ var.name }"
+}
+*/
+
+/*
+module "azuresecurity" {
+  source = "./modules/security"
+
+  cidr-allow-ssh = "${ var.cidr["allow-ssh"] }"
+  cidr-vpc = "${ var.cidr["vpc"] }"
+  name = "${ var.name }"
+  vpc-id = "${ module.vpc.id }"
 }
 */

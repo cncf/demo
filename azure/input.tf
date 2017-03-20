@@ -1,9 +1,12 @@
+variable "name" {}
+
 variable "azure" {
   default = {
     resource-group = "deploy"
     location = "West US"
   }
 }
+
 variable "cidr" {
   default = {
     allow-ssh = "0.0.0.0/0"
@@ -12,6 +15,7 @@ variable "cidr" {
     vpc = "10.0.0.0/16"
   }
 }
+
 variable "cluster-domain" { default = "cluster.local" }
 variable "dns-service-ip" { default = "10.3.0.10" }
 variable "etcd-ips" { default = "10.0.10.10,10.0.10.11,10.0.10.12" }
@@ -30,8 +34,6 @@ variable "k8s" {
   }
 }
 variable "k8s-service-ip" { default = "10.3.0.1" }
-variable "name" {}
-variable "s3-bucket" {}
 variable "vpc-existing" {
   default = {
     id = ""
@@ -42,3 +44,4 @@ variable "vpc-existing" {
 }
 variable "dir-ssl" { default = "/cncf/data/.cfssl" }
 variable "dir-key-pair" { default = "/cncf/data"}
+variable "admin-username" { default = "cncf"}
