@@ -84,7 +84,7 @@ I'm comfortable using this image as our base.
 
 
 * Communicating to Azure from Terraform
-
+  
 The [[https://github.com/Azure/azure-cli][Azure-CLI]] can be utilized to create creds for terraform.
 
 We need to get it installed into the container
@@ -172,6 +172,78 @@ openssl x509 -in .cfssl/k8s-apiserver.pem -noout -text
 az group delete --name deploy --yes
 
 #+END_SRC
+** CoreOS
+
+We might start with CoreOS to focus on getting cloud up now, then look at images.
+
+#+NAME: list CoreOS sku offers
+#+BEGIN_SRC shell
+az vm image list-skus -o table --publisher CoreOS --location westus --offer CoreOS
+#+END_SRC
+
+#+RESULTS[1756d18b49a91fd7d620f538082e7101545e22d7]: list CoreOS sku offers
+| Location   | Name   |
+| ---------- | ------ |
+| westus     | Alpha  |
+| westus     | Beta   |
+| westus     | Stable |
+
+#+NAME: list CoreOS Stable Versions
+#+BEGIN_SRC shell
+az vm image list --offer CoreOS -o table --publisher CoreOS --sku Stable --all
+#+END_SRC
+
+#+RESULTS[508f2fcde4974eced346be39c6788c31c21e5230]: list CoreOS Stable Versions
+| Offer   | Publisher   | Sku    | Urn                            |   Version |
+| ------- | ----------- | ------ | ------------------------------ | --------- |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1010.5.0  |  1010.5.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1010.6.0  |  1010.6.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1068.6.0  |  1068.6.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1068.8.0  |  1068.8.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1068.9.0  |  1068.9.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1122.2.0  |  1122.2.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1122.3.0  |  1122.3.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1185.3.0  |  1185.3.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1185.5.0  |  1185.5.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1235.12.0 | 1235.12.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1235.5.0  |  1235.5.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1235.6.0  |  1235.6.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1235.8.0  |  1235.8.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1235.9.0  |  1235.9.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1298.5.0  |  1298.5.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:494.3.0   |   494.3.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:494.4.0   |   494.4.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:494.5.0   |   494.5.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:522.5.0   |   522.5.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:522.6.0   |   522.6.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:557.2.0   |   557.2.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:607.0.0   |   607.0.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:633.1.0   |   633.1.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:647.0.0   |   647.0.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:647.2.0   |   647.2.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:681.0.0   |   681.0.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:681.1.0   |   681.1.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:681.2.0   |   681.2.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:717.1.0   |   717.1.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:717.3.0   |   717.3.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:723.3.0   |   723.3.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:766.3.0   |   766.3.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:766.4.0   |   766.4.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:766.5.0   |   766.5.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:835.10.0  |  835.10.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:835.11.0  |  835.11.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:835.12.0  |  835.12.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:835.13.0  |  835.13.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:835.8.0   |   835.8.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:835.9.0   |   835.9.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:899.13.0  |  899.13.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:899.15.0  |  899.15.0 |
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:899.17.0  |  899.17.0 |
+
+
+I think we want:
+
+| CoreOS  | CoreOS      | Stable | CoreOS:CoreOS:Stable:1298.5.0  |  1298.5.0 |
 
 * Summary
 
