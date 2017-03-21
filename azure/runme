@@ -1,3 +1,5 @@
+terraform get
+
 terraform apply -target null_resource.aws_keypair                                                                                                  
 terraform apply -target null_resource.ssl_gen                                                                                                      
 terraform apply -target module.route53.null_resource.ip_files_to_csv    
