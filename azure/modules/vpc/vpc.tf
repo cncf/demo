@@ -36,3 +36,8 @@ resource "azurerm_virtual_network" "main" {
   #}
 }
 
+resource "azurerm_route_table" "test" {
+  name                = "RouteTable"
+  location            = "West US"
+  resource_group_name = "${ var.name }"
+}

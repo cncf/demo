@@ -3,6 +3,7 @@ resource "azurerm_subnet" "test" {
   resource_group_name = "${ var.name}"
   virtual_network_name = "${azurerm_virtual_network.main.name}"
   address_prefix = "10.0.10.0/24"
+  route_table_id = "${ azurerm_route_table.test.id }"
 
 }
 
