@@ -1,16 +1,16 @@
-# -*- org-use-property-inheritance: t; -*-                                                                                                                                                                                                                     
+# -*- org-use-property-inheritance: t; -*-
 #+TITLE: CNCF Demo on Azure
-#+AUTHOR: Hippie Hacker                                                                                                                                                                                                                                      
-#+EMAIL: hh@ii.coop                                                                                                                                                                                                                                             
-#+CREATOR: ii.coop                                                                                                                                                                                                                                           
-#+DATE: March 1st, 2017                                                                                                                                                                                                                                     
-#+PROPERTY: header-args :dir "."                                                                                                                                                                                                                              
-#+NOTPROPERTY: header-args:shell :prologue ". .env_prod ; . ~/.rvm/scripts/rvm"                                                                                                                                                                                   
+#+AUTHOR: Hippie Hacker
+#+EMAIL: hh@ii.coop
+#+CREATOR: ii.coop
+#+DATE: March 1st, 2017
+#+PROPERTY: header-args :dir "."
+#+NOTPROPERTY: header-args:shell :prologue ". .env_prod ; . ~/.rvm/scripts/rvm"
 #+PROPERTY: header-args:shell :session none :exports both :cache yes
 * tldr
 
 #+NAME: tldr
-#+BEGIN_SRC shell 
+#+BEGIN_SRC shell
 docker run -v $(pwd)/data:/data -ti generate/creds:azure
 # this will ask you to launch a web browser to authenticate to azure
 # it will result in ./data/azure.env
@@ -34,8 +34,8 @@ user	0m4.460s
 sys	0m0.668s
 # takes about 3-8 minutes to deploy
 
-sudo chown -R $(whoami):$(whoami) $(pwd)/data/${DEPLOYNAME} 
-export KUBECONFIG=$(pwd)/data/${DEPLOYNAME}/kubeconfig 
+sudo chown -R $(whoami):$(whoami) $(pwd)/data/${DEPLOYNAME}
+export KUBECONFIG=$(pwd)/data/${DEPLOYNAME}/kubeconfig
 
 kubectl get nodes
 NAME           STATUS                     AGE
@@ -87,7 +87,7 @@ image-version= "1298.6.0"
 
 ** Azure dns_zones do not provide IPs
 Specifically [[https://www.terraform.io/docs/providers/azurerm/r/dns_zone.html#name_servers][azurerm_dns_zone name_servers]] only provides the server names, while [[https://www.terraform.io/docs/providers/azurerm/r/network_interface.html#dns_servers][azurerm_network_interface requires a list of IPs]].
-We'll do a cleaner maping later, but the [[https://github.com/cncf/demo/pull/194/files#diff-8f1d08cae7f5b62ea7e23f2cb3b0b67bR7][current hack]] got us IPs and 
+We'll do a cleaner maping later, but the [[https://github.com/cncf/demo/pull/194/files#diff-8f1d08cae7f5b62ea7e23f2cb3b0b67bR7][current hack]] got us IPs and
 ** Azure CNAME records don't resolve correctly
 We had a couple places where CNAMEs behaved unexpectedly when using Azure dns zones.
 Specifically CNAME records when queried with DIG wouldn't refer.
@@ -130,7 +130,7 @@ Using tenant_id: 9996322a-93ac-43ae-80be-887a3e8194a1
 Retrying role assignment creation: 1/36
 Retrying role assignment creation: 2/36
 ./data/azure.env created
-$ cat ./data/azure.env 
+$ cat ./data/azure.env
 export ARM_SUBSCRIPTION_ID=70693672-XXXX-4858-ac08-06888888880e
 export ARM_TENANT_ID=9896828a-93ac-43ae-YYYY-887a3e8898a1
 export ARM_CLIENT_ID=968448ae-f9f9-ZZZZ-bf43-5c081da88975
@@ -140,7 +140,7 @@ export ARM_CLIENT_SECRET=BBBBBBBB-8eaa-AAAA-aafe-75b02ad4ceba
 ** manually
 
 #+NAME: run az via docker
-#+BEGIN_SRC 
+#+BEGIN_SRC
 docker run -v $(pwd)/.azure:/root/.azure azuresdk/azure-cli-python az account list -o table
 #+END_SRC
 
