@@ -1,9 +1,2 @@
-.DS_Store
-*~
-*.swp
-*.swo
-*.egg-info/
-*.out
-*.zip
-*.pyc
-*.dist-info/
+myazure.publishsettings
+*.env

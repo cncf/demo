@@ -1,0 +1,28 @@
+purpose: to generate an azure.env for use with terraform.
+
+This is published on docker hub as [[https://hub.docker.com/r/generate/creds/][generate/creds:azure]]
+
+#+BEGIN_SRC shell
+$ docker run -v $(pwd)/data:/data -ti generate/creds:azure
+To sign in, use a web browser to open the page https://aka.ms/devicelogin and enter the code GY7W7BMRZ to authenticate.
+Name           CloudName    SubscriptionId                        State     IsDefault
+-------------  -----------  ------------------------------------  --------  -----------
+Free Trial     AzureCloud   5358e673-95e7-4cd8-9791-ca28dd5e3cbb  Disabled  True
+Pay-As-You-Go  AzureCloud   70693672-7c0d-485f-ac08-06d458c80f0e  Enabled
+
+Please enter the Name of the account you wish to use. If you do not see
+a valid account in the list press Ctrl+C to abort and create one.
+If you leave this blank we will use the Current account.
+> Pay-As-You-Go
+Using subscription_id: 70693672-7c0d-485f-ac08-06d458c80f0e
+Using tenant_id: 9996322a-93ac-43ae-80be-887a3e8194a1
+==> Creating service principal
+Retrying role assignment creation: 1/36
+Retrying role assignment creation: 2/36
+./data/azure.env created
+$ cat ./data/azure.env 
+export ARM_SUBSCRIPTION_ID=70693672-XXXX-4858-ac08-06888888880e
+export ARM_TENANT_ID=9896828a-93ac-43ae-YYYY-887a3e8898a1
+export ARM_CLIENT_ID=968448ae-f9f9-ZZZZ-bf43-5c081da88975
+export ARM_CLIENT_SECRET=BBBBBBBB-8eaa-AAAA-aafe-75b02ad4ceba
+#+END_SRC
