@@ -30,4 +30,4 @@ COPY azure /azure/
 RUN chmod +x /cncf/entrypoint.sh
 
 ENTRYPOINT ["/cncf/entrypoint.sh"]
-CMD ["azure"]
+CMD ["deploy"]
