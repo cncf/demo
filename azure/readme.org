@@ -24,10 +24,7 @@ docker run -ti -v $(pwd)/data/$DEPLOYNAME:/cncf/data --env-file ./data/azure.env
 
 #+NAME: 3 minute deploy
 #+BEGIN_SRC output
-Outputs:
-
 bastion-fqdn = bastion201703230324.westus.cloudapp.azure.com
-bastion-ip = 13.93.226.230
 fqdn-k8s = k8s201703230324.westus.cloudapp.azure.com
 ssh-key-setup = eval $(ssh-agent) ; ssh-add /cncf/data/.ssh/id_rsa
 ssh-via-bastion = ssh -At cncf@bastion201703230324.westus.cloudapp.azure.com ssh cncf@master1.cncf.demo
@@ -57,7 +54,36 @@ docker run -ti -v $(pwd)/data/$DEPLOYNAME:/cncf/data --env-file ./data/azure.env
 
 Using DEPLOYNAME allows for multiple concurrent deploys and to easily.
 
-* difficulties
+* Customing the Deploy via environment
+
+Adding var-name=value to ./data/terraform.tfvars will allow you to override many settings for this deploy.
+
+#+BEGIN_SRC shell
+name= "azure"
+location= "westus"
+internal-tld= "cncf.demo"
+master-node-count= "3"
+worker-node-count= "3"
+master-vm-size= "Standard_A2"
+worker-vm-size= "Standard_A2"
+bastion-vm-size= "Standard_A2"
+kubelet-image-url= "quay.io/coreos/hyperkube"
+kubelet-image-tag= "v1.4.7_coreos.0"
+image-publisher= "CoreOS"
+image-offer= "CoreOS"
+image-sku= "Stable"
+image-version= "1298.6.0"
+#+END_SRC
+
+* Next steps
+
+- Store private keys in storage rather than cloud-init
+- Look into using Centos and Debian/Ubuntu
+- Deploy onto AWS and Azure at the same time
+- Setup some CI to deploy on every commit to both clouds
+- Start on GCE
+
+* Notable issues
 
 ** Azure dns_zones do not provide IPs
 Specifically [[https://www.terraform.io/docs/providers/azurerm/r/dns_zone.html#name_servers][azurerm_dns_zone name_servers]] only provides the server names, while [[https://www.terraform.io/docs/providers/azurerm/r/network_interface.html#dns_servers][azurerm_network_interface requires a list of IPs]].
@@ -68,7 +94,7 @@ Specifically CNAME records when queried with DIG wouldn't refer.
 ** Terraform azurerm_dns_srv_records do not support multiple dynamic entries
 This affects our ability to bootstrap etcd with an unknown number of nodes beforehand.
 If we stick with three (or any number) it's not a problem.
-** Azure Virtual Machine Scale Sets are not yet supported by kubernetes
+** Azure Cluster-Autoscale Virtual Machine Scale Sets are not yet supported by kubernetes
 We should be able to scale up our workers at some point [[https://github.com/Azure/ACS/blob/master/kubernetes-status.md#future-work][in the future]].
 ** Starting kubelet without --cloud-config=azure.json results in a panic
 When using --cloud-provider=azure not only must you use
