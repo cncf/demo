@@ -7,7 +7,9 @@ resource "azurerm_resource_group" "cncf" {
 }
 
 resource "azurerm_storage_account" "cncf" {
-  # FIXME: storage_account name must be globally unique
+  # * azurerm_storage_account.cncf: name can only consist of lowercase letters
+  # and numbers, and must be between 3 and 24 characters long FIXME:
+  # storage_account name must be globally unique
   name                = "${ var.name }cncfdemo"
   resource_group_name = "${ var.name }"
   location            = "${ var.location }"
