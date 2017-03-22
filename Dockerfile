@@ -24,15 +24,10 @@ RUN go get -u github.com/cloudflare/cfssl/cmd/cfssl && \
 #Add Terraform Modules
 go get -u github.com/cloudflare/cfssl/cmd/...
 
-WORKDIR /cncf
-COPY AddOns /cncf/AddOns
-COPY Demo /cncf/Demo
-# COPY modules /cncf/modules
-# COPY io.tf modules.tf modules_override.tf vpc-existing.tfvars terraform.tfvars wait-for-cluster init-cfssl /cncf/
-# COPY entrypoint.sh /cncf/
-# COPY runme /cncf/
-# RUN chmod +x /cncf/entrypoint.sh
+WORKDIR /cncf/data
+COPY entrypoint.sh /cncf/
+COPY azure /azure/
+RUN chmod +x /cncf/entrypoint.sh
 
-
-#ENTRYPOINT ["/cncf/entrypoint.sh"]
-CMD ["/bin/bash"]
+ENTRYPOINT ["/cncf/entrypoint.sh"]
+CMD ["azure"]

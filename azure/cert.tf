@@ -4,7 +4,7 @@ resource "null_resource" "ssl_gen" {
   provisioner "local-exec" {
     command = <<EOF
 ${ path.module }/init-cfssl \
-${ var.dir-ssl } \
+${ var.data-dir }/.cfssl \
 ${ azurerm_resource_group.cncf.location } \
 ${ var.internal-tld } \
 ${ var.k8s-service-ip }
@@ -15,7 +15,7 @@ EOF
     when = "destroy"
     on_failure = "continue"
     command = <<EOF
-rm -rf ${ var.dir-ssl }
+rm -rf ${ var.data-dir }/.cfssl
 EOF
   }
 

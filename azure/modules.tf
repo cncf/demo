@@ -36,8 +36,8 @@ module "dns" {
    internal-tld = "${ var.internal-tld }"
    pod-cidr = "${ var.pod-cidr }"
    service-cidr = "${ var.service-cidr }"
-   k8s-apiserver-tar = "${file("/cncf/data/.cfssl/k8s-apiserver.tar")}"
-   cloud-config = "${file("/cncf/data/azure-config.json")}"
+   k8s-apiserver-tar = "${file("${ var.data-dir }/.cfssl/k8s-apiserver.tar")}"
+   cloud-config = "${file("${ var.data-dir }/azure-config.json")}"
    # etcd-security-group-id = "${ module.security.etcd-id }"
    # external-elb-security-group-id = "${ module.security.external-elb-id }"
 }
@@ -82,8 +82,8 @@ module "worker" {
   kubelet-image-tag = "${ var.kubelet-image-tag }"
   dns-service-ip = "${ var.dns-service-ip }"
   internal-tld = "${ var.internal-tld }"
-  k8s-worker-tar = "${file("/cncf/data/.cfssl/k8s-worker.tar")}"
-  cloud-config = "${file("/cncf/data/azure-config.json")}"
+  k8s-worker-tar = "${file("${ var.data-dir }/.cfssl/k8s-worker.tar")}"
+  cloud-config = "${file("${ var.data-dir }/azure-config.json")}"
   # security-group-id = "${ module.security.worker-id }"
 }
 
@@ -91,9 +91,9 @@ module "worker" {
 module "kubeconfig" {
   source = "./modules/kubeconfig"
 
-  admin-key-pem = "${ var.dir-ssl }/k8s-admin-key.pem"
-  admin-pem = "${ var.dir-ssl }/k8s-admin.pem"
-  ca-pem = "${ var.dir-ssl }/ca.pem"
+  admin-key-pem = "${ var.data-dir }/.cfssl/k8s-admin-key.pem"
+  admin-pem = "${ var.data-dir }/.cfssl/k8s-admin.pem"
+  ca-pem = "${ var.data-dir }/.cfssl/ca.pem"
   fqdn-k8s = "${ module.etcd.fqdn-lb }"
   name = "${ var.name }"
 }

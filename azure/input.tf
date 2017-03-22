@@ -1,4 +1,4 @@
-variable "name" {}
+variable "name" { default = "azure" }
 variable "internal-tld" { default = "cncf.demo" }
 variable "master-node-count" { default = "3" }
 variable "worker-node-count" { default = "3" }
@@ -14,8 +14,6 @@ variable "image-sku"       { default = "Stable" }
 variable "image-version"   { default = "1298.6.0" }
 variable "location"        { default = "westus" }
 variable "cluster-domain" { default = "cluster.local" }
-variable "dir-ssl" { default = "/cncf/data/.cfssl" }
-variable "dir-key-pair" { default = "/cncf/data"}
 variable "admin-username" { default = "cncf"}
 variable "vpc-cidr" { default = "10.0.0.0/16" }
 variable "pod-cidr" { default = "10.2.0.0/16" }
@@ -23,3 +21,4 @@ variable "service-cidr"   { default = "10.3.0.0/24" }
 variable "k8s-service-ip" { default = "10.3.0.1" }
 variable "dns-service-ip" { default = "10.3.0.10" }
 variable "allow-ssh-cidr" { default = "0.0.0.0/0" }
+variable "data-dir" { default = "/cncf/data" }

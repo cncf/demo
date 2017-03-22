@@ -3,7 +3,7 @@ resource "null_resource" "cloud_gen" {
 
   provisioner "local-exec" {
     command = <<COMMAND
-cat <<JSON > /cncf/data/azure-config.json
+cat <<JSON > ${ var.data-dir }/azure-config.json
 {
   "aadClientId": "$${ARM_CLIENT_ID}",
   "aadClientSecret": "$${ARM_CLIENT_SECRET}",
@@ -25,7 +25,7 @@ COMMAND
     when = "destroy"
     on_failure = "continue"
     command = <<EOF
-rm -rf /cncf/data/azure-config.json
+    rm -rf ${ var.data-dir }/azure-config.json
 EOF
   }
 

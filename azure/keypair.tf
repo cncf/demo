@@ -3,8 +3,8 @@ resource "null_resource" "sshkey_gen" {
 
   provisioner "local-exec" {
     command = <<EOF
-mkdir -p /cncf/data/.ssh
-ssh-keygen -t rsa -f /cncf/data/.ssh/id_rsa -N ''
+mkdir -p ${ var.data-dir }/.ssh
+ssh-keygen -t rsa -f ${ var.data-dir }/.ssh/id_rsa -N ''
 EOF
   }
 
@@ -12,7 +12,7 @@ EOF
     when = "destroy"
     on_failure = "continue"
     command = <<EOF
-rm -rf /cncf/data/.ssh/id*
+    rm -rf ${ var.data-dir }/.ssh
 EOF
  }
 }
