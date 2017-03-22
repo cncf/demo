@@ -56,12 +56,12 @@ resource "azurerm_dns_a_record" "A-etcds" {
   ]
 }
 
-resource "azurerm_dns_cname_record" "CNAME-master" {
+resource "azurerm_dns_a_record" "A-master" {
   name = "master"
   zone_name = "${azurerm_dns_zone.cncf.name}"
   resource_group_name = "${ var.name }"
   ttl = "300"
-  record = "etcd.${ var.internal-tld }"
+  records = [ "${ split(",", var.etcd-ips) }" ]
 }
 
 resource "azurerm_dns_srv_record" "etcd-client-tcp" {
