@@ -36,10 +36,10 @@ createServicePrincipal() {
 }
 
 showConfigs() {
-  echo export ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID
-  echo export ARM_TENANT_ID=$ARM_TENANT_ID
-  echo export ARM_CLIENT_ID=$ARM_CLIENT_ID
-  echo export ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET
+  echo ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID
+  echo ARM_TENANT_ID=$ARM_TENANT_ID
+  echo ARM_CLIENT_ID=$ARM_CLIENT_ID
+  echo ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET
 }
 
 az login > /dev/null
