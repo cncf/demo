@@ -36,23 +36,25 @@ EOF
   }
 }
 
-resource "azurerm_dns_a_record" "A-etcd" {
+resource "azurerm_dns_a_record" "A-etcd"  {
   name = "etcd"
   zone_name = "${azurerm_dns_zone.cncf.name}"
   resource_group_name = "${ var.name }"
   ttl = "300"
-  records = [ "${ split(",", var.etcd-ips) }" ]
+  records = [
+    "${ var.master-ips }"
+  ]
 }
 
 resource "azurerm_dns_a_record" "A-etcds" {
-  count = "${ length( split(",", var.etcd-ips) ) }"
+  count = "${ length(var.master-ips) }"
 
   name = "etcd${ count.index+1 }"
   zone_name = "${azurerm_dns_zone.cncf.name}"
   resource_group_name = "${ var.name }"
   ttl = "300"
   records = [
-    "${ element(split(",", var.etcd-ips), count.index) }"
+    "${ element(var.master-ips, count.index) }"
   ]
 }
 
@@ -61,7 +63,18 @@ resource "azurerm_dns_a_record" "A-master" {
   zone_name = "${azurerm_dns_zone.cncf.name}"
   resource_group_name = "${ var.name }"
   ttl = "300"
-  records = [ "${ split(",", var.etcd-ips) }" ]
+  records = [ "${ var.master-ips }" ]
+}
+
+resource "azurerm_dns_a_record" "A-masters" {
+  count = "${ length(var.master-ips) }"
+  name = "master${ count.index+1 }"
+  zone_name = "${azurerm_dns_zone.cncf.name}"
+  resource_group_name = "${ var.name }"
+  ttl = "300"
+  records = [
+    "${ element(var.master-ips, count.index) }"
+  ]
 }
 
 resource "azurerm_dns_srv_record" "etcd-client-tcp" {

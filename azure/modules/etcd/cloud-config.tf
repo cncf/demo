@@ -1,5 +1,5 @@
 data "template_file" "cloud-config" {
-  count = "${ length( split(",", var.etcd-ips) ) }"
+  count = "${ var.master-node-count }"
   template = "${ file( "${ path.module }/cloud-config.yml" )}"
 
   vars {
@@ -13,9 +13,9 @@ data "template_file" "cloud-config" {
     kubelet-image-url = "${ var.kubelet-image-url }"
     kubelet-image-tag = "${ var.kubelet-image-tag }"
     internal-tld = "${ var.internal-tld }"
-    pod-ip-range = "${ var.pod-ip-range }"
+    pod-cidr = "${ var.pod-cidr }"
     location = "${ var.location }"
-    service-cluster-ip-range = "${ var.service-cluster-ip-range }"
+    service-cidr = "${ var.service-cidr }"
     k8s-apiserver-tar = "${ base64encode(var.k8s-apiserver-tar) }"
     node-ip = "${ element(azurerm_network_interface.cncf.*.private_ip_address, count.index) }"
     cloud-config = "${ base64encode(var.cloud-config) }"

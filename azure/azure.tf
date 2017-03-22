@@ -3,14 +3,14 @@ provider "azurerm" { }
 
 resource "azurerm_resource_group" "cncf" {
   name     = "${ var.name }"
-  location = "${ var.azure["location"] }"
+  location = "${ var.location }"
 }
 
 resource "azurerm_storage_account" "cncf" {
   # FIXME: storage_account name must be globally unique
   name                = "${ var.name }cncfdemo"
   resource_group_name = "${ var.name }"
-  location            = "${ var.azure["location"] }"
+  location            = "${ var.location }"
   account_type        = "Standard_LRS"
 }
 
@@ -24,7 +24,7 @@ resource "azurerm_storage_container" "cncf" {
 resource "azurerm_availability_set" "cncf" {
   name                = "${ var.name }"
   resource_group_name = "${ var.name }"
-  location            = "${ var.azure["location"] }"
+  location            = "${ var.location }"
 
 }
 

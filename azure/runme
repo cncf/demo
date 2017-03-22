@@ -8,4 +8,5 @@ terraform apply -target null_resource.sshkey_gen
 terraform apply -target null_resource.ssl_gen
 terraform apply -target null_resource.cloud_gen
 terraform apply -target module.dns.null_resource.dns_gen
+terraform apply -target module.etcd.azurerm_network_interface.cncf
 time terraform apply

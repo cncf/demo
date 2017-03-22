@@ -1,5 +1,10 @@
 variable "name" {}
 variable "location" {}
+variable "bastion-vm-size" {}
+variable "image-publisher" {}
+variable "image-offer"     {}
+variable "image-sku"       {}
+variable "image-version"   {}
 variable "admin-username" {}
 variable "internal-tld" {}
 variable "subnet-id" {}

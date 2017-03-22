@@ -1,5 +1,5 @@
 resource "azurerm_network_interface" "cncf" {
-  count               = "${ var.worker-nodes }"
+  count               = "${ var.worker-node-count }"
   name                = "worker-interface${ count.index + 1 }"
   location            = "${ var.location }"
   resource_group_name = "${ var.name }"
@@ -12,19 +12,19 @@ resource "azurerm_network_interface" "cncf" {
 }
 
 resource "azurerm_virtual_machine" "cncf" {
-  count = "${ var.worker-nodes }"
+  count = "${ var.worker-node-count }"
   name                  = "worker-node${ count.index + 1 }"
   location              = "${ var.location }"
   availability_set_id   = "${ var.availability-id }"
   resource_group_name   = "${ var.name }"
   network_interface_ids = ["${ element(azurerm_network_interface.cncf.*.id, count.index) }"]
-  vm_size               = "Standard_A2"
+  vm_size               = "${ var.worker-vm-size }"
 
   storage_image_reference {
-    publisher = "CoreOS"
-    offer     = "CoreOS"
-    sku       = "Stable"
-    version   = "1298.6.0"
+    publisher = "${ var.image-publisher }"
+    offer     = "${ var.image-offer }"
+    sku       = "${ var.image-sku }"
+    version   = "${ var.image-version}"
   }
 
   storage_os_disk {

@@ -1,52 +1,25 @@
 variable "name" {}
 variable "internal-tld" { default = "cncf.demo" }
-
-variable "azure" {
-  default = {
-    location = "westus"
-  }
-}
-
-variable "cidr" {
-  default = {
-    allow-ssh = "0.0.0.0/0"
-    pods = "10.2.0.0/16"
-    service-cluster = "10.3.0.0/24"
-    vpc = "10.0.0.0/16"
-  }
-}
-
-variable "cluster-domain" { default = "cluster.local" }
-variable "dns-service-ip" { default = "10.3.0.10" }
-variable "etcd-ips" { default = "10.0.10.10,10.0.10.11,10.0.10.12" }
-variable "instance-type" {
-  default = {
-    bastion = "t2.nano"
-    etcd = "m3.medium"
-    worker = "m3.medium"
-  }
-}
-
+variable "master-node-count" { default = "3" }
+variable "worker-node-count" { default = "3" }
+variable "master-vm-size"   { default = "Standard_A2" }
+variable "worker-vm-size"   { default = "Standard_A2" }
+variable "bastion-vm-size"   { default = "Standard_A2" }
 # Set from https://quay.io/repository/coreos/hyperkube?tab=tags
-variable "k8s" {
-  default = {
-    kubelet-image-url = "quay.io/coreos/hyperkube"
-    kubelet-image-tag = "v1.4.7_coreos.0"
-    # kubelet-image-tag = "v1.5.1_coreos.0"
-  }
-}
-
-variable "k8s-service-ip" { default = "10.3.0.1" }
-
-variable "vpc-existing" {
-  default = {
-    id = ""
-    gateway-id = ""
-    subnet-ids-public = ""
-    subnet-ids-private = ""
-  }
-}
+variable "kubelet-image-url" { default = "quay.io/coreos/hyperkube"}
+variable "kubelet-image-tag" { default = "v1.4.7_coreos.0"}
+variable "image-publisher" { default = "CoreOS" }
+variable "image-offer"     { default = "CoreOS" }
+variable "image-sku"       { default = "Stable" }
+variable "image-version"   { default = "1298.6.0" }
+variable "location"        { default = "westus" }
+variable "cluster-domain" { default = "cluster.local" }
 variable "dir-ssl" { default = "/cncf/data/.cfssl" }
 variable "dir-key-pair" { default = "/cncf/data"}
 variable "admin-username" { default = "cncf"}
-variable "worker-nodes" { default = "3" }
+variable "vpc-cidr" { default = "10.0.0.0/16" }
+variable "pod-cidr" { default = "10.2.0.0/16" }
+variable "service-cidr"   { default = "10.3.0.0/24" }
+variable "k8s-service-ip" { default = "10.3.0.1" }
+variable "dns-service-ip" { default = "10.3.0.10" }
+variable "allow-ssh-cidr" { default = "0.0.0.0/0" }

@@ -37,7 +37,7 @@ coreos:
           content: |
             [Service]
             ExecStartPre=-/usr/bin/etcdctl mk /coreos.com/network/config \
-              '{ "Network": "${ pod-ip-range }", "Backend": { "Type": "vxlan" } }'
+              '{ "Network": "${ pod-cidr }", "Backend": { "Type": "vxlan" } }'
             Restart=always
             RestartSec=10
 
@@ -142,7 +142,7 @@ write-files:
           - --insecure-bind-address=0.0.0.0
           - --secure-port=443
           - --service-account-key-file=/etc/kubernetes/ssl/k8s-apiserver-key.pem
-          - --service-cluster-ip-range=${ service-cluster-ip-range }
+          - --service-cluster-ip-range=${ service-cidr }
           - --tls-cert-file=/etc/kubernetes/ssl/k8s-apiserver.pem
           - --tls-private-key-file=/etc/kubernetes/ssl/k8s-apiserver-key.pem
           - --v=2

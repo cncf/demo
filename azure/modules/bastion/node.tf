@@ -1,8 +1,9 @@
 resource "azurerm_public_ip" "cncf" {
-  name  = "${ var.name }"
+  name  = "PublicIPForBastion"
   location = "${ var.location }"
   resource_group_name = "${ var.name }"
   public_ip_address_allocation = "static"
+  domain_name_label = "bastion${ var.name }"
 }
 
 resource "azurerm_network_interface" "cncf" {
@@ -24,13 +25,13 @@ resource "azurerm_virtual_machine" "cncf" {
   availability_set_id   = "${ var.availability-id }"
   resource_group_name = "${ var.name }"
   network_interface_ids = ["${azurerm_network_interface.cncf.id}"]
-  vm_size               = "Standard_A0"
+  vm_size               = "${ var.bastion-vm-size }"
 
   storage_image_reference {
-    publisher = "CoreOS"
-    offer     = "CoreOS"
-    sku       = "Stable"
-    version   = "1298.6.0"
+    publisher = "${ var.image-publisher }"
+    offer     = "${ var.image-offer }"
+    sku       = "${ var.image-sku }"
+    version   = "${ var.image-version}"
   }
 
   storage_os_disk {

@@ -10,7 +10,7 @@ cat <<JSON > /cncf/data/azure-config.json
   "tenantId": "$${ARM_TENANT_ID}",
   "subscriptionId": "$${ARM_SUBSCRIPTION_ID}",
   "resourceGroup": "${ var.name }",
-  "location": "${ var.azure["location"] }",
+  "location": "${ var.location }",
   "subnetName": "${ var.name }",
   "securityGroupName": "${ var.name }",
   "vnetName": "${ var.name }",

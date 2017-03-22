@@ -1,9 +1,10 @@
 output "fqdn-k8s" { value = "${ module.etcd.fqdn-lb}" }
 output "bastion-ip" { value = "${ module.bastion.bastion-ip}" }
+output "bastion-fqdn" { value = "${ module.bastion.bastion-fqdn}" }
 output "k8s-admin" { value = "${ k8s-admin}"}
 # fixme for use outside container
 output "ssh-key-setup" { value = "eval $(ssh-agent) ; ssh-add /cncf/data/.ssh/id_rsa"}
-output "ssh-via-bastion" { value = "ssh -At ${ var.admin-username }@${ module.bastion.bastion-ip } ssh ${ var.admin-username }@10.0.10.10"}
+output "ssh-via-bastion" { value = "ssh -At ${ var.admin-username }@${ module.bastion.bastion-fqdn } ssh ${ var.admin-username }@master1.cncf.demo"}
 
 #output "availability-id" { value = "${ azurerm_availability_set.cncf.id }" }
 #output "azs" { value = "${ var.aws["azs"] }" }
