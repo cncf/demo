@@ -9,7 +9,7 @@
 #+PROPERTY: header-args:shell :session none :exports both :cache yes
 * tldr
 
-#+NAME tldr
+#+NAME: tldr
 #+BEGIN_SRC shell 
 docker run -v $(pwd)/data:/data -ti generate/creds:azure
 # this will ask you to launch a web browser to authenticate to azure
@@ -20,7 +20,7 @@ DEPLOYNAME=$(date +%Y%m%d%H%M) # could be a branch+gitcommit etc
 docker run -ti -v $(pwd)/data/$DEPLOYNAME:/cncf/data --env-file ./data/azure.env create/azure deploy $DEPLOYNAME
 #+END_SRC
 
-This will result in a kubectl accessible endpoint
+* access your k8s cluster
 
 #+NAME: 3 minute deploy
 #+BEGIN_SRC output
@@ -35,17 +35,11 @@ ssh-via-bastion = ssh -At cncf@bastion201703230324.westus.cloudapp.azure.com ssh
 real	3m2.509s
 user	0m4.460s
 sys	0m0.668s
+# takes about 3-8 minutes to deploy
 
-#Commands to Configue Kubectl 
-sudo chown -R $(whoami):$(whoami) $(pwd)/data/${name} 
-export KUBECONFIG=$(pwd)/data/${name}/kubeconfig 
-#+END_SRC
-
-#+NAME: use for demo and cleanup
-#+BEGIN_SRC shell
-# takes about 5 minutes to deploy
 sudo chown -R $(whoami):$(whoami) $(pwd)/data/${DEPLOYNAME} 
 export KUBECONFIG=$(pwd)/data/${DEPLOYNAME}/kubeconfig 
+
 kubectl get nodes
 NAME           STATUS                     AGE
 etcd-master1   Ready,SchedulingDisabled   13m
@@ -56,6 +50,8 @@ worker-node2   Ready                      13m
 worker-node3   Ready                      13m
 ...
 kubectl proxy etc
+
+# to destroy
 docker run -ti -v $(pwd)/data/$DEPLOYNAME:/cncf/data --env-file ./data/azure.env terminate/azure destroy $DEPLOYNAME
 #+END_SRC
 
@@ -82,7 +78,8 @@ settings as well. Failure to do so results in a panic.
 [[https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/kubelet_node_status.go#L255][instances are looked up via nodeName]] and if they don't match, kubelet will not start.
 
 #+BEGIN_SRC example
-kubelet_node_status.go:69] Unable to construct api.Node object for kubelet: failed to get external ID from cloud provider: instance not found
+kubelet_node_status.go:69] Unable to construct api.Node object for kubelet:
+    failed to get external ID from cloud provider: instance not found
 #+END_SRC
 
 * generate credentials
