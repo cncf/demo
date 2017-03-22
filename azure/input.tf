@@ -49,3 +49,4 @@ variable "vpc-existing" {
 variable "dir-ssl" { default = "/cncf/data/.cfssl" }
 variable "dir-key-pair" { default = "/cncf/data"}
 variable "admin-username" { default = "cncf"}
+variable "worker-nodes" { default = "3" }

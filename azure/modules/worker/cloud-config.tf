@@ -2,7 +2,7 @@ data "template_file" "cloud-config" {
   template = "${ file( "${ path.module }/cloud-config.yml" )}"
 
   vars {
-    # bucket = "${ var.bucket-prefix }"
+    worker-nodes = "${ var.worker-nodes }"
     cluster-domain = "${ var.cluster-domain }"
     dns-service-ip = "${ var.dns-service-ip }"
     kubelet-image-url = "${ var.kubelet-image-url }"

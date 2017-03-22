@@ -68,6 +68,7 @@ module "worker" {
   internal-tld = "${ var.internal-tld }"
   k8s-worker-tar = "${file("/cncf/data/.cfssl/k8s-worker.tar")}"
   cloud-config = "${file("/cncf/data/azure-config.json")}"
+  worker-nodes = "${ var.worker-nodes }"
   # security-group-id = "${ module.security.worker-id }"
 }
 

@@ -1,3 +1,56 @@
+resource "azurerm_network_interface" "cncf" {
+  count               = "${ var.worker-nodes }"
+  name                = "worker-interface${ count.index + 1 }"
+  location            = "${ var.location }"
+  resource_group_name = "${ var.name }"
+
+  ip_configuration {
+    name                          = "worker-nic${ count.index + 1 }"
+    subnet_id                     = "${ var.subnet-id }"
+    private_ip_address_allocation = "dynamic"
+  }
+}
+
+resource "azurerm_virtual_machine" "cncf" {
+  count = "${ var.worker-nodes }"
+  name                  = "worker-node${ count.index + 1 }"
+  location              = "${ var.location }"
+  availability_set_id   = "${ var.availability-id }"
+  resource_group_name   = "${ var.name }"
+  network_interface_ids = ["${ element(azurerm_network_interface.cncf.*.id, count.index) }"]
+  vm_size               = "Standard_A2"
+
+  storage_image_reference {
+    publisher = "CoreOS"
+    offer     = "CoreOS"
+    sku       = "Stable"
+    version   = "1298.6.0"
+  }
+
+  storage_os_disk {
+    name          = "worker-disks${ count.index + 1 }"
+    vhd_uri       = "${ var.storage-primary-endpoint }${ var.storage-container }/worker-vhd${ count.index + 1 }.vhd"
+    caching       = "ReadWrite"
+    create_option = "FromImage"
+  }
+
+  os_profile {
+    computer_name  = "worker-node${ count.index + 1 }"
+    admin_username = "${ var.admin-username }"
+    admin_password = "Password1234!"
+    custom_data = "${ element(data.template_file.cloud-config.*.rendered, count.index) }"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = true
+    ssh_keys {
+      path = "/home/${ var.admin-username }/.ssh/authorized_keys"
+      key_data = "${file("/cncf/data/.ssh/id_rsa.pub")}"
+  }
+ }
+}
+
+/*
 resource "azurerm_virtual_machine_scale_set" "cncf" {
   name = "${ var.name }"
   location = "${ var.location }"
@@ -48,104 +101,5 @@ resource "azurerm_virtual_machine_scale_set" "cncf" {
     sku       = "Stable"
     version   = "1298.6.0"
   }
-}
-
-/*
-resource "aws_launch_configuration" "worker" {
-  ebs_block_device {
-    device_name = "/dev/xvdf"
-    volume_size = "${ var.volume_size["ebs"] }"
-    volume_type = "gp2"
-  }
-
-  iam_instance_profile = "${ var.instance-profile-name }"
-  image_id = "${ var.ami-id }"
-  instance_type = "${ var.instance-type }"
-  key_name = "${ var.key-name }"
-
-  # Storage
-  root_block_device {
-    volume_size = "${ var.volume_size["root"] }"
-    volume_type = "gp2"
-  }
-
-  security_groups = [
-    "${ var.security-group-id }",
-  ]
-
-  user_data = "${ data.template_file.cloud-config.rendered }"
-
-  /*lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_autoscaling_group" "worker" {
-  name = "worker-${ var.worker-name }-${ var.name }"
-
-  desired_capacity = "${ var.capacity["desired"] }"
-  health_check_grace_period = 60
-  health_check_type = "EC2"
-  force_delete = true
-  launch_configuration = "${ aws_launch_configuration.worker.name }"
-  max_size = "${ var.capacity["max"] }"
-  min_size = "${ var.capacity["min"] }"
-  vpc_zone_identifier = [ "${ split(",", var.subnet-ids) }" ]
-
-  tag {
-    key = "builtWith"
-    value = "terraform"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key = "depends-id"
-    value = "${ var.depends-id }"
-    propagate_at_launch = false
-  }
-
-  # used by kubelet's aws provider to determine cluster
-  tag {
-    key = "KubernetesCluster"
-    value = "${ var.name }"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key = "kz8s"
-    value = "${ var.name }"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key = "Name"
-    value = "kz8s-worker"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key = "role"
-    value = "worker"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key = "version"
-    value = "${ var.kubelet-image-tag }"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key = "visibility"
-    value = "private"
-    propagate_at_launch = true
-  }
-}
-
-resource "null_resource" "dummy_dependency" {
-  depends_on = [
-    "aws_autoscaling_group.worker",
-    "aws_launch_configuration.worker",
-  ]
 }
 */
