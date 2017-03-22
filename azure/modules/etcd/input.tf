@@ -15,6 +15,7 @@ variable "service-cluster-ip-range" {}
 variable "admin-username" {}
 variable "kubelet-image-url" {}
 variable "kubelet-image-tag" {}
+variable "cloud-config" {}
 
 # variable "etcd-security-group-id" {}
 # variable "external-elb-security-group-id" {}

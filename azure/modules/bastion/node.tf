@@ -1,29 +1,29 @@
-resource "azurerm_public_ip" "test2" {
-  name = "acceptanceTestPublicIp1"
+resource "azurerm_public_ip" "cncf" {
+  name  = "${ var.name }"
   location = "${ var.location }"
   resource_group_name = "${ var.name }"
   public_ip_address_allocation = "static"
 }
 
-resource "azurerm_network_interface" "test2" {
-  name                = "acctni2"
+resource "azurerm_network_interface" "cncf" {
+  name                = "${ var.name }"
   location            = "${ var.location }"
   resource_group_name = "${ var.name }"
 
   ip_configuration {
-    name                          = "testconfiguration1"
+    name                          = "${ var.name }"
     subnet_id                     = "${ var.subnet-id }"
     private_ip_address_allocation = "dynamic"
-    public_ip_address_id          = "${ azurerm_public_ip.test2.id }"
+    public_ip_address_id          = "${ azurerm_public_ip.cncf.id }"
   }
 }
 
-resource "azurerm_virtual_machine" "tes2t" {
-  name                  = "acctvm2"
-  location              = "West US"
+resource "azurerm_virtual_machine" "cncf" {
+  name                = "${ var.name }"
+  location            = "${ var.location }"
   availability_set_id   = "${ var.availability-id }"
   resource_group_name = "${ var.name }"
-  network_interface_ids = ["${azurerm_network_interface.test2.id}"]
+  network_interface_ids = ["${azurerm_network_interface.cncf.id}"]
   vm_size               = "Standard_A0"
 
   storage_image_reference {

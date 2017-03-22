@@ -6,11 +6,11 @@
 #}
 
 
-resource "azurerm_virtual_network" "main" {
-  name                = "virtualNetwork"
+resource "azurerm_virtual_network" "cncf" {
+  name                = "${ var.name }"
   resource_group_name = "${ var.name }"
   address_space       = ["${ var.cidr }"]
-  location            = "West US"
+  location            = "${ var.location }"
   dns_servers         = [
     "${ element(split( ",", file(var.name-servers-file) ),0) }",
     "${ element(split( ",", file(var.name-servers-file) ),1) }",
@@ -36,8 +36,8 @@ resource "azurerm_virtual_network" "main" {
   #}
 }
 
-resource "azurerm_route_table" "test" {
-  name                = "RouteTable"
-  location            = "West US"
+resource "azurerm_route_table" "cncf" {
+  name                = "${ var.name }"
+  location            = "${ var.location }"
   resource_group_name = "${ var.name }"
 }

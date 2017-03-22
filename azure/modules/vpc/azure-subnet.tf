@@ -1,9 +1,9 @@
-resource "azurerm_subnet" "test" {
-  name = "testsubnet"
-  resource_group_name = "${ var.name}"
-  virtual_network_name = "${azurerm_virtual_network.main.name}"
+resource "azurerm_subnet" "cncf" {
+  name = "${ var.name }"
+  resource_group_name = "${ var.name }"
+  virtual_network_name = "${azurerm_virtual_network.cncf.name}"
   address_prefix = "10.0.10.0/24"
-  route_table_id = "${ azurerm_route_table.test.id }"
+  route_table_id = "${ azurerm_route_table.cncf.id }"
 
 }
 
@@ -23,7 +23,7 @@ resource "aws_subnet" "private" {
 
   availability_zone = "${ element( split(",", var.azs), count.index ) }"
   cidr_block = "${ cidrsubnet(var.cidr, 8, count.index + 10) }"
-  vpc_id = "${ aws_vpc.main.id }"
+  vpc_id = "${ aws_vpc.cncf.id }"
 
   tags {
     "kubernetes.io/role/internal-elb" = "${ var.name }"
@@ -36,7 +36,7 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_route_table" "private" {
-  vpc_id = "${ aws_vpc.main.id }"
+  vpc_id = "${ aws_vpc.cncf.id }"
 
   route {
     cidr_block = "0.0.0.0/0"

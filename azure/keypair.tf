@@ -1,5 +1,5 @@
 #Create SSH Keypair
-resource "null_resource" "aws_keypair" {
+resource "null_resource" "sshkey_gen" {
 
   provisioner "local-exec" {
     command = <<EOF
@@ -12,11 +12,11 @@ EOF
     when = "destroy"
     on_failure = "continue"
     command = <<EOF
-   rm -rf /cncf/data/.ssh/id*
-   EOF
+rm -rf /cncf/data/.ssh/id*
+EOF
  }
 }
 
 resource "null_resource" "dummy_dependency2" {
-  depends_on = [ "null_resource.aws_keypair" ]
+  depends_on = [ "null_resource.sshkey_gen" ]
 }

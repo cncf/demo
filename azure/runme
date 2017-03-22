@@ -1,6 +1,11 @@
+rm -rf /cncf/data/.ssh/
+rm -rf /cncf/data/.cfssl/
+rm -rf /cncf/data/azure-config.json
+rm -rf /build/azure/terraform.tfstate*
+rm -rf /build/azure/azure_dns*
 terraform get
-
-terraform apply -target null_resource.aws_keypair                                                                                                  
-terraform apply -target null_resource.ssl_gen                                                                                                      
-terraform apply -target module.route53.null_resource.ip_files_to_csv    
+terraform apply -target null_resource.sshkey_gen
+terraform apply -target null_resource.ssl_gen
+terraform apply -target null_resource.cloud_gen
+terraform apply -target module.dns.null_resource.dns_gen
 time terraform apply

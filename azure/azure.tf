@@ -1,29 +1,30 @@
 # Configure the Microsoft Azure Provider
 provider "azurerm" { }
 
-resource "azurerm_resource_group" "main" {
-  name     = "${ var.azure["resource-group"] }"
+resource "azurerm_resource_group" "cncf" {
+  name     = "${ var.name }"
   location = "${ var.azure["location"] }"
-  }
+}
 
-resource "azurerm_storage_account" "test" {
-  name                = "accsa1231234"
-  resource_group_name = "${azurerm_resource_group.main.name}"
-  location            = "${azurerm_resource_group.main.location}"
+resource "azurerm_storage_account" "cncf" {
+  # FIXME: storage_account name must be globally unique
+  name                = "${ var.name }cncfdemo"
+  resource_group_name = "${ var.name }"
+  location            = "${ var.azure["location"] }"
   account_type        = "Standard_LRS"
 }
 
-resource "azurerm_storage_container" "test" {
-  name                  = "vhds"
-  resource_group_name = "${ azurerm_resource_group.main.name }"
-  storage_account_name  = "${ azurerm_storage_account.test.name }"
+resource "azurerm_storage_container" "cncf" {
+  name                  = "${ var.name }"
+  resource_group_name   = "${ var.name }"
+  storage_account_name  = "${ azurerm_storage_account.cncf.name }"
   container_access_type = "private"
 }
 
-resource "azurerm_availability_set" "test" {
-  name = "acceptanceTestAvailabilitySet1"
-  location = "${ var.azure["location"] }"
-  resource_group_name = "${azurerm_resource_group.main.name}"
+resource "azurerm_availability_set" "cncf" {
+  name                = "${ var.name }"
+  resource_group_name = "${ var.name }"
+  location            = "${ var.azure["location"] }"
 
 }
 

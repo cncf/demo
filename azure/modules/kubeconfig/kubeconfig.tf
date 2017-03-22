@@ -2,7 +2,7 @@ data "template_file" "kubeconfig" {
   template = <<EOF
 kubectl config set-cluster cluster-${ var.name } \
   --embed-certs=true \
-  --server=https://${ var.master-elb } \
+  --server=https://${ var.fqdn-k8s } \
   --certificate-authority=${ var.ca-pem }
 
 kubectl config set-credentials admin-${ var.name } \
@@ -34,7 +34,7 @@ LOCAL_EXEC
   provisioner "local-exec" {
     command = <<LOCAL_EXEC
 kubectl config set-cluster cluster-${ var.name } \
-  --server=https://${ var.master-elb } \
+  --server=https://${ var.fqdn-k8s } \
   --certificate-authority=${ var.ca-pem } &&\
 kubectl config set-credentials admin-${ var.name } \
   --certificate-authority=${ var.ca-pem } \

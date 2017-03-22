@@ -1,9 +1,9 @@
 variable "name" {}
+variable "internal-tld" { default = "cncf.demo" }
 
 variable "azure" {
   default = {
-    resource-group = "deploy"
-    location = "West US"
+    location = "westus"
   }
 }
 
@@ -26,13 +26,13 @@ variable "instance-type" {
     worker = "m3.medium"
   }
 }
-variable "internal-tld" {}
 
 # Set from https://quay.io/repository/coreos/hyperkube?tab=tags
 variable "k8s" {
   default = {
     kubelet-image-url = "quay.io/coreos/hyperkube"
-    kubelet-image-tag = "v1.5.1_coreos.0"
+    kubelet-image-tag = "v1.4.7_coreos.0"
+    # kubelet-image-tag = "v1.5.1_coreos.0"
   }
 }
 

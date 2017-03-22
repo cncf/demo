@@ -13,3 +13,4 @@ variable "admin-username" {}
 variable "k8s-worker-tar"  {}
 variable "kubelet-image-url" {}
 variable "kubelet-image-tag" {}
+variable "cloud-config" {}

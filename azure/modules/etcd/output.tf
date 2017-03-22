@@ -1,5 +1,5 @@
-output "external-lb" { value = "${azurerm_lb_backend_address_pool.test.id }" }
-output "fqdn-lb" { value = "${azurerm_public_ip.test.fqdn}" }
+output "external-lb" { value = "${azurerm_lb_backend_address_pool.cncf.id }" }
+output "fqdn-lb" { value = "${azurerm_public_ip.cncf.fqdn}" }
 
 
 # output "depends-id" { value = "${ null_resource.dummy_dependency.id }" }

@@ -16,7 +16,7 @@ resource "aws_subnet" "private" {
 
   availability_zone = "${ element( split(",", var.azs), count.index ) }"
   cidr_block = "${ cidrsubnet(var.cidr, 8, count.index + 10) }"
-  vpc_id = "${ aws_vpc.main.id }"
+  vpc_id = "${ aws_vpc.cncf.id }"
 
   tags {
     "kubernetes.io/role/internal-elb" = "${ var.name }"
@@ -29,7 +29,7 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_route_table" "private" {
-  vpc_id = "${ aws_vpc.main.id }"
+  vpc_id = "${ aws_vpc.cncf.id }"
 
   route {
     cidr_block = "0.0.0.0/0"

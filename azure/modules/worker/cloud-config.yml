@@ -52,7 +52,7 @@ coreos:
         [Service]
         Environment="KUBELET_IMAGE_URL=${ kubelet-image-url }"
         Environment="KUBELET_IMAGE_TAG=${ kubelet-image-tag }"
-        Environment="RKT_RUN_ARGS=\
+        Environment="RKT_OPTS=\
           --volume dns,kind=host,source=/etc/resolv.conf \
           --mount volume=dns,target=/etc/resolv.conf \
           --volume rkt,kind=host,source=/opt/bin/host-rkt \
@@ -71,6 +71,7 @@ coreos:
           --allow-privileged=true \
           --api-servers=http://master.${ internal-tld }:8080 \
           --cloud-provider=azure \
+          --cloud-config=/etc/kubernetes/ssl/azure-config.json \
           --cluster-dns=${ dns-service-ip } \
           --cluster-domain=${ cluster-domain } \
           --config=/etc/kubernetes/manifests \
@@ -169,3 +170,7 @@ write-files:
   - encoding: b64 
     content: ${ k8s-worker-tar }
     path: /etc/kubernetes/ssl/k8s-worker.tar
+
+  - encoding: b64
+    content: ${ cloud-config }
+    path: /etc/kubernetes/ssl/azure-config.json

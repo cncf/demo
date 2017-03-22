@@ -1,7 +1,6 @@
-resource "azurerm_virtual_machine_scale_set" "test" {
-  name = "mytestscaleset-1"
+resource "azurerm_virtual_machine_scale_set" "cncf" {
+  name = "${ var.name }"
   location = "${ var.location }"
-  # availability_set_id   = "${ var.availability-id }"
   resource_group_name = "${ var.name }"
   upgrade_policy_mode = "Manual"
 
@@ -12,9 +11,9 @@ resource "azurerm_virtual_machine_scale_set" "test" {
   }
 
   os_profile {
-    computer_name_prefix = "testvm"
+    computer_name_prefix = "worker"
     admin_username = "${ var.admin-username }"
-    admin_password = "Passwword1234"
+    admin_password = "Password1234"
     custom_data = "${ data.template_file.cloud-config.rendered }"
   }
 
@@ -32,7 +31,7 @@ resource "azurerm_virtual_machine_scale_set" "test" {
       ip_configuration {
         name = "TestIPConfiguration"
         subnet_id = "${ var.subnet-id }"
-        load_balancer_backend_address_pool_ids = ["${ var.external-lb }"] 
+        # load_balancer_backend_address_pool_ids = ["${ var.external-lb }"] 
       }
   }
 

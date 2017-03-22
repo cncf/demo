@@ -10,5 +10,6 @@ data "template_file" "cloud-config" {
     internal-tld = "${ var.internal-tld }"
     location = "${ var.location }"
     k8s-worker-tar = "${ base64encode(var.k8s-worker-tar) }"
+    cloud-config = "${ base64encode(var.cloud-config) }"
   }
 }
