@@ -5,7 +5,7 @@ resource "null_resource" "ssl_gen" {
     command = <<EOF
 ${ path.module }/init-cfssl \
 ${ var.data-dir }/.cfssl \
-${ azurerm_resource_group.cncf.location } \
+${ var.region } \
 ${ var.internal-tld } \
 ${ var.k8s-service-ip }
 EOF

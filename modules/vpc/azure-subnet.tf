@@ -1,10 +1,8 @@
-resource "azurerm_subnet" "cncf" {
-  name = "${ var.name }"
-  resource_group_name = "${ var.name }"
-  virtual_network_name = "${azurerm_virtual_network.cncf.name}"
-  address_prefix = "10.0.10.0/24"
-  route_table_id = "${ azurerm_route_table.cncf.id }"
-
+resource "google_compute_subnetwork" "cncf" {
+  name          = "${ var.name }"
+  ip_cidr_range = "${ var.cidr }"
+  network       = "${ google_compute_network.cncf.self_link }"
+  region        = "${ var.region }"
 }
 
 /*
