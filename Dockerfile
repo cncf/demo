@@ -6,7 +6,7 @@ ENV ARC=amd64
 ENV AWS_CONFIG_FILE=/cncf/data/awsconfig
 ENV KUBECONFIG=/cncf/data/kubeconfig
 # Install AWS CLI + Deps 
-RUN apk add --update git bash util-linux wget tar curl build-base jq openssh bind-tools && \
+RUN apk add --update git bash util-linux wget tar curl build-base jq openssh && \
 	rm /var/cache/apk/*
 
 
@@ -26,8 +26,8 @@ go get -u github.com/cloudflare/cfssl/cmd/...
 
 WORKDIR /cncf/data
 COPY entrypoint.sh /cncf/
-COPY azure /azure/
+COPY gce /gce/
 RUN chmod +x /cncf/entrypoint.sh
 
-ENTRYPOINT ["/cncf/entrypoint.sh"]
-CMD ["deploy"]
+# ENTRYPOINT ["/cncf/entrypoint.sh"]
+CMD ["/bin/bash"]
