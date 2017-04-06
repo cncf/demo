@@ -1,9 +1,22 @@
 # Configure the Microsoft Azure Provider
 provider "google" {
   credentials = "${file("gce.json")}"
-  project     = "${ var.name }"
+  project     = "${ var.project }"
   region      = "${ var.region }"
 }
+
+# resource "google_project" "company-env" {
+#   project_id         = "${var.ENVIRONMENT}"
+#   org_id             = "${var.GCP_ORG_ID}"
+#   name               = "${var.ENVIRONMENT}"
+#   skip_delete        = "true"
+# }
+
+# // APIs to enable for above project
+# resource "google_project_services" "company-env" {
+#   project            = "${var.ENVIRONMENT}"
+#   services           = ["compute_component", "container", "dns.googleapis.com", "sqladmin-json.googleapis.com", "monitoring.googleapis.com", "logging.googleapis.com", "sql-component-json.googleapis.com", "cloudmonitoring.googleapis.com", "storage-component-json.googleapis.com", "iam.googleapis.com"]
+# }
 
 # resource "azurerm_resource_group" "cncf" {
 #   name     = "${ var.name }"
