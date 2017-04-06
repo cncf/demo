@@ -1,4 +1,4 @@
-variable "name" { default = "custom-zone-163720" }
+variable "name" { default = "test" }
 variable "internal-tld" { default = "cncf.demo" }
 variable "master-node-count" { default = "3" }
 variable "worker-node-count" { default = "3" }
@@ -13,6 +13,7 @@ variable "image-offer"     { default = "CoreOS" }
 variable "image-sku"       { default = "Stable" }
 variable "image-version"   { default = "1298.6.0" }
 variable "region"          { default = "us-central1" }
+variable "project"         { default = "temporal-tensor-163817" }
 variable "cluster-domain" { default = "cluster.local" }
 variable "admin-username" { default = "cncf"}
 variable "cidr" { default = "10.0.0.0/16" }
