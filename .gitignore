@@ -1,3 +1,5 @@
+myazure.publishsettings
+*.env
 .DS_Store
 *~
 *.swp
