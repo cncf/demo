@@ -1,249 +1,201 @@
 <head>
 <title>cncfdemo</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" type="text/css" href="main.css">
-<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/novus/nvd3/v1.8.1/build/nv.d3.css">
+<!-- <link rel="stylesheet" type="text/css" href="main.css"> -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.js"></script>
+<style>
+
+
+html { box-sizing: border-box; font-family: Roboto,Helvetica Neue,Helvetica,Arial,sans-serif; font-weight: 300; font-size: 1rem; line-height: 1.5; }
+*, *:before, *:after { box-sizing: inherit; }
+a { color: #039be5; text-decoration: none; background-color: transparent; -webkit-tap-highlight-color: transparent; }
+body { margin: 0; background-color: #f9f9f9; color: #7f7f7f; display: flex; flex-flow: column nowrap; min-height: 100vh; }
+header { background-color: #fff; color: #333; font-size: 1em; font-weight: 100; line-height: 3rem; max-height: 7em;
+display: grid;
+grid-template-areas: "logo uuid provider masters minions"
+                     "command vcpu memory storage storage";
+}
+
+header > div { align-self: center; justify-self: center; }
+header > div:nth-child(-n+5) { font-size: 2em; font-weight: 400; line-height: 4rem; }
+main { flex: 1 }
+footer { background-color: #333; color: #ccc; padding: 1em; }
+
+#aws { margin-left: 42px; }
+#aws:before { background-image: url(img/aws.png); background-size: 50px 40px; content: ''; position: absolute; margin-left: -50px; width: 50px; height: 40px; margin-top: 10px; }
+
+#command { display: inline-block; height: 32px; font-size: 13px; font-weight: 500; color: rgba(0,0,0,0.6); line-height: 32px; padding: 0 12px; border-radius: 16px; background-color: #e4e4e4; }
+
+#events { padding: 1em 3em; display: flex; flex-flow: column nowrap; }
+.card { padding: 1.25em; display: flex; flex-flow: column nowrap;
+        min-height: 4rem; margin: 0.625rem 0; background-color: #fff; border-radius: 2px; border-left: 4px solid #71c4d5;
+        box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+      }
+
+.rotate90 { transform: rotate(90deg); }
+.card-content { display: flex; line-height: 1.5em; }
+.card-content div:first-child { margin-right: 0.5em; transition: all 0.25s 0s; font-weight: 800; user-select: none; }
+.card-content div:last-child { margin-left: auto; }
+
+.content-extra { background: #333; margin-top: 1.5em; min-height: 3em; }
+.event-message { align-self: center; margin: 0.5em; }
+.event-message:last-of-type { color: #71c4d5; }
+.hr { display: flex; flex-flow: column nowrap; margin: 2em 0 0.5em 0; }
+.hr div:nth-of-type(1) { width: 100%; border-top: 1px solid rgba(0, 0, 0, 0.1); }
+.hr div:nth-of-type(2) {     align-self: center; margin-top: -1.5em; background: #f9f9f9; padding: 0.5em;}
+
+.tty { background: #212121; color: #edede3; margin: 0em; padding: 1em; overflow: scroll; max-height: 35vh; }
+.tty ol { list-style-type: none; margin: 0; padding: 0; }
+.tty li { min-height: 1.5em; }
+</style>
 </head>
 
 <body>
-
   <header>
     <template class="Metadata">
-    <a href="/"><div id="logo"><img src="img/logo_cncf.png"></div></a>
-    <div id="metadata">
-      <div id="uuid">Demo ／ ${ id }</div>
-      <div id="aws">${ Provider }</div>
-      <div id="masters">${ Masters['size'] } Master</div>
-      <div id="minions">${ Minions['size'] } Minions </div>
-    </div>
-
-    <div id="command">This demo was run with the command: <span>cncfdemo bootstrap aws cluster --scale 3</span></div>
-
-    <div id="moreinfo">
-      <div id="uuid">${ vcpu } vCPU Cores</div>
-      <div id="ram">${ RAM } Memory</div>
-      <div id="masters">${ Storage } Storage</div>
-    </div>
+    <div> <a href="/"><img src="img/logo_cncf.png" style="width:235px; margin-top: -0.5em;"></a> </div>
+    <div>Demo ／ ${ id }</div>
+    <div id="aws">${ Provider }</div>
+    <div>${ Masters['size'] } Masters</div>
+    <div>${ Minions['size'] } Nodes</div>
+    <div style="margin-left:1.5em;">This demo was run with the command:</div>
+    <div id="command"><span>cncfdemo bootstrap aws cluster --scale ${ Minions['size'] }</span></div>
+    <div>${ vcpu } vCPU Cores</div>
+    <div>${ RAM } Memory</div>
+    <div>${ Storage } Storage</div>
     </template>
   </header>
-  <div style="background: white;">
-
-    <div id="spark" style='height:8em; margin-bottom: 2em;'> <svg id="spark1"></svg> </div>
-    <div style='height:16em;'> <svg id="chart1"></svg> </div>
-  </div>
 
   <main>
-
-    
-    <article id="centercolumn">
+    <div id="graphs" style="background: white;" ><div style='height:16em;'> <svg id="chart1"></svg> </div> </div>
+    <div id="events">
       <template class="events">
       <div class="card ${ timeend ? 'ended' : 'running' }" id="stat${ _index }">
         <div class="card-content">
-         <span class="card-arrow">❯</span>
-         <span class="card-title">${ title }</span>
-         <span class="card-times">${ humanize(g['events'][_index]['time']) }</span>
+         <div class="card-arrow">❯</div>
+         <div class="card-title">${ title }</div>
+         <div class="card-times">${ cncfdemo.humanize(g['events'][_index]['time']) }</div>
         </div>
         ${ content }
       </div>
       </template>
-    </article>  
-
+    </div>
   </main>
 
   <footer><span>Copyright © 2017 The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our Trademark Usage page. Linux is a registered trademark of Linus Torvalds. Privacy Policy and Terms of Use</span></footer>
-  
-</body>
-
 
 <script>
+  const cncfdemo = {
 
-const polyfills = ['js/fetch.js', 'js/url-search-params.js'];
-const loadScripts = srcList => { 
+    debug: false,
+    base_url: 'http://stats.cncfdemo.io',
+    debug_url: 'http://localhost:8000',
+    urlParams: new URLSearchParams(window.location.search),
 
-  const succeeded = new Set();  
-  return new Promise( (ok, err) => {
+    id() { return (cncfdemo.urlParams.get('id') ? cncfdemo.urlParams.get('id') : 'sample') + '.json' },
+    url(_) { return `${cncfdemo.debug ? cncfdemo.debug_url : cncfdemo.base_url}/${_}/${cncfdemo.id()}` },
 
-    srcList.forEach( src => {
+    cards() { return document.querySelectorAll('.card'); },
+    templates() { return document.getElementsByTagName('template') },
 
-      const js = document.createElement('script'); js.src = src;
-      js.onerror = () => err(new Error('Failed to load script ' + src));
-      js.onload  = () => { succeeded.add(src); //es16 stdlib leaves a lot to be desired
-                           (polyfills.filter(p => !succeeded.has(p)).length === 0) ? ok(succeeded) : 'wait'; }
-      document.head.appendChild(js);
+    now: Math.floor(Date.now() / 1000),
+    humanize(t) { m = Math.floor(t / 60); return `${ (m > 0) ? m+' minutes,' : '' } ${ Math.floor(t % 60) } seconds` },
 
-    })
+    toggle(e) {
+      e.stopPropagation();
+      console.log(e.currentTarget, e.target, e);
+      extra = e.currentTarget.querySelector('.content-extra');
+      if (extra) {
+        e.currentTarget.querySelector('.card-arrow').classList.toggle('rotate90');
+        extra.hidden = !extra.hidden;
+      }
+    },
 
-  })
+    Render(template, contexts, g, rendered = '') {
+      [].concat(contexts).forEach( (context, _index) => {
 
-}
+        with (context) {
 
-const now = Math.floor(Date.now() / 1000);
+          timestart = g['events'][_index]['timestart'];
+          timeend = g['events'][_index]['timeend'];
+          if (typeof context['content'] === 'undefined') { context['content'] = '' }
 
-const humanize = t => { m = Math.floor(t / 60); return `${ (m > 0) ? m+' minutes,' : '' } ${ Math.floor(t % 60) } seconds` }
+          g['events'][_index]['time'] = Math.max(0, (timeend ? timeend : cncfdemo.now) - timestart);
+          rendered += context['raw'] ? raw : eval('`'+template.innerHTML+'`');
 
-const Render = (template, contexts, g) => {
-
-  rendered = '';
-  [].concat(contexts).forEach( (context, _index) => {
-
-    with (context) {
-
-      timestart = g['events'][_index]['timestart'];
-      timeend = g['events'][_index]['timeend'];
-
-      if (typeof context['content'] === 'undefined') { context['content'] = '' }
-
-
-      g['events'][_index]['time'] = Math.max(0, (timeend ? timeend : now) - timestart);
-      rendered += context['raw'] ? raw : eval('`'+template.innerHTML+'`');
-    }
-
-
-  })
-
-  return rendered;
-
-}
-
-
-const toggle = e => {
-  e.stopPropagation();
-  console.log(e.currentTarget, e.target, e);
-  extra = e.currentTarget.querySelector('.content-extra');
-  if (extra) {
-    e.currentTarget.querySelector('.card-arrow').classList.toggle('rotate90');
-    extra.hidden = !extra.hidden;
-  }
- }
-
-
-let status = 'running';
-
-
-const dataStore = () => {
-
-
-}
-
-
-const main = () => {
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const id = urlParams.get('id') ? urlParams.get('id') : 'sample.json';
-  const base_url = 'http://stats.cncfdemo.io/';
-
-  const url = base_url + status + '/' + id;
-  //const url = id;
-  //console.log(url);
-
-  const templates = document.getElementsByTagName('template');
-
-  headers = {};
-  const handleErrors = response => {
-
-      headers = response.headers;
-      contentType = headers.get('Content-Type');
-
-      if (!response.ok) {
-
-          if (response.status === 404 && status == 'running') 
-            { status = 'finished'; main(); }
-          else {
-            throw Error(response.statusText);
           }
-        };
-      if (!contentType === 'application/json') throw Error(contentType);
 
-      return response.clone().json();
+      })
 
-  }
-
-  fetch(url)
-    .then(handleErrors)
-    .catch(Err => console.log(Err))
-    .then(data => { if (!data) { console.log('Fetch Failed') } else {
-
-    console.log(data);
-    events = data['events'];
-
-    lastModified = headers.get('Last-modified');
-    console.log('lastModified: ', lastModified);
-
-    Array.from(templates).forEach( template => {
-
-      contexts = data[template.className];
-      rendered = Render(template, contexts, data);
-      template.parentElement.innerHTML = rendered + template.outerHTML;
-
-
-    })
-
-    cards = document.querySelectorAll('.card');
-
-    Array.from(cards).forEach( card => { 
-      card.addEventListener('click', toggle);
-    });
-
-
-
-    const ticker = window.setInterval( () => {
-
-
-            running = document.querySelectorAll('div.card.running');
-            Array.from(running).forEach( event => {
-
-              index = event.id.split('stat')[1];
-              eventData = data['events'][index];
-
-              eventData['time'] += 1;
-              tick = humanize(eventData['time'] );
-              event.querySelector('.card-times').innerText = tick;
-
-              });
-
-           }, 1000);
-
-
-      console.log('timer start: ', ticker);
-
-
-    const refresh = window.setInterval( () => {
-      fetch(url, { method: 'HEAD' } )
-        .then(response => {
-          if (response.headers.get('Last-modified') !== lastModified) {
-            console.log('new!');
-            window.clearInterval(ticker);
-            window.clearInterval(refresh);
-            main();
-            }
-
-          })
-
-        }, 1000)
-
-
+      return rendered;
 
     }
 
+  };
+
+  fetch(cncfdemo.url("finished"))
+    .then( response => response.json() )
+    .then( data => { cncfdemo.state = data; console.log(data);
+
+       Array.from(cncfdemo.templates()).forEach( template => {
+
+         contexts = data[template.className];
+         rendered = cncfdemo.Render(template, contexts, data);
+         template.parentElement.innerHTML = rendered + template.outerHTML;
+
+        })
+
+       Array.from(cncfdemo.cards()).forEach( card => { card.addEventListener('click', cncfdemo.toggle); });
+
+       fetch(cncfdemo.url("charts"))
+         .then( response => response.json() )
+         .then( data => { cncfdemo.chart = data; console.log(data); 
+
+                var colors = d3.scale.category20();
+                var chart;
+                nv.addGraph(function() {
+                    chart = nv.models.stackedAreaChart()
+                        .useInteractiveGuideline(true)
+                        .x(function(d) { return d[0] })
+                        .y(function(d) { return d[1] })
+                        .duration(300);
+            
+                    chart.showControls(false)
+                    chart.style("expand");
+            
+                    chart.xAxis.tickFormat(function(d) { return d3.time.format('%H:%M')(new Date(d*1000)) });
+                    chart.yAxis.tickFormat(d3.format(',.4f'));
+                    chart.interactiveLayer.tooltip.headerFormatter(function (d) { return d;    });
+                    chart.legend.vers('furious');
+                    d3.select('#chart1')
+                        .datum(cncfdemo.chart)
+                        .transition().duration(1000)
+                        .call(chart)
+                        .each('start', function() {
+                            setTimeout(function() {
+                                d3.selectAll('#chart1 *').each(function() {
+                                    if(this.__transition__)
+                                        this.__transition__.duration = 1;
+                                })
+                            }, 0)
+                        });
+                    nv.utils.windowResize(chart.update);
+                    return chart;
+                });
+            
+
+             
+         } )
+         .catch(Err => console.log(Err));
+
     })
+    .catch(Err => console.log(Err));
 
-}
 
-
-if (!window.fetch) {
-  loadScripts(polyfills)
-    .then(response => { console.log('Polyfills loaded: ', response); main(); }, Err => console.log(Err))
-} else { main() }
 
 </script>
 
-<!-- <script src="aws-iot-sdk-browser-bundle.js"></script> -->
-<!-- <script src="bundle.js"></script> -->
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
-<script src="https://cdn.rawgit.com/novus/nvd3/v1.8.1/build/nv.d3.min.js"></script>
-
-<script src="data.js"></script>
-<script src="chart.js"></script>
-
-
+</body>
