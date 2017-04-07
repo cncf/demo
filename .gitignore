@@ -7,3 +7,4 @@
 *.zip
 *.pyc
 *.dist-info/
+api/_tes*
