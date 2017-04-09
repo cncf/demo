@@ -7,7 +7,7 @@ ${ path.module }/init-cfssl \
 ${ var.data-dir }/.cfssl \
 ${ azurerm_resource_group.cncf.location } \
 ${ var.internal-tld } \
-${ var.k8s-service-ip }
+${ var.k8s_service_ip }
 EOF
   }
 

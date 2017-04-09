@@ -1,11 +1,11 @@
 variable "name" {}
 variable "location" {}
-variable "bastion-vm-size" {}
-variable "image-publisher" {}
-variable "image-offer"     {}
-variable "image-sku"       {}
-variable "image-version"   {}
-variable "admin-username" {}
+variable "bastion_vm_size" {}
+variable "image_publisher" {}
+variable "image_offer"     {}
+variable "image_sku"       {}
+variable "image_version"   {}
+variable "admin_username" {}
 variable "internal-tld" {}
 variable "subnet-id" {}
 variable "availability-id" {}

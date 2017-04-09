@@ -2,10 +2,10 @@ data "template_file" "cloud-config" {
   template = "${ file( "${ path.module }/cloud-config.yml" )}"
 
   vars {
-    cluster-domain = "${ var.cluster-domain }"
-    dns-service-ip = "${ var.dns-service-ip }"
-    kubelet-image-url = "${ var.kubelet-image-url }"
-    kubelet-image-tag = "${ var.kubelet-image-tag }"
+    cluster_domain = "${ var.cluster_domain }"
+    dns_service_ip = "${ var.dns_service_ip }"
+    kubelet_image_url = "${ var.kubelet_image_url }"
+    kubelet_image_tag = "${ var.kubelet_image_tag }"
     internal-tld = "${ var.internal-tld }"
     location = "${ var.location }"
     k8s-worker-tar = "${ base64encode(var.k8s-worker-tar) }"
