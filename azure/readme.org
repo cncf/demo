@@ -61,7 +61,7 @@ Adding var-name=value to ./data/terraform.tfvars will allow you to override many
 #+BEGIN_SRC shell
 name= "azure"
 location= "westus"
-internal-tld= "cncf.demo"
+internal_tld= "cncf.demo"
 master_node_count= "3"
 worker_node_count= "3"
 master_vm_size= "Standard_A2"

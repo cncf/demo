@@ -1,5 +1,5 @@
 resource "azurerm_dns_zone" "cncf" {
-  name = "${ var.internal-tld }"
+  name = "${ var.internal_tld }"
   resource_group_name = "${ var.name }"
 }
 
@@ -87,21 +87,21 @@ resource "azurerm_dns_srv_record" "etcd-client-tcp" {
     priority = 0
     weight = 0
     port = 2379
-    target = "etcd1.${ var.internal-tld }"
+    target = "etcd1.${ var.internal_tld }"
   }
 
   record {
     priority = 0
     weight = 0
     port = 2379
-    target = "etcd2.${ var.internal-tld }"
+    target = "etcd2.${ var.internal_tld }"
   }
 
   record {
     priority = 0
     weight = 0
     port = 2379
-    target = "etcd3.${ var.internal-tld }"
+    target = "etcd3.${ var.internal_tld }"
   }
 
 }
@@ -116,21 +116,21 @@ resource "azurerm_dns_srv_record" "etcd-server-tcp" {
     priority = 0
     weight = 0
     port = 2380
-    target = "etcd1.${ var.internal-tld }"
+    target = "etcd1.${ var.internal_tld }"
   }
 
   record {
     priority = 0
     weight = 0
     port = 2380
-    target = "etcd2.${ var.internal-tld }"
+    target = "etcd2.${ var.internal_tld }"
   }
 
   record {
     priority = 0
     weight = 0
     port = 2380
-    target = "etcd3.${ var.internal-tld }"
+    target = "etcd3.${ var.internal_tld }"
   }
 
 }

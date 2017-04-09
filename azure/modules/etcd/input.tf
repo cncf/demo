@@ -14,7 +14,7 @@ variable "storage-container" {}
 variable "k8s-apiserver-tar" {}
 variable "cluster_domain" {}
 variable "dns_service_ip" {}
-variable "internal-tld" {}
+variable "internal_tld" {}
 variable "pod_cidr" {}
 variable "service_cidr" {}
 variable "admin_username" {}

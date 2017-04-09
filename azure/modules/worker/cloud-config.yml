@@ -4,7 +4,7 @@
 coreos:
 
   etcd2:
-    discovery-srv: ${ internal-tld }
+    discovery-srv: ${ internal_tld }
     peer-trusted-ca-file: /etc/kubernetes/ssl/ca.pem
     peer-client-cert-auth: true
     peer-cert-file: /etc/kubernetes/ssl/k8s-worker.pem
@@ -51,7 +51,7 @@ coreos:
         ExecStartPre=/usr/bin/mount --make-shared /var/lib/kubelet
         ExecStart=/usr/lib/coreos/kubelet-wrapper \
           --allow-privileged=true \
-          --api-servers=http://master.${ internal-tld }:8080 \
+          --api-servers=http://master.${ internal_tld }:8080 \
           --cloud-provider=azure \
           --cloud-config=/etc/kubernetes/ssl/azure-config.json \
           --cluster-dns=${ dns_service_ip } \
@@ -113,7 +113,7 @@ write-files:
           - /hyperkube
           - proxy
           - --kubeconfig=/etc/kubernetes/kubeconfig.yml
-          - --master=https://master.${ internal-tld }
+          - --master=https://master.${ internal_tld }
           - --proxy-mode=iptables
           securityContext:
             privileged: true

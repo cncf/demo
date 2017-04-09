@@ -14,7 +14,7 @@ variable "availability-id" {}
 variable "external-lb" {}
 variable "cluster_domain" {}
 variable "dns_service_ip" {}
-variable "internal-tld" {}
+variable "internal_tld" {}
 variable "admin_username" {}
 variable "k8s-worker-tar"  {}
 variable "kubelet_image_url" {}

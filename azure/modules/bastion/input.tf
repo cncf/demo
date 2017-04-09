@@ -6,7 +6,7 @@ variable "image_offer"     {}
 variable "image_sku"       {}
 variable "image_version"   {}
 variable "admin_username" {}
-variable "internal-tld" {}
+variable "internal_tld" {}
 variable "subnet-id" {}
 variable "availability-id" {}
 variable "storage-container" {}

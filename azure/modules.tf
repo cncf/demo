@@ -9,7 +9,7 @@ module "vpc" {
 module "dns" {
   source = "./modules/dns"
   name = "${ var.name }"
-  internal-tld = "${ var.internal-tld }"
+  internal_tld = "${ var.internal_tld }"
   master-ips = "${ module.etcd.master-ips }"
 }
 
@@ -33,7 +33,7 @@ module "dns" {
    kubelet_image_url = "${ var.kubelet_image_url }"
    kubelet_image_tag = "${ var.kubelet_image_tag }"
    dns_service_ip = "${ var.dns_service_ip }"
-   internal-tld = "${ var.internal-tld }"
+   internal_tld = "${ var.internal_tld }"
    pod_cidr = "${ var.pod_cidr }"
    service_cidr = "${ var.service_cidr }"
    k8s-apiserver-tar = "${file("${ var.data-dir }/.cfssl/k8s-apiserver.tar")}"
@@ -57,7 +57,7 @@ module "bastion" {
   storage-primary-endpoint = "${ azurerm_storage_account.cncf.primary_blob_endpoint }"
   storage-container = "${ azurerm_storage_container.cncf.name }"
   availability-id = "${ azurerm_availability_set.cncf.id }"
-  internal-tld = "${ var.internal-tld }"
+  internal_tld = "${ var.internal_tld }"
 }
 
 module "worker" {
@@ -81,7 +81,7 @@ module "worker" {
   kubelet_image_url = "${ var.kubelet_image_url }"
   kubelet_image_tag = "${ var.kubelet_image_tag }"
   dns_service_ip = "${ var.dns_service_ip }"
-  internal-tld = "${ var.internal-tld }"
+  internal_tld = "${ var.internal_tld }"
   k8s-worker-tar = "${file("${ var.data-dir }/.cfssl/k8s-worker.tar")}"
   cloud-config = "${file("${ var.data-dir }/azure-config.json")}"
   # security-group-id = "${ module.security.worker-id }"
