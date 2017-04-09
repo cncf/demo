@@ -10,7 +10,7 @@ module "dns" {
   source = "./modules/dns"
   name = "${ var.name }"
   internal-tld = "${ var.internal-tld }"
-  # master-ips = "${ module.etcd.master-ips }"
+  master-ips = "${ module.etcd.master-ips }"
 }
 
  module "etcd" {
