@@ -29,102 +29,38 @@ resource "google_dns_record_set" "A-etcds" {
   ]
 }
 
+resource "google_dns_record_set" "CNAME-master" {
+  name = "master_${ var.name }.${ var.internal-tld }."
+  type = "CNAME"
+  ttl  = 300
 
-# resource "azurerm_dns_a_record" "A-etcd"  {
-#   name = "etcd"
-#   zone_name = "${azurerm_dns_zone.cncf.name}"
-#   resource_group_name = "${ var.name }"
-#   ttl = "300"
-#   records = [
-#     "${ var.master-ips }"
-#   ]
-# }
+  managed_zone = "${ google_dns_managed_zone.cncf.name }"
 
-# resource "azurerm_dns_a_record" "A-etcds" {
-#   count = "${ length(var.master-ips) }"
+  rrdatas = [
+    "${ var.name }.${ var.internal-tld }."
+  ]
+}
 
-#   name = "etcd${ count.index+1 }"
-#   zone_name = "${azurerm_dns_zone.cncf.name}"
-#   resource_group_name = "${ var.name }"
-#   ttl = "300"
-#   records = [
-#     "${ element(var.master-ips, count.index) }"
-#   ]
-# }
+resource "google_dns_record_set" "etcd-client-tcp" {
+  name = "_etcd-client._tcp.${ var.internal-tld }."
+  type = "SRV"
+  ttl  = 300
 
-# resource "azurerm_dns_a_record" "A-master" {
-#   name = "master"
-#   zone_name = "${azurerm_dns_zone.cncf.name}"
-#   resource_group_name = "${ var.name }"
-#   ttl = "300"
-#   records = [ "${ var.master-ips }" ]
-# }
+  managed_zone = "${ google_dns_managed_zone.cncf.name }"
 
-# resource "azurerm_dns_a_record" "A-masters" {
-#   count = "${ length(var.master-ips) }"
-#   name = "master${ count.index+1 }"
-#   zone_name = "${azurerm_dns_zone.cncf.name}"
-#   resource_group_name = "${ var.name }"
-#   ttl = "300"
-#   records = [
-#     "${ element(var.master-ips, count.index) }"
-#   ]
-# }
+  rrdatas = [
+    "${ formatlist("0 0 2379 %v", google_dns_record_set.A-etcds.*.name) }"
+  ]
+}
 
-# resource "azurerm_dns_srv_record" "etcd-client-tcp" {
-#   name = "_etcd-client._tcp"
-#   zone_name = "${azurerm_dns_zone.cncf.name}"
-#   resource_group_name = "${ var.name }"
-#   ttl = "300"
+resource "google_dns_record_set" "etcd-server-tcp" {
+  name = "_etcd-server-ssl._tcp.${ var.internal-tld }."
+  type = "SRV"
+  ttl  = 300
 
-#   record {
-#     priority = 0
-#     weight = 0
-#     port = 2379
-#     target = "etcd1.${ var.internal-tld }"
-#   }
+  managed_zone = "${ google_dns_managed_zone.cncf.name }"
 
-#   record {
-#     priority = 0
-#     weight = 0
-#     port = 2379
-#     target = "etcd2.${ var.internal-tld }"
-#   }
-
-#   record {
-#     priority = 0
-#     weight = 0
-#     port = 2379
-#     target = "etcd3.${ var.internal-tld }"
-#   }
-
-# }
-
-# resource "azurerm_dns_srv_record" "etcd-server-tcp" {
-#   name = "_etcd-server-ssl._tcp"
-#   zone_name = "${azurerm_dns_zone.cncf.name}"
-#   resource_group_name = "${ var.name }"
-#   ttl = "300"
-
-#   record {
-#     priority = 0
-#     weight = 0
-#     port = 2380
-#     target = "etcd1.${ var.internal-tld }"
-#   }
-
-#   record {
-#     priority = 0
-#     weight = 0
-#     port = 2380
-#     target = "etcd2.${ var.internal-tld }"
-#   }
-
-#   record {
-#     priority = 0
-#     weight = 0
-#     port = 2380
-#     target = "etcd3.${ var.internal-tld }"
-#   }
-
-# }
+  rrdatas = [
+    "${ formatlist("0 0 2380 %v", google_dns_record_set.A-etcds.*.name) }"
+  ]
+}
