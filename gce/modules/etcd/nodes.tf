@@ -7,7 +7,7 @@ resource "google_compute_instance" "cncf" {
   tags = ["foo", "bar"]
 
   disk {
-    image = "debian-cloud/debian-8"
+    image = "coreos-stable-1298-7-0-v20170401"
   }
 
   // Local SSD disk
@@ -22,6 +22,7 @@ resource "google_compute_instance" "cncf" {
     subnetwork_project = "${ var.project }"
 
     access_config {
+      // FIX ME Don't assign Public IP
       // Ephemeral IP
     }
   }
