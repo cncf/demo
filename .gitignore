@@ -1,2 +1,12 @@
 myazure.publishsettings
 *.env
+.DS_Store
+*~
+*.swp
+*.swo
+*.egg-info/
+*.out
+*.zip
+*.pyc
+*.dist-info/
+api/_tes*

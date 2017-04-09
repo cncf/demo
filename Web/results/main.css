@@ -1,7 +1,7 @@
 html {
   box-sizing: border-box;
-  font-family: Roboto,Helvetica Neue,Helvetica,Arial,sans-serif;
-  font-weight: 300; 
+  font-family: Roboto, Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-weight: 300;
   font-size: 1rem;
   line-height: 1.5;
 }
@@ -75,7 +75,7 @@ header > h1 { color: rgba(0, 0, 0, 0.75); }
 #command {
     align-self: center;
     margin: 0 calc(17rem - 230px);
-    margin-top: auto;
+    /* margin-top: auto; */
 }
 
 #clickgrafana {
@@ -392,3 +392,12 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
     /* margin: 1em 0; */
     padding: 0 1em 1em 1em;
 }
+
+div {}
+
+#spark:before {
+    content: 'HTTP Requests';
+    font-weight: bolder;
+    margin-left: 2em;
+}
+
