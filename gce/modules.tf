@@ -13,12 +13,14 @@ module "vpc" {
 #   master-ips = "${ module.etcd.master-ips }"
 # }
 
-#  module "etcd" {
-#    source = "./modules/etcd"
-#    name = "${ var.name }"
-#    location = "${ var.location }"
-#    admin-username = "${ var.admin-username }"
-#    master-node-count = "${ var.master-node-count }"
+ module "etcd" {
+   source = "./modules/etcd"
+   name = "${ var.name }"
+   region = "${ var.region }"
+   zone = "${ var.zone }"
+   project = "${ var.project }"
+# admin-username = "${ var.admin-username }"
+   master-node-count = "${ var.master-node-count }"
 #    master-vm-size = "${ var.master-vm-size }"
 #    image-publisher = "${ var.image-publisher }"
 #    image-offer = "${ var.image-offer }"
@@ -40,7 +42,7 @@ module "vpc" {
 #    cloud-config = "${file("${ var.data-dir }/azure-config.json")}"
 #    # etcd-security-group-id = "${ module.security.etcd-id }"
 #    # external-elb-security-group-id = "${ module.security.external-elb-id }"
-# }
+}
 
 
 # module "bastion" {
