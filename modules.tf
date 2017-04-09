@@ -11,6 +11,7 @@ module "dns" {
   name = "${ var.name }"
   internal-tld = "${ var.internal-tld }"
   master-ips = "${ module.etcd.master-ips }"
+  master-node-count = "${ var.master-node-count }"
 }
 
  module "etcd" {
