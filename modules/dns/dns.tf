@@ -4,43 +4,18 @@ resource "google_dns_managed_zone" "cncf" {
   description = "${ var.name }"
 }
 
-# ns_zone" "cncf" {
-#   name = "${ var.internal-tld }"
-#   resource_group_name = "${ var.name }"
-# }
+resource "google_dns_record_set" "A-etcd" {
+  name = "${ var.name }.${ var.internal-tld }."
+  type = "A"
+  ttl  = 300
 
-# #Name Servers
-# resource "null_resource" "dns_dig" {
-#   # Error running plan: 1 error(s) occurred:
-#   # * module.dns.null_resource.ns_to_ip_list: null_resource.ns_to_ip_list: value of 'count' cannot be computed
-#   # FIXME: hardcoding to 2
-#   # we only need 2 dns servers
-#   count = 2
-#   depends_on = [ "azurerm_dns_zone.cncf" ]
-#   provisioner "local-exec" {
-#     # filename = "/dev/null"
-#     command = <<EOF
-# # grab ip for this nameserver into a file
-# dig +short ${ element(azurerm_dns_zone.cncf.name_servers,count.index) } > ${ var.name-servers-file }.${ count.index }.ip
-# EOF
-#   }
-# }
+  managed_zone = "${ google_dns_managed_zone.cncf.name }"
 
-# resource "null_resource" "dns_gen" {
-#   depends_on = [ "null_resource.dns_dig" ]
-#   provisioner "local-exec" {
-#     # filename = "/dev/null"
-#     command = <<EOF
-# # collect them all into a csv
-# # wait for them all to appear
-# sleep 4
-# cat ${ var.name-servers-file }.*.ip \
-# | sed -n -e 'H;$${x;s/\n/,/g;s/^,//;p;}' \
-# | tr -d '\n' \
-# > ${ var.name-servers-file}
-# EOF
-#   }
-# }
+  rrdatas = [
+    "${ var.master-ips }"
+  ]
+}
+
 
 # resource "azurerm_dns_a_record" "A-etcd"  {
 #   name = "etcd"
