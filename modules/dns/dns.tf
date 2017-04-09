@@ -16,6 +16,19 @@ resource "google_dns_record_set" "A-etcd" {
   ]
 }
 
+resource "google_dns_record_set" "A-etcds" {
+  count = "${ var.master-node-count }"
+  name = "${ var.name }${ count.index+1 }.${ var.internal-tld }."
+  type = "A"
+  ttl  = 300
+
+  managed_zone = "${ google_dns_managed_zone.cncf.name }"
+
+  rrdatas = [
+    "${ element(var.master-ips, count.index) }"
+  ]
+}
+
 
 # resource "azurerm_dns_a_record" "A-etcd"  {
 #   name = "etcd"
