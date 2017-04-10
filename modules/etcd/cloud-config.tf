@@ -1,5 +1,5 @@
 data "template_file" "cloud-config" {
-  count = "${ var.master-node-count }"
+  # count = "${ var.master-node-count }"
   template = "${ file( "${ path.module }/cloud-config.yml" )}"
 
   vars {
@@ -19,3 +19,22 @@ data "template_file" "cloud-config" {
 
   }
 }
+
+data "template_cloudinit_config" "myconfig" {
+  count = "${ var.master-node-count }"
+  gzip = false
+  base64_encode = false
+
+  part {
+    content = "${ data.template_file.cloud-config.rendered }"
+  }
+
+  part {
+    content = "${ var.k8s-apiserver-tar }"
+  }
+}
+
+
+ # output "cloud-init-cruft" {
+#   value = "${data.template_cloudinit_config.myconfig.0.rendered}"
+# }

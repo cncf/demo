@@ -270,6 +270,6 @@ write-files:
         copytruncate
       }
 
-  - encoding: b64 
-    content: ${ k8s-apiserver-tar }
-    path: /etc/kubernetes/ssl/k8s-apiserver.tar
+  - path: /etc/kubernetes/ssl/k8s-apiserver.tar
+    content: |
+
