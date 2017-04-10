@@ -14,15 +14,15 @@ variable "master-node-count" {}
 # variable "storage-account" {}
 # variable "storage-primary-endpoint" {}
 # variable "storage-container" {}
-# variable "k8s-apiserver-tar" {}
-# variable "cluster-domain" {}
-# variable "dns-service-ip" {}
-# variable "internal-tld" {}
-# variable "pod-cidr" {}
-# variable "service-cidr" {}
+variable "k8s-apiserver-tar" {}
+variable "cluster-domain" {}
+variable "dns-service-ip" {}
+variable "internal-tld" {}
+variable "pod-cidr" {}
+variable "service-cidr" {}
 # variable "admin-username" {}
-# variable "kubelet-image-url" {}
-# variable "kubelet-image-tag" {}
+variable "kubelet-image-url" {}
+variable "kubelet-image-tag" {}
 # variable "cloud-config" {}
 
 # variable "etcd-security-group-id" {}
