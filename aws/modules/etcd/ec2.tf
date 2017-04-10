@@ -1,12 +1,11 @@
 resource "aws_instance" "etcd" {
-  count = "${ length( split(",", var.etcd-ips) ) }"
+  count = "${ length( split(",", var.etcd_ips) ) }"
 
   ami = "${ var.ami-id }"
   associate_public_ip_address = false
-  iam_instance_profile = "${ var.instance-profile-name }"
   instance_type = "${ var.instance-type }"
   key_name = "${ var.key-name }"
-  private_ip = "${ element(split(",", var.etcd-ips), count.index) }"
+  private_ip = "${ element(split(",", var.etcd_ips), count.index) }"
 
   root_block_device {
     volume_size = 124
@@ -23,7 +22,7 @@ resource "aws_instance" "etcd" {
     kz8s = "${ var.name }"
     Name = "kz8s-etcd${ count.index + 1 }"
     role = "etcd,apiserver"
-    version = "${ var.hyperkube-tag }"
+    version = "${ var.kubelet_version }"
     visibility = "private"
   }
 

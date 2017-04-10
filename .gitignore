@@ -1,3 +1,5 @@
+myazure.publishsettings
+*.env
 .DS_Store
 *~
 *.swp
@@ -7,3 +9,4 @@
 *.zip
 *.pyc
 *.dist-info/
+api/_tes*

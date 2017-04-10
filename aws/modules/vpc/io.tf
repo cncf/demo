@@ -1,6 +1,6 @@
 variable "azs" {}
 variable "cidr" {}
-variable "hyperkube-tag" {}
+variable "kubelet_version" {}
 variable "depends-id" {}
 variable "name" {}
 variable "region" {}

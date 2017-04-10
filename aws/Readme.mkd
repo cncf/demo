@@ -10,7 +10,7 @@
   - IAMFullAccess
   - IAMUserChangePassword
 
-* optionally update config data/terraform.tfvars
+* Must use a config config from the repo data/terraform.tfvars
 
 ## export AWS Authentication
 

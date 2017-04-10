@@ -1,51 +1,36 @@
-module "s3" {
-  source = "./modules/s3"
-  depends-id = "${ module.vpc.depends-id }"
-
-  bucket-prefix = "${ var.s3-bucket }"
-  hyperkube-image = "${ var.k8s["hyperkube-image"] }"
-  hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
-  internal-tld = "${ var.internal-tld }"
-  name = "${ var.name }"
-  region = "${ var.aws["region"] }"
-  service-cluster-ip-range = "${ var.cidr["service-cluster"] }"
-  dir-ssl = "${ var.dir-ssl }"
-}
-
 module "vpc" {
   source = "./modules/vpc"
   depends-id = ""
 
-  azs = "${ var.aws["azs"] }"
-  cidr = "${ var.cidr["vpc"] }"
-  hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
+  azs = "${ var.aws_azs }"
+  cidr = "${ var.vpc_cidr }"
+  kubelet_version = "${ var.kubelet_version }"
   name = "${ var.name }"
-  region = "${ var.aws["region"] }"
+  region = "${ var.aws_region }"
 }
 
 module "security" {
   source = "./modules/security"
 
-  cidr-allow-ssh = "${ var.cidr["allow-ssh"] }"
-  cidr-vpc = "${ var.cidr["vpc"] }"
+  allow_ssh_cidr = "${ var.allow_ssh_cidr }"
+  vpc_cidr = "${ var.vpc_cidr }"
   name = "${ var.name }"
   vpc-id = "${ module.vpc.id }"
 }
 
-module "iam" {
-  source = "./modules/iam"
-  depends-id = "${ module.s3.depends-id }"
+# module "iam" {
+#   source = "./modules/iam"
+#   depends-id = "${ module.s3.depends-id }"
 
-  bucket-prefix = "${ var.s3-bucket }"
-  name = "${ var.name }"
-}
+#   s3_bucket = "${ var.s3_bucket }"
+#   name = "${ var.name }"
+# }
 
 module "route53" {
   source = "./modules/route53"
-  depends-id = "${ module.iam.depends-id }"
 
-  etcd-ips = "${ var.etcd-ips }"
-  internal-tld = "${ var.internal-tld }"
+  etcd_ips = "${ var.etcd_ips }"
+  internal_tld = "${ var.internal_tld }"
   name = "${ var.name }"
   vpc-id = "${ module.vpc.id }"
 }
@@ -54,38 +39,35 @@ module "etcd" {
   source = "./modules/etcd"
   depends-id = "${ module.route53.depends-id }"
 
-  ami-id = "${ var.coreos-aws["ami"] }"
-  bucket-prefix = "${ var.s3-bucket }"
-  cluster-domain = "${ var.cluster-domain }"
-  hyperkube-image = "${ var.k8s["hyperkube-image"] }"
-  hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
-  dns-service-ip = "${ var.dns-service-ip }"
-  etcd-ips = "${ var.etcd-ips }"
+  ami-id = "${ var.aws_image_ami }"
+  cluster_domain = "${ var.cluster_domain }"
+  kubelet_aci = "${ var.kubelet_aci }"
+  kubelet_version = "${ var.kubelet_version }"
+  dns_service_ip = "${ var.dns_service_ip }"
+  etcd_ips = "${ var.etcd_ips }"
   etcd-security-group-id = "${ module.security.etcd-id }"
   external-elb-security-group-id = "${ module.security.external-elb-id }"
-  instance-profile-name = "${ module.iam.instance-profile-name-master }"
-  instance-type = "${ var.instance-type["etcd"] }"
-  internal-tld = "${ var.internal-tld }"
-  key-name = "${ var.aws["key-name"] }"
+  instance-type = "${ var.aws_master_vm_size }"
+  internal_tld = "${ var.internal_tld }"
+  key-name = "${ var.aws_key_name }"
   name = "${ var.name }"
-  pod-ip-range = "${ var.cidr["pods"] }"
-  region = "${ var.aws["region"] }"
-  service-cluster-ip-range = "${ var.cidr["service-cluster"] }"
+  pod-ip-range = "${ var.pod_cidr }"
+  region = "${ var.aws_region }"
+  service-cluster-ip-range = "${ var.service_cidr }"
   subnet-ids-private = "${ module.vpc.subnet-ids-private }"
   subnet-ids-public = "${ module.vpc.subnet-ids-public }"
   vpc-id = "${ module.vpc.id }"
+  k8s-apiserver-tar = "${file("${ var.data_dir }/.cfssl/k8s-apiserver.tar.bz2")}"
 }
 
 module "bastion" {
   source = "./modules/bastion"
   depends-id = "${ module.etcd.depends-id }"
 
-  ami-id = "${ var.coreos-aws["ami"] }"
-  bucket-prefix = "${ var.s3-bucket }"
-  cidr-allow-ssh = "${ var.cidr["allow-ssh"] }"
-  instance-type = "${ var.instance-type["bastion"] }"
-  internal-tld = "${ var.internal-tld }"
-  key-name = "${ var.aws["key-name"] }"
+  ami-id = "${ var.aws_image_ami }"
+  instance-type = "${ var.aws_bastion_vm_size }"
+  internal_tld = "${ var.internal_tld }"
+  key-name = "${ var.aws_key_name }"
   name = "${ var.name }"
   security-group-id = "${ module.security.bastion-id }"
   subnet-ids = "${ module.vpc.subnet-ids-public }"
@@ -96,23 +78,21 @@ module "worker" {
   source = "./modules/worker"
   depends-id = "${ module.route53.depends-id }"
 
-  ami-id = "${ var.coreos-aws["ami"] }"
-  bucket-prefix = "${ var.s3-bucket }"
+  ami-id = "${ var.aws_image_ami }"
   capacity = {
     desired = 3
     max = 5
     min = 3
   }
-  cluster-domain = "${ var.cluster-domain }"
-  hyperkube-image = "${ var.k8s["hyperkube-image"] }"
-  hyperkube-tag = "${ var.k8s["hyperkube-tag"] }"
-  dns-service-ip = "${ var.dns-service-ip }"
-  instance-profile-name = "${ module.iam.instance-profile-name-worker }"
-  instance-type = "${ var.instance-type["worker"] }"
-  internal-tld = "${ var.internal-tld }"
-  key-name = "${ var.aws["key-name"] }"
+  cluster_domain = "${ var.cluster_domain }"
+  kubelet_aci = "${ var.kubelet_aci }"
+  kubelet_version = "${ var.kubelet_version }"
+  dns_service_ip = "${ var.dns_service_ip }"
+  instance-type = "${ var.aws_worker_vm_size }"
+  internal_tld = "${ var.internal_tld }"
+  key-name = "${ var.aws_key_name }"
   name = "${ var.name }"
-  region = "${ var.aws["region"] }"
+  region = "${ var.aws_region }"
   security-group-id = "${ module.security.worker-id }"
   subnet-ids = "${ module.vpc.subnet-ids-private }"
   volume_size = {
@@ -121,46 +101,15 @@ module "worker" {
   }
   vpc-id = "${ module.vpc.id }"
   worker-name = "general"
+  k8s-worker-tar = "${file("${ var.data_dir }/.cfssl/k8s-worker.tar.bz2")}"
 }
-
-/*
-module "worker2" {
-  source = "./modules/worker"
-  depends-id = "${ module.route53.depends-id }"
-
-  ami-id = "${ var.coreos-aws["ami"] }"
-  bucket-prefix = "${ var.s3-bucket }"
-  capacity = {
-    desired = 2
-    max = 2
-    min = 2
-  }
-  coreos-hyperkube-image = "${ var.k8s["coreos-hyperkube-image"] }"
-  coreos-hyperkube-tag = "${ var.k8s["coreos-hyperkube-tag"] }"
-  dns-service-ip = "${ var.dns-service-ip }"
-  instance-profile-name = "${ module.iam.instance-profile-name-worker }"
-  instance-type = "${ var.instance-type["worker"] }"
-  internal-tld = "${ var.internal-tld }"
-  key-name = "${ var.aws["key-name"] }"
-  name = "${ var.name }"
-  region = "${ var.aws["region"] }"
-  security-group-id = "${ module.security.worker-id }"
-  subnet-ids = "${ module.vpc.subnet-ids-private }"
-  volume_size = {
-    ebs = 250
-    root = 52
-  }
-  vpc-id = "${ module.vpc.id }"
-  worker-name = "special"
-}
-*/
 
 module "kubeconfig" {
   source = "./modules/kubeconfig"
 
-  admin-key-pem = "${ var.dir-ssl }/k8s-admin-key.pem"
-  admin-pem = "${ var.dir-ssl }/k8s-admin.pem"
-  ca-pem = "${ var.dir-ssl }/ca.pem"
+  admin-key-pem = "${ var.data_dir }/k8s-admin-key.pem"
+  admin-pem = "${ var.data_dir }/k8s-admin.pem"
+  ca-pem = "${ var.data_dir }/ca.pem"
   master-elb = "${ module.etcd.external-elb }"
   name = "${ var.name }"
 }

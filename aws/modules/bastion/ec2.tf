@@ -1,7 +1,6 @@
 resource "aws_instance" "bastion" {
   ami = "${ var.ami-id }"
   associate_public_ip_address = true
-  iam_instance_profile = "${ aws_iam_instance_profile.bastion.name }"
   instance_type = "${ var.instance-type }"
   key_name = "${ var.key-name }"
 
@@ -29,7 +28,7 @@ data "template_file" "user-data" {
   template = "${ file( "${ path.module }/user-data.yml" )}"
 
   vars {
-    internal-tld = "${ var.internal-tld }"
+    internal_tld = "${ var.internal_tld }"
   }
 }
 

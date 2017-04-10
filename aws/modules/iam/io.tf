@@ -1,4 +1,4 @@
-variable "bucket-prefix" {}
+variable "s3_bucket" {}
 variable "depends-id" {}
 variable "name" {}
 

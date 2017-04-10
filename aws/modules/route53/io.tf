@@ -1,6 +1,5 @@
-variable "depends-id" {}
-variable "etcd-ips" {}
-variable "internal-tld" {}
+variable "etcd_ips" {}
+variable "internal_tld" {}
 variable "name" {}
 variable "vpc-id" {}
 

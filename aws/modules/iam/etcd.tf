@@ -36,7 +36,7 @@ resource "aws_iam_role_policy" "master" {
         "s3:Get*"
       ],
       "Effect": "Allow",
-      "Resource": [ "arn:aws:s3:::${ var.bucket-prefix }/*" ]
+      "Resource": [ "arn:aws:s3:::${ var.s3_bucket }/*" ]
     },
     {
       "Action": [

@@ -5,7 +5,6 @@ resource "aws_launch_configuration" "worker" {
     volume_type = "gp2"
   }
 
-  iam_instance_profile = "${ var.instance-profile-name }"
   image_id = "${ var.ami-id }"
   instance_type = "${ var.instance-type }"
   key_name = "${ var.key-name }"
@@ -78,7 +77,7 @@ resource "aws_autoscaling_group" "worker" {
 
   tag {
     key = "version"
-    value = "${ var.hyperkube-tag }"
+    value = "${ var.kubelet_version }"
     propagate_at_launch = true
   }
 

@@ -1,6 +1,6 @@
 resource "aws_route53_zone" "internal" {
   comment = "Kubernetes cluster DNS (internal)"
-  name = "${ var.internal-tld }"
+  name = "${ var.internal_tld }"
   tags {
     builtWith = "terraform"
     KubernetesCluster = "${ var.name }"
@@ -11,27 +11,27 @@ resource "aws_route53_zone" "internal" {
 
 resource "aws_route53_record" "A-etcd" {
   name = "etcd"
-  records = [ "${ split(",", var.etcd-ips) }" ]
+  records = [ "${ split(",", var.etcd_ips) }" ]
   ttl = "300"
   type = "A"
   zone_id = "${ aws_route53_zone.internal.zone_id }"
 }
 
 resource "aws_route53_record" "A-etcds" {
-  count = "${ length( split(",", var.etcd-ips) ) }"
+  count = "${ length( split(",", var.etcd_ips) ) }"
 
   name = "etcd${ count.index+1 }"
   ttl = "300"
   type = "A"
   records = [
-    "${ element(split(",", var.etcd-ips), count.index) }"
+    "${ element(split(",", var.etcd_ips), count.index) }"
   ]
   zone_id = "${ aws_route53_zone.internal.zone_id }"
 }
 
 resource "aws_route53_record" "CNAME-master" {
   name = "master"
-  records = [ "etcd.${ var.internal-tld }" ]
+  records = [ "etcd.${ var.internal_tld }" ]
   ttl = "300"
   type = "CNAME"
   zone_id = "${ aws_route53_zone.internal.zone_id }"

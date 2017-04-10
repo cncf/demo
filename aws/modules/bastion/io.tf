@@ -1,9 +1,7 @@
 variable "ami-id" {}
-variable "bucket-prefix" {}
-variable "cidr-allow-ssh" {}
 variable "depends-id" {}
 variable "instance-type" {}
-variable "internal-tld" {}
+variable "internal_tld" {}
 variable "key-name" {}
 variable "name" {}
 variable "security-group-id" {}

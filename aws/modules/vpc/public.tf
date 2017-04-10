@@ -6,7 +6,7 @@ resource "aws_internet_gateway" "main" {
     KubernetesCluster = "${ var.name }"
     kz8s = "${ var.name }"
     Name = "kz8s-${ var.name }"
-    version = "${ var.hyperkube-tag }"
+    version = "${ var.kubelet_version }"
   }
 }
 
@@ -23,7 +23,7 @@ resource "aws_subnet" "public" {
     KubernetesCluster = "${ var.name }"
     kz8s = "${ var.name }"
     Name = "kz8s-${ var.name }-public"
-    version = "${ var.hyperkube-tag }"
+    version = "${ var.kubelet_version }"
     visibility = "public"
   }
 }

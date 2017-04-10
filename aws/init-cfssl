@@ -107,3 +107,5 @@ generate k8s-worker client "${DEFAULT_HOSTS},*.*.compute.internal,*.ec2.internal
 # TODO: fix cert provisioning hacks
 tar -rf k8s-apiserver.tar k8s-etcd.pem k8s-etcd-key.pem
 tar -rf k8s-worker.tar ca.pem
+bzip2 k8s-apiserver.tar
+bzip2 k8s-worker.tar
