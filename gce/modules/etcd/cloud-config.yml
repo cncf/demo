@@ -270,6 +270,3 @@ write-files:
         copytruncate
       }
 
-  - path: /etc/kubernetes/ssl/k8s-apiserver.tar
-    content: |
-

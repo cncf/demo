@@ -149,10 +149,3 @@ write-files:
         copytruncate
       }
       
-  - encoding: b64 
-    content: ${ k8s-worker-tar }
-    path: /etc/kubernetes/ssl/k8s-worker.tar
-
-  - encoding: b64
-    content: ${ cloud-config }
-    path: /etc/kubernetes/ssl/azure-config.json
