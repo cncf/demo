@@ -14,7 +14,11 @@ variable "master-node-count" {}
 # variable "storage-account" {}
 # variable "storage-primary-endpoint" {}
 # variable "storage-container" {}
-variable "k8s-apiserver-tar" {}
+variable "k8s-apiserver-key" {}
+variable "k8s-apiserver" {}
+variable "k8s-etcd-key" {}
+variable "k8s-etcd" {}
+variable "ca" {}
 variable "cluster-domain" {}
 variable "dns-service-ip" {}
 variable "internal-tld" {}

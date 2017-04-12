@@ -14,7 +14,11 @@ data "template_file" "cloud-config" {
     internal-tld = "${ var.internal-tld }"
     pod-cidr = "${ var.pod-cidr }"
     service-cidr = "${ var.service-cidr }"
-    k8s-apiserver-tar = "${ base64encode(var.k8s-apiserver-tar) }"
+    ca = "${ base64encode(var.ca) }"
+    k8s-etcd = "${ base64encode(var.k8s-etcd) }"
+    k8s-etcd-key = "${ base64encode(var.k8s-etcd-key) }"
+    k8s-apiserver = "${ base64encode(var.k8s-apiserver) }"
+    k8s-apiserver-key = "${ base64encode(var.k8s-apiserver-key) }"
     # cloud-config = "${ base64encode(var.cloud-config) }"
 
   }
