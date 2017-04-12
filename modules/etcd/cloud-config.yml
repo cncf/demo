@@ -23,12 +23,6 @@ coreos:
   units:
     - name: etcd2.service
       command: start
-      drop-ins:
-        - name: wait-for-certs.conf
-          content: |
-            [Unit]
-            After=get-ssl.service
-            Requires=get-ssl.service
 
     - name: docker.service
       command: start
@@ -37,14 +31,6 @@ coreos:
           content: |
             [Service]
             Environment="DOCKER_OPTS=--storage-driver=overlay"
-
-    - name: get-ssl.service
-      command: start
-      content: |
-        [Service]
-        ExecStart=/bin/sh -c "tar xv -f /etc/kubernetes/ssl/k8s-apiserver.tar -C /etc/kubernetes/ssl/"
-        RemainAfterExit=yes
-        Type=oneshot
 
     - name: kubelet.service
       command: start
@@ -72,8 +58,7 @@ coreos:
         ExecStart=/usr/lib/coreos/kubelet-wrapper \
           --allow-privileged=true \
           --api-servers=http://127.0.0.1:8080 \
-          --cloud-provider=azure \
-          --cloud-config=/etc/kubernetes/ssl/azure-config.json \
+          --cloud-provider=gce \
           --cluster-dns=${ dns-service-ip } \
           --cluster-domain=${ cluster-domain } \
           --config=/etc/kubernetes/manifests \
@@ -117,8 +102,7 @@ write-files:
           - --admission-control=ServiceAccount
           - --allow-privileged=true
           - --client-ca-file=/etc/kubernetes/ssl/ca.pem
-          - --cloud-provider=azure
-          - --cloud-config=/etc/kubernetes/ssl/azure-config.json
+          - --cloud-provider=gce
           - --etcd-servers=http://etcd.${ internal-tld }:2379
           - --insecure-bind-address=0.0.0.0
           - --secure-port=443
