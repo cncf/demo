@@ -18,14 +18,6 @@ coreos:
     - name: docker.service
       command: start
 
-    - name: get-ssl.service
-      command: start
-      content: |
-        [Service]
-        ExecStart=/bin/sh -c "tar xv -f /etc/kubernetes/ssl/k8s-worker.tar -C /etc/kubernetes/ssl/"
-        RemainAfterExit=yes
-        Type=oneshot
-
     - name: kubelet.service
       command: start
       content: |
@@ -52,8 +44,7 @@ coreos:
         ExecStart=/usr/lib/coreos/kubelet-wrapper \
           --allow-privileged=true \
           --api-servers=http://master.${ internal-tld }:8080 \
-          --cloud-provider=azure \
-          --cloud-config=/etc/kubernetes/ssl/azure-config.json \
+          --cloud-provider=gce \
           --cluster-dns=${ dns-service-ip } \
           --cluster-domain=${ cluster-domain } \
           --config=/etc/kubernetes/manifests \
