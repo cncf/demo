@@ -1,5 +1,5 @@
 resource "aws_elb" "external" {
-  name = "kz8s-apiserver-${replace(var.name, "/(.{0,17})(.*)/", "$1")}"
+  name = "${replace(var.name, "/(.{0,17})(.*)/", "$1")}-apiserver"
 
   cross_zone_load_balancing = false
 
