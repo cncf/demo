@@ -16,7 +16,9 @@ variable "cluster-domain" {}
 variable "dns-service-ip" {}
 variable "internal-tld" {}
 variable "admin-username" {}
-variable "k8s-worker-tar"  {}
 variable "kubelet-image-url" {}
 variable "kubelet-image-tag" {}
+variable "ca" {}
+variable "k8s-worker" {}
+variable "k8s-worker-key" {}
 variable "cloud-config" {}
