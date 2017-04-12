@@ -1,14 +1,40 @@
+resource "google_compute_instance" "cncf" {
+  count        = "${ var.worker-node-count }"
+  name         = "${ var.name }${ count.index + 1 }"
+  machine_type = "n1-standard-1"
+  zone         = "${ var.zone }"
 
+  tags = ["foo", "bar"]
 
+  disk {
+    image = "coreos-stable-1298-7-0-v20170401"
+  }
 
+  // Local SSD disk
+  disk {
+    type    = "local-ssd"
+    scratch = true
+  }
 
+  network_interface {
+    # network = "${ var.name }"
+    subnetwork = "${ var.name }"
+    subnetwork_project = "${ var.project }"
 
+    access_config {
+      // FIX ME Don't assign Public IP
+      // Ephemeral IP
+    }
+  }
 
+  metadata {
+    user-data = "${ data.template_file.cloud-config.rendered }"
+  }
 
-
-
-
-
+  service_account {
+    scopes = ["userinfo-email", "compute-ro", "storage-ro"]
+  }
+}
 
 # resource "azurerm_network_interface" "cncf" {
 #   count               = "${ var.worker-node-count }"
