@@ -10,6 +10,6 @@ data "template_file" "cloud-config" {
     ca = "${ var.ca }"
     k8s-worker = "${ var.k8s-worker }"
     k8s-worker-key = "${ var.k8s-worker-key }"
-    cloud-config = "${ base64encode(var.cloud-config) }"
+    # cloud-config = "${ base64encode(var.cloud-config) }"
   }
 }

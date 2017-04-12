@@ -1,6 +1,6 @@
 resource "google_compute_instance" "cncf" {
   count        = "${ var.master-node-count }"
-  name         = "${ var.name }${ count.index + 1 }"
+  name         = "${ var.name }-master${ count.index + 1 }"
   machine_type = "n1-standard-1"
   zone         = "${ var.zone }"
 
