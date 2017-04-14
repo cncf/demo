@@ -16,8 +16,8 @@ data "template_file" "cloud-config" {
     pod-ip-range = "${ var.pod-ip-range }"
     region = "${ var.region }"
     service-cluster-ip-range = "${ var.service-cluster-ip-range }"
-    ssl-tar = "ssl/k8s-apiserver.tar"
-    k8s-apiserver-tar = "${ base64encode(var.k8s-apiserver-tar) }"
+    ssl_tar = "ssl/k8s-apiserver.tar.bz2"
+    bucket = "${var.s3_bucket}"
   }
 }
 

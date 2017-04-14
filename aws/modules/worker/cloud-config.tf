@@ -8,6 +8,7 @@ data "template_file" "cloud-config" {
     kubelet_version = "${ var.kubelet_version }"
     internal_tld = "${ var.internal_tld }"
     region = "${ var.region }"
-    k8s-worker-tar = "${ base64encode(var.k8s-worker-tar) }"
+    ssl_tar = "/ssl/k8s-worker.tar.bz2"
+    bucket = "${ var.s3_bucket }"
   }
 }

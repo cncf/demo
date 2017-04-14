@@ -18,3 +18,5 @@ variable "subnet-ids-private" {}
 variable "subnet-ids-public" {}
 variable "vpc-id" {}
 variable "k8s-apiserver-tar" {}
+variable "s3_bucket" {}
+variable "instance-profile-name" {}

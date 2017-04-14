@@ -1,5 +1,5 @@
 resource "aws_elb" "external" {
-  name = "${replace(var.name, "/(.{0,17})(.*)/", "$1")}-apiserver"
+  name = "kz8s-apiserver-${replace(var.name, "/(.{0,17})(.*)/", "$1")}"
 
   cross_zone_load_balancing = false
 
@@ -29,7 +29,6 @@ resource "aws_elb" "external" {
     kz8s = "${ var.name }"
     Name = "kz8s-apiserver"
     role = "apiserver"
-    version = "${ var.kubelet_version }"
     visibility = "public"
     KubernetesCluster = "${ var.name }"
   }

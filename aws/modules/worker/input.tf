@@ -6,7 +6,6 @@ variable "capacity" {
     min = 3
   }
 }
-variable "k8s-worker-tar"  {}
 variable "cluster_domain" {}
 variable "kubelet_aci" {}
 variable "kubelet_version" {}
@@ -27,3 +26,5 @@ variable "volume_size" {
 }
 variable "vpc-id" {}
 variable "worker-name" {}
+variable "instance-profile-name" {}
+variable "s3_bucket" {}

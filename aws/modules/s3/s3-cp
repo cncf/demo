@@ -30,15 +30,11 @@ BUCKET=$1
 [ -z "$BUCKET" ] && usage
 
 # assert environment variables
-[ -z "$HYPERKUBE" ] && usage
-[ -z "$INTERNAL_TLD" ] && usage
 [ -z "$REGION" ] && usage
 [ -z "$DIR_SSL"] && usage
 
 # print environment and parameter
 echo "❤ s3-cp using these settings"
-echo envvar HYPERKUBE=${HYPERKUBE}
-echo envvar INTERNAL_TLD=${INTERNAL_TLD}
 echo envvar REGION=${REGION}
 echo envvar DIR_SSL=${DIR_SSL}
 echo parameter BUCKET=${BUCKET}
@@ -55,6 +51,6 @@ set -o pipefail
 
 # cp tls assets
 echo "❤ Copy tls assets to s3 ${BUCKET}"
-aws s3 cp "$DIR_SSL" s3://${BUCKET}/ssl --recursive --exclude "*" --include "*.tar" \
+aws s3 cp "$DIR_SSL" s3://${BUCKET}/ssl --recursive --exclude "*" --include "*.tar.bz2" \
   --region ${REGION}
 echo "✓ tls copy success"
