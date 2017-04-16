@@ -12,6 +12,7 @@ module "dns" {
   internal-tld = "${ var.internal-tld }"
   master-ips = "${ module.etcd.master-ips }"
   master-node-count = "${ var.master-node-count }"
+  name-servers-file = "${ var.name-servers-file }"
 }
 
  module "etcd" {
@@ -20,6 +21,7 @@ module "dns" {
    region = "${ var.region }"
    zone = "${ var.zone }"
    project = "${ var.project }"
+   name-servers-file = "${ var.name-servers-file }"
 # admin-username = "${ var.admin-username }"
    master-node-count = "${ var.master-node-count }"
 #    master-vm-size = "${ var.master-vm-size }"

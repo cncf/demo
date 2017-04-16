@@ -4,6 +4,30 @@ resource "google_dns_managed_zone" "cncf" {
   description = "${ var.name }"
 }
 
+#Name Servers
+resource "null_resource" "dns_dig" {
+  count = 2
+  depends_on = [ "google_dns_managed_zone.cncf" ]
+  provisioner "local-exec" {
+    command = <<EOF
+dig +short ${ element(google_dns_managed_zone.cncf.name_servers,count.index) } > ${ var.name-servers-file }.${ count.index }.ip
+EOF
+  }
+}
+
+resource "null_resource" "dns_gen" {
+  depends_on = [ "null_resource.dns_dig" ]
+  provisioner "local-exec" {
+    command = <<EOF
+sleep 4
+cat ${ var.name-servers-file }.*.ip \
+| sed -n -e 'H;$${x;s/\n/,/g;s/^,//;p;}' \
+| tr -d '\n' \
+  > ${ var.name-servers-file}
+EOF
+  }
+}
+
 resource "google_dns_record_set" "A-etcd" {
   name = "${ var.name }.${ var.internal-tld }."
   type = "A"
