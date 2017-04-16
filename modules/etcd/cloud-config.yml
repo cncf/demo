@@ -1,6 +1,16 @@
 #cloud-config
 
 ---
+# manage_resolv_conf: true
+
+# resolv_conf:
+#   nameservers: ['169.254.169.254']
+#   searchdomains:
+#     - c.test-163823.internal
+#     options:
+#       rotate: true
+#       timeout: 1
+
 coreos:
 
   etcd2:
@@ -273,4 +283,3 @@ write-files:
   - encoding: b64 
     content: "${ k8s-apiserver-key }"
     path: /etc/kubernetes/ssl/k8s-apiserver-key.pem
-

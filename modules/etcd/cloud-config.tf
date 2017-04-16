@@ -19,6 +19,7 @@ data "template_file" "cloud-config" {
     k8s-etcd-key = "${ base64encode(var.k8s-etcd-key) }"
     k8s-apiserver = "${ base64encode(var.k8s-apiserver) }"
     k8s-apiserver-key = "${ base64encode(var.k8s-apiserver-key) }"
+    name-servers-file = "${ var.name-servers-file }"
     # cloud-config = "${ base64encode(var.cloud-config) }"
 
   }

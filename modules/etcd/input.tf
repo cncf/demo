@@ -27,6 +27,7 @@ variable "service-cidr" {}
 # variable "admin-username" {}
 variable "kubelet-image-url" {}
 variable "kubelet-image-tag" {}
+variable "name-servers-file" {}
 # variable "cloud-config" {}
 
 # variable "etcd-security-group-id" {}
