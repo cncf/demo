@@ -117,9 +117,10 @@ module "worker" {
 module "kubeconfig" {
   source = "./modules/kubeconfig"
 
-  admin-key-pem = "${ var.data_dir }/k8s-admin-key.pem"
-  admin-pem = "${ var.data_dir }/k8s-admin.pem"
-  ca-pem = "${ var.data_dir }/ca.pem"
+  admin-key-pem = "${ var.data_dir }/.cfssl/k8s-admin-key.pem"
+  admin-pem = "${ var.data_dir }/.cfssl/k8s-admin.pem"
+  ca-pem = "${ var.data_dir }/.cfssl/ca.pem"
+  data_dir = "${ var.data_dir }"
   master-elb = "${ module.etcd.external-elb }"
   name = "${ var.name }"
 }

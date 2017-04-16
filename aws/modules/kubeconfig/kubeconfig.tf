@@ -25,7 +25,7 @@ resource "null_resource" "kubeconfig" {
 
   provisioner "local-exec" {
     command = <<LOCAL_EXEC
-mkdir -p ./tmp && cat <<'__USERDATA__' > ./tmp/kubeconfig
+  cat <<'__USERDATA__' > ${ var.data_dir }/kubeconfig
 ${data.template_file.kubeconfig.rendered}
 __USERDATA__
 LOCAL_EXEC
