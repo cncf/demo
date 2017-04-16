@@ -6,8 +6,6 @@ ENV AWSCLI_VERSION=1.11.75
 ENV AZURECLI_VERSION=2.0.2
 ENV TERRAFORM_VERSION=0.9.0-beta2
 ENV ARC=amd64
-ENV AWS_CONFIG_FILE=/cncf/data/awsconfig
-ENV KUBECONFIG=/cncf/data/kubeconfig
 
 # Install AWS / AZURE CLI Deps
 RUN apk update
