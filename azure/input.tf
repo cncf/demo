@@ -21,4 +21,4 @@ variable "service_cidr"   { default = "10.3.0.0/24" }
 variable "k8s_service_ip" { default = "10.3.0.1" }
 variable "dns_service_ip" { default = "10.3.0.10" }
 variable "allow_ssh_cidr" { default = "0.0.0.0/0" }
-variable "data-dir" { default = "/cncf/data" }
+variable "data_dir" { default = "/cncf/data" }
