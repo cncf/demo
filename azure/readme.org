@@ -25,7 +25,7 @@ docker run -ti -v $(pwd)/data/$DEPLOYNAME:/cncf/data --env-file ./data/azure.env
 #+NAME: 3 minute deploy
 #+BEGIN_SRC output
 bastion-fqdn = bastion201703230324.westus.cloudapp.azure.com
-fqdn-k8s = k8s201703230324.westus.cloudapp.azure.com
+fqdn_k8s = k8s201703230324.westus.cloudapp.azure.com
 ssh-key-setup = eval $(ssh-agent) ; ssh-add /cncf/data/.ssh/id_rsa
 ssh-via-bastion = ssh -At cncf@bastion201703230324.westus.cloudapp.azure.com ssh cncf@master1.cncf.demo
 

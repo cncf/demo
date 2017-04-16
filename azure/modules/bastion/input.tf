@@ -7,11 +7,11 @@ variable "image_sku"       {}
 variable "image_version"   {}
 variable "admin_username" {}
 variable "internal_tld" {}
-variable "subnet-id" {}
-variable "availability-id" {}
-variable "storage-container" {}
-variable "storage-primary-endpoint" {}
+variable "subnet_id" {}
+variable "availability_id" {}
+variable "storage_container" {}
+variable "storage_primary_endpoint" {}
 
 # variable "allow_ssh_cidr" {}
-# variable "security-group-id" {}
-# variable "subnet-ids" {}
+# variable "security_group_id" {}
+# variable "subnet_ids" {}

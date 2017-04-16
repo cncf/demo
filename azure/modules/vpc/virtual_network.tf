@@ -17,8 +17,8 @@ resource "azurerm_virtual_network" "cncf" {
   address_space       = ["${ var.cidr }"]
   location            = "${ var.location }"
   dns_servers         = [
-    "${ element(split( ",", file(var.name-servers-file) ),0) }",
-    "${ element(split( ",", file(var.name-servers-file) ),1) }",
+    "${ element(split( ",", file(var.name_servers_file) ),0) }",
+    "${ element(split( ",", file(var.name_servers_file) ),1) }",
     "8.8.8.8"
   ]
   # getting dns servers in list form was difficult

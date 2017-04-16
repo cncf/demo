@@ -31,7 +31,7 @@ coreos:
           content: |
             [Service]
             ExecStartPre=-/usr/bin/etcdctl mk /coreos.com/network/config \
-              '{ "Network": "${ pod-ip-range }", "Backend": { "Type": "vxlan" } }'
+              '{ "Network": "${ pod_cidr }", "Backend": { "Type": "vxlan" } }'
             Restart=always
             RestartSec=10
 
@@ -226,23 +226,23 @@ write-files:
     permissions: "0644"
     encoding: "gzip+base64"
     content: |
-      ${ k8s-etcd }
+      ${ k8s_etcd }
       
   - path: /etc/kubernetes/ssl/k8s-etcd-key.pem
     permissions: "0644"
     encoding: "gzip+base64"
     content: |
-      ${ k8s-etcd-key }
+      ${ k8s_etcd_key }
       
   - path: /etc/kubernetes/ssl/k8s-apiserver.pem
     permissions: "0644"
     encoding: "gzip+base64"
     content: |
-      ${ k8s-apiserver }
+      ${ k8s_apiserver }
 
   - path: /etc/kubernetes/ssl/k8s-apiserver-key.pem
     permissions: "0644"
     encoding: "gzip+base64"
     content: |
-      ${ k8s-apiserver-key }
+      ${ k8s_apiserver_key }
 

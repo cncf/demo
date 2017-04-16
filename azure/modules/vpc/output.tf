@@ -1,1 +1,1 @@
-output "subnet-id" { value = "${ azurerm_subnet.cncf.id }" }
+output "subnet_id" { value = "${ azurerm_subnet.cncf.id }" }

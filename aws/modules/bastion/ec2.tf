@@ -1,18 +1,18 @@
 resource "aws_instance" "bastion" {
-  ami = "${ var.ami-id }"
+  ami = "${ var.ami_id }"
   associate_public_ip_address = true
-  instance_type = "${ var.instance-type }"
-  key_name = "${ var.key-name }"
+  instance_type = "${ var.instance_type }"
+  key_name = "${ var.key_name }"
 
   # TODO: force private_ip to prevent collision with etcd machines
 
   source_dest_check = false
-  subnet_id = "${ element( split(",", var.subnet-ids), 0 ) }"
+  subnet_id = "${ element( split(",", var.subnet_ids), 0 ) }"
 
   tags  {
     builtWith = "terraform"
     kz8s = "${ var.name }"
-    depends-id = "${ var.depends-id }"
+    depends-id = "${ var.depends_id }"
     Name = "kz8s-bastion"
     role = "bastion"
   }
@@ -20,7 +20,7 @@ resource "aws_instance" "bastion" {
   user_data = "${ data.template_file.user-data.rendered }"
 
   vpc_security_group_ids = [
-    "${ var.security-group-id }",
+    "${ var.security_group_id }",
   ]
 }
 

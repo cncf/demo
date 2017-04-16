@@ -1,22 +1,7 @@
-output "fqdn-k8s" { value = "${ module.etcd.fqdn-lb}" }
-output "bastion-ip" { value = "${ module.bastion.bastion-ip}" }
-output "bastion-fqdn" { value = "${ module.bastion.bastion-fqdn}" }
-output "k8s-admin" { value = "${ k8s-admin}"}
+output "fqdn_k8s" { value = "${ module.etcd.fqdn_lb}" }
+output "bastion_ip" { value = "${ module.bastion.bastion_ip}" }
+output "bastion_fqdn" { value = "${ module.bastion.bastion_fqdn}" }
+output "k8s_admin" { value = "${ k8s_admin}"}
 # fixme for use outside container
-output "ssh-key-setup" { value = "eval $(ssh-agent) ; ssh-add /cncf/data/.ssh/id_rsa"}
-output "ssh-via-bastion" { value = "ssh -At ${ var.admin_username }@${ module.bastion.bastion-fqdn } ssh ${ var.admin_username }@master1.cncf.demo"}
-
-#output "availability-id" { value = "${ azurerm_availability_set.cncf.id }" }
-#output "azs" { value = "${ var.aws["azs"] }" }
-#output "bastion-ip" { value = "${ module.bastion.ip }" }
-#output "cluster_domain" { value = "${ var.cluster_domain }" }
-#output "dns_service_ip" { value = "${ var.dns_service_ip }" }
-#output "etcd1-ip" { value = "${ element( split(",", var.etcd-ips), 0 ) }" }
-#output "external-elb" { value = "${ module.etcd.external-elb }" }
-#output "internal_tld" { value = "${ var.internal_tld }" }
-#output "name" { value = "${ var.name }" }
-#output "region" { value = "${ var.aws["region"] }" }
-#output "s3_bucket" { value = "${ var.s3_bucket }" }
-#output "subnet-ids-private" { value = "${ module.vpc.subnet-ids-private }" }
-#output "subnet-ids-public" { value = "${ module.vpc.subnet-ids-public }" }
-#output "worker-autoscaling-group-name" { value = "${ module.worker.autoscaling-group-name }" }
+output "ssh_key_setup" { value = "eval $(ssh-agent) ; ssh-add ${ var.data_dir }/.ssh/id_rsa"}
+output "ssh_via_bastion" { value = "ssh -At ${ var.admin_username }@${ module.bastion.bastion_fqdn } ssh ${ var.admin_username }@etcd1.${ var.internal_tld }"}

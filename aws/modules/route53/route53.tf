@@ -6,7 +6,7 @@ resource "aws_route53_zone" "internal" {
     KubernetesCluster = "${ var.name }"
     Name = "k8s-${ var.name }"
   }
-  vpc_id = "${ var.vpc-id }"
+  vpc_id = "${ var.vpc_id }"
 }
 
 resource "aws_route53_record" "A-etcd" {

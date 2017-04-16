@@ -1,4 +1,4 @@
-variable "ami-id" {}
+variable "ami_id" {}
 variable "capacity" {
   default = {
     desired = 5
@@ -9,25 +9,25 @@ variable "capacity" {
 variable "cluster_domain" {}
 variable "kubelet_aci" {}
 variable "kubelet_version" {}
-variable "depends-id" {}
+variable "depends_id" {}
 variable "dns_service_ip" {}
-variable "instance-type" {}
+variable "instance_type" {}
 variable "internal_tld" {}
-variable "key-name" {}
+variable "key_name" {}
 variable "name" {}
 variable "region" {}
-variable "security-group-id" {}
-variable "subnet-ids" {}
+variable "security_group_id" {}
+variable "subnet_ids" {}
 variable "volume_size" {
   default = {
     ebs = 250
     root = 52
   }
 }
-variable "vpc-id" {}
-variable "worker-name" {}
+variable "vpc_id" {}
+variable "worker_name" {}
 variable "ca" {}
-variable "k8s-worker" {}
-variable "k8s-worker-key" {}
-variable "instance-profile-name" {}
+variable "k8s_worker" {}
+variable "k8s_worker-key" {}
+variable "instance_profile_name" {}
 # variable "s3_bucket" {}

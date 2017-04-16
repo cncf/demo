@@ -4,10 +4,10 @@ resource "aws_launch_configuration" "worker" {
     volume_size = "${ var.volume_size["ebs"] }"
     volume_type = "gp2"
   }
-  iam_instance_profile = "${ var.instance-profile-name }"
-  image_id = "${ var.ami-id }"
-  instance_type = "${ var.instance-type }"
-  key_name = "${ var.key-name }"
+  iam_instance_profile = "${ var.instance_profile_name }"
+  image_id = "${ var.ami_id }"
+  instance_type = "${ var.instance_type }"
+  key_name = "${ var.key_name }"
 
   # Storage
   root_block_device {
@@ -16,7 +16,7 @@ resource "aws_launch_configuration" "worker" {
   }
 
   security_groups = [
-    "${ var.security-group-id }",
+    "${ var.security_group_id }",
   ]
 
   user_data = "${ data.template_file.cloud-config.rendered }"
@@ -27,7 +27,7 @@ resource "aws_launch_configuration" "worker" {
 }
 
 resource "aws_autoscaling_group" "worker" {
-  name = "worker-${ var.worker-name }-${ var.name }"
+  name = "worker-${ var.worker_name }-${ var.name }"
 
   desired_capacity = "${ var.capacity["desired"] }"
   health_check_grace_period = 60
@@ -36,7 +36,7 @@ resource "aws_autoscaling_group" "worker" {
   launch_configuration = "${ aws_launch_configuration.worker.name }"
   max_size = "${ var.capacity["max"] }"
   min_size = "${ var.capacity["min"] }"
-  vpc_zone_identifier = [ "${ split(",", var.subnet-ids) }" ]
+  vpc_zone_identifier = [ "${ split(",", var.subnet_ids) }" ]
 
   tag {
     key = "builtWith"
@@ -46,7 +46,7 @@ resource "aws_autoscaling_group" "worker" {
 
   tag {
     key = "depends-id"
-    value = "${ var.depends-id }"
+    value = "${ var.depends_id }"
     propagate_at_launch = false
   }
 

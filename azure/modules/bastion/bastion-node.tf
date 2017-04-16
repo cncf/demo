@@ -13,7 +13,7 @@ resource "azurerm_network_interface" "cncf" {
 
   ip_configuration {
     name                          = "${ var.name }"
-    subnet_id                     = "${ var.subnet-id }"
+    subnet_id                     = "${ var.subnet_id }"
     private_ip_address_allocation = "dynamic"
     public_ip_address_id          = "${ azurerm_public_ip.cncf.id }"
   }
@@ -22,7 +22,7 @@ resource "azurerm_network_interface" "cncf" {
 resource "azurerm_virtual_machine" "cncf" {
   name                = "${ var.name }"
   location            = "${ var.location }"
-  availability_set_id   = "${ var.availability-id }"
+  availability_set_id   = "${ var.availability_id }"
   resource_group_name = "${ var.name }"
   network_interface_ids = ["${azurerm_network_interface.cncf.id}"]
   vm_size               = "${ var.bastion_vm_size }"
@@ -36,7 +36,7 @@ resource "azurerm_virtual_machine" "cncf" {
 
   storage_os_disk {
     name          = "disk2"
-    vhd_uri       = "${ var.storage-primary-endpoint }${ var.storage-container }/disk2.vhd"
+    vhd_uri       = "${ var.storage_primary_endpoint }${ var.storage_container }/disk2.vhd"
     caching       = "ReadWrite"
     create_option = "FromImage"
   }
@@ -53,7 +53,7 @@ resource "azurerm_virtual_machine" "cncf" {
     disable_password_authentication = true
     ssh_keys {
      path = "/home/${ var.admin_username }/.ssh/authorized_keys"
-     key_data = "${file("/cncf/data/.ssh/id_rsa.pub")}"
+      key_data = "${file("${vardata_dir}.ssh/id_rsa.pub")}"
     }
   }
 }

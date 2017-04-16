@@ -23,7 +23,7 @@ resource "aws_security_group" "bastion" {
     builtWith = "terraform"
   }
 
-  vpc_id = "${ var.vpc-id }"
+  vpc_id = "${ var.vpc_id }"
 }
 
 resource "aws_security_group" "etcd" {
@@ -53,10 +53,10 @@ resource "aws_security_group" "etcd" {
     builtWith = "terraform"
   }
 
-  vpc_id = "${ var.vpc-id }"
+  vpc_id = "${ var.vpc_id }"
 }
 
-resource "aws_security_group" "external-elb" {
+resource "aws_security_group" "external_elb" {
   description = "k8s-${ var.name } master (apiserver) external elb"
 
   egress {
@@ -89,7 +89,7 @@ resource "aws_security_group" "external-elb" {
     builtWith = "terraform"
   }
 
-  vpc_id = "${ var.vpc-id }"
+  vpc_id = "${ var.vpc_id }"
 }
 
 resource "aws_security_group" "worker" {
@@ -119,5 +119,5 @@ resource "aws_security_group" "worker" {
     builtWith = "terraform"
   }
 
-  vpc_id = "${ var.vpc-id }"
+  vpc_id = "${ var.vpc_id }"
 }

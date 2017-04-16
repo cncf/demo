@@ -1,5 +1,8 @@
 variable "name" { default = "azure" }
+
 variable "internal_tld" { default = "azure.cncf.demo" }
+variable "data_dir" { default = "/cncf/data/azure" }
+
 variable "master_node_count" { default = "3" }
 variable "worker_node_count" { default = "3" }
 variable "master_vm_size"   { default = "Standard_A2" }
@@ -21,4 +24,4 @@ variable "service_cidr"   { default = "10.3.0.0/24" }
 variable "k8s_service_ip" { default = "10.3.0.1" }
 variable "dns_service_ip" { default = "10.3.0.10" }
 variable "allow_ssh_cidr" { default = "0.0.0.0/0" }
-variable "data_dir" { default = "/cncf/data" }
+

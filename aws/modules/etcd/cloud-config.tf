@@ -6,20 +6,20 @@ resource "gzip_me" "ca" {
   input = "${ var.ca }"
 }
 
-resource "gzip_me" "k8s-etcd" {
-  input = "${ var.k8s-etcd }"
+resource "gzip_me" "k8s_etcd" {
+  input = "${ var.k8s_etcd }"
 }
 
-resource "gzip_me" "k8s-etcd-key" {
-  input = "${ var.k8s-etcd-key }"
+resource "gzip_me" "k8s_etcd_key" {
+  input = "${ var.k8s_etcd_key }"
 }
 
-resource "gzip_me" "k8s-apiserver" {
-  input = "${ var.k8s-apiserver }"
+resource "gzip_me" "k8s_apiserver" {
+  input = "${ var.k8s_apiserver }"
 }
 
-resource "gzip_me" "k8s-apiserver-key" {
-  input = "${ var.k8s-apiserver-key }"
+resource "gzip_me" "k8s_apiserver_key" {
+  input = "${ var.k8s_apiserver_key }"
 }
 
 data "template_file" "kube-apiserver" {
@@ -27,7 +27,7 @@ data "template_file" "kube-apiserver" {
 
   vars {
     internal_tld = "${ var.internal_tld }"
-    service-cluster-ip-range = "${ var.service-cluster-ip-range }"
+    service_cidr = "${ var.service_cidr }"
     hyperkube = "${ var.kubelet_aci }:${ var.kubelet_version }"
     kubelet_aci = "${ var.kubelet_aci }"
     kubelet_version = "${ var.kubelet_version }"
@@ -52,14 +52,14 @@ data "template_file" "cloud-config" {
     kubelet_aci = "${ var.kubelet_aci }"
     kubelet_version = "${ var.kubelet_version }"
     internal_tld = "${ var.internal_tld }"
-    pod-ip-range = "${ var.pod-ip-range }"
+    pod_cidr = "${ var.pod_cidr }"
     region = "${ var.region }"
-    service-cluster-ip-range = "${ var.service-cluster-ip-range }"
+    service_cidr = "${ var.service_cidr }"
     ca = "${ gzip_me.ca.output }"
-    k8s-etcd = "${ gzip_me.k8s-etcd.output }"
-    k8s-etcd-key = "${ gzip_me.k8s-etcd-key.output }"
-    k8s-apiserver = "${ gzip_me.k8s-apiserver.output }"
-    k8s-apiserver-key = "${ gzip_me.k8s-apiserver-key.output }"
+    k8s_etcd = "${ gzip_me.k8s_etcd.output }"
+    k8s_etcd_key = "${ gzip_me.k8s_etcd_key.output }"
+    k8s_apiserver = "${ gzip_me.k8s_apiserver.output }"
+    k8s_apiserver_key = "${ gzip_me.k8s_apiserver_key.output }"
     kube-apiserver-yml = "${ gzip_me.kube-apiserver.output }"
   }
 }

@@ -21,8 +21,8 @@ resource "aws_elb" "external" {
     lb_protocol = "tcp"
   }
 
-  security_groups = [ "${ var.external-elb-security-group-id }" ]
-  subnets = [ "${ split(",", var.subnet-ids-public) }" ]
+  security_groups = [ "${ var.external_elb_security_group_id }" ]
+  subnets = [ "${ split(",", var.subnet_ids_public) }" ]
 
   tags {
     builtWith = "terraform"

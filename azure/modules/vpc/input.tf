@@ -1,4 +1,4 @@
 variable "cidr" {}
 variable "name" {}
-variable "name-servers-file" {}
+variable "name_servers_file" {}
 variable "location" {}
