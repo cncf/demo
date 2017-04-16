@@ -1,39 +1,34 @@
 module "vpc" {
   source = "./modules/vpc"
-  depends_id = ""
+  name = "${ var.name }"
 
   azs = "${ var.aws_azs }"
   cidr = "${ var.vpc_cidr }"
-  kubelet_version = "${ var.kubelet_version }"
-  name = "${ var.name }"
-  region = "${ var.aws_region }"
 }
 
 module "security" {
-  source = "./modules/security"
+  source         = "./modules/security"
+  name           = "${ var.name }"
 
+  vpc_cidr       = "${ var.vpc_cidr }"
+  vpc_id         = "${ module.vpc.id }"
   allow_ssh_cidr = "${ var.allow_ssh_cidr }"
-  vpc_cidr = "${ var.vpc_cidr }"
-  name = "${ var.name }"
-  vpc_id = "${ module.vpc.id }"
 }
 
 
 module "iam" {
   source = "./modules/iam"
-  # depends_id = "${ module.s3.depends_id }"
-  # s3_bucket = "${ module.s3.bucket }"
-  name = "${ var.name }"
+  name   = "${ var.name }"
 }
 
 
 module "route53" {
   source = "./modules/route53"
+  name         = "${ var.name }"
 
-  etcd_ips = "${ var.etcd_ips }"
+  etcd_ips     = "${ var.etcd_ips }"
   internal_tld = "${ var.internal_tld }"
-  name = "${ var.name }"
-  vpc_id = "${ module.vpc.id }"
+  vpc_id       = "${ module.vpc.id }"
 }
 
 module "etcd" {
@@ -41,29 +36,29 @@ module "etcd" {
   depends_id = "${ module.route53.depends_id }"
   instance_profile_name = "${ module.iam.instance_profile_name_master }"
 
-  ami_id = "${ var.aws_image_ami }"
-  cluster_domain = "${ var.cluster_domain }"
-  kubelet_aci = "${ var.kubelet_aci }"
-  kubelet_version = "${ var.kubelet_version }"
-  dns_service_ip = "${ var.dns_service_ip }"
-  etcd_ips = "${ var.etcd_ips }"
-  etcd_security_group_id = "${ module.security.etcd_id }"
+  name                           = "${ var.name }"
+  ami_id                         = "${ var.aws_image_ami }"
+  key_name                       = "${ var.aws_key_name }"
+  cluster_domain                 = "${ var.cluster_domain }"
+  kubelet_aci                    = "${ var.kubelet_aci }"
+  kubelet_version                = "${ var.kubelet_version }"
+  dns_service_ip                 = "${ var.dns_service_ip }"
+  etcd_ips                       = "${ var.etcd_ips }"
+  etcd_security_group_id         = "${ module.security.etcd_id }"
   external_elb_security_group_id = "${ module.security.external_elb_id }"
-  instance_type = "${ var.aws_master_vm_size }"
-  internal_tld = "${ var.internal_tld }"
-  key_name = "${ var.aws_key_name }"
-  name = "${ var.name }"
-  pod_cidr = "${ var.pod_cidr }"
-  region = "${ var.aws_region }"
-  service_cidr = "${ var.service_cidr }"
+  instance_type                  = "${ var.aws_master_vm_size }"
+  internal_tld                   = "${ var.internal_tld }"
+  pod_cidr                       = "${ var.pod_cidr }"
+  region                         = "${ var.aws_region }"
+  service_cidr                   = "${ var.service_cidr }"
   subnet_ids_private = "${ module.vpc.subnet_ids_private }"
-  subnet_ids_public = "${ module.vpc.subnet_ids_public }"
+  subnet_ids_public  = "${ module.vpc.subnet_ids_public }"
   vpc_id = "${ module.vpc.id }"
   ca = "${file("${ var.data_dir }/.cfssl/ca.pem")}"
-  k8s_etcd = "${file("${ var.data_dir }/.cfssl/k8s_etcd.pem")}"
+  k8s_etcd = "${file("${ var.data_dir }/.cfssl/k8s-etcd.pem")}"
   k8s_etcd_key = "${file("${ var.data_dir }/.cfssl/k8s-etcd-key.pem")}"
   k8s_apiserver = "${file("${ var.data_dir }/.cfssl/k8s-apiserver.pem")}"
-  k8s_apiserver_key = "${file("${ var.data_dir }/.cfssl/k8s_apiserver_key.pem")}"
+  k8s_apiserver_key = "${file("${ var.data_dir }/.cfssl/k8s-apiserver-key.pem")}"
 }
 
 module "bastion" {

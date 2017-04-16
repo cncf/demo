@@ -10,7 +10,7 @@ KUBECONFIG="${ var.data_dir}/kubeconfig" \
 kubectl config set-credentials admin-${ var.name } \
   --certificate-authority=${ var.ca_pem } \
   --client-key=${ var.admin_key_pem } \
-  --client-certificate=${ var.admin-pem } &&\
+  --client-certificate=${ var.admin_pem } &&\
 KUBECONFIG="${ var.data_dir}/kubeconfig" \
 kubectl config set-context ${ var.name } \
   --cluster=cluster-${ var.name } \
