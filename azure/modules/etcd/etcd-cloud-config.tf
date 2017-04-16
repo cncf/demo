@@ -3,10 +3,10 @@ provider "gzip" {
 }
 
 resource "gzip_me" "kube-apiserver" {
-  input = "${ data.template_file.kube-apiserver.rendered }"
+  input = "${ data.template_file.kube_apiserver.rendered }"
 }
-resource "gzip_me" "cloud_config" {
-  input = "${ var.cloud_config }"
+resource "gzip_me" "k8s_cloud_config" {
+  input = "${ var.k8s_cloud_config }"
 }
 
 resource "gzip_me" "ca" {
@@ -57,7 +57,7 @@ data "template_file" "etcd_cloud_config" {
     pod_cidr = "${ var.pod_cidr }"
     location = "${ var.location }"
     service_cidr = "${ var.service_cidr }"
-    cloud_config = "${ gzip_me.cloud_config }"
+    k8s_cloud_config = "${ gzip_me.k8s_cloud_config.output }"
     ca = "${ gzip_me.ca.output }"
     k8s_etcd = "${ gzip_me.k8s_etcd.output }"
     k8s_etcd_key = "${ gzip_me.k8s_etcd_key.output }"

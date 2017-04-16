@@ -3,7 +3,7 @@ resource "azurerm_public_ip" "cncf" {
   location = "${ var.location }"
   resource_group_name = "${ var.name }"
   public_ip_address_allocation = "static"
-  domain_name_label = "k8s${ var.name }"
+  domain_name_label = "k8s-${ var.name }"
 }
 
 resource "azurerm_lb" "cncf" {

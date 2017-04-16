@@ -230,4 +230,4 @@ write-files:
     permissions: "0644"
     encoding: "gzip+base64"
     content: |
-      ${ cloud_config }
+      ${ k8s_cloud_config }

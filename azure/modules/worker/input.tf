@@ -11,14 +11,15 @@ variable "storage_account" {}
 variable "storage_primary_endpoint" {}
 variable "storage_container" {}
 variable "availability_id" {}
-variable "external-lb" {}
+variable "external_lb" {}
 variable "cluster_domain" {}
 variable "dns_service_ip" {}
 variable "internal_tld" {}
 variable "admin_username" {}
 variable "kubelet_image_url" {}
 variable "kubelet_image_tag" {}
-variable "cloud_config" {}
+variable "k8s_cloud_config" {}
 variable "ca" {}
 variable "k8s_worker" {}
 variable "k8s_worker_key" {}
+variable "data_dir" {}

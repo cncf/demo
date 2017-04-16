@@ -88,6 +88,10 @@ module "worker" {
   dns_service_ip = "${ var.dns_service_ip }"
   internal_tld = "${ var.internal_tld }"
   k8s_cloud_config = "${file("${ var.data_dir }/azure-config.json")}"
+  ca = "${file("${ var.data_dir }/.cfssl/ca.pem")}"
+  k8s_worker = "${file("${ var.data_dir }/.cfssl/k8s-worker.pem")}"
+  k8s_worker_key = "${file("${ var.data_dir }/.cfssl/k8s-worker-key.pem")}"
+  data_dir = "${ var.data_dir }"
 }
 
 

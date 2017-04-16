@@ -53,7 +53,7 @@ resource "azurerm_virtual_machine" "cncf" {
     disable_password_authentication = true
     ssh_keys {
      path = "/home/${ var.admin_username }/.ssh/authorized_keys"
-      key_data = "${file("${vardata_dir}.ssh/id_rsa.pub")}"
+      key_data = "${file("${ var.data_dir }/.ssh/id_rsa.pub")}"
     }
   }
 }

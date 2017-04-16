@@ -11,6 +11,7 @@ variable "subnet_id" {}
 variable "availability_id" {}
 variable "storage_container" {}
 variable "storage_primary_endpoint" {}
+variable "data_dir" {}
 
 # variable "allow_ssh_cidr" {}
 # variable "security_group_id" {}

@@ -11,7 +11,6 @@ variable "availability_id" {}
 variable "storage_account" {}
 variable "storage_primary_endpoint" {}
 variable "storage_container" {}
-variable "k8s-apiserver-tar" {}
 variable "cluster_domain" {}
 variable "dns_service_ip" {}
 variable "internal_tld" {}
@@ -20,7 +19,7 @@ variable "service_cidr" {}
 variable "admin_username" {}
 variable "kubelet_image_url" {}
 variable "kubelet_image_tag" {}
-variable "cloud_config" {}
+variable "k8s_cloud_config" {}
 # variable "etcd_security_group_id" {}
 # variable "external_elb_security_group_id" {}
 variable "ca" {}
@@ -28,3 +27,4 @@ variable "k8s_etcd" {}
 variable "k8s_etcd_key" {}
 variable "k8s_apiserver" {}
 variable "k8s_apiserver_key" {}
+variable "data_dir" {}
