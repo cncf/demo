@@ -4,7 +4,7 @@ resource "aws_launch_configuration" "worker" {
     volume_size = "${ var.volume_size["ebs"] }"
     volume_type = "gp2"
   }
-  # iam_instance_profile = "${ var.instance-profile-name }"
+  iam_instance_profile = "${ var.instance-profile-name }"
   image_id = "${ var.ami-id }"
   instance_type = "${ var.instance-type }"
   key_name = "${ var.key-name }"

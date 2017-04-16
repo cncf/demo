@@ -26,5 +26,8 @@ variable "volume_size" {
 }
 variable "vpc-id" {}
 variable "worker-name" {}
-# variable "instance-profile-name" {}
+variable "ca" {}
+variable "k8s-worker" {}
+variable "k8s-worker-key" {}
+variable "instance-profile-name" {}
 # variable "s3_bucket" {}
