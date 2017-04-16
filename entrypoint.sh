@@ -6,21 +6,11 @@ set -e
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-function write_aws_config {
-    # Only if AWS_*_vars exist
-    # AWS_CONFIG_FILE
-    # AWS_DEFAULT_OUTPUT
-    # AWS_SHARED_CREDENTIALS_FILE
-    # Write aws Creds if they don't exist
-    if [ -f /cncf/data/awsconfig  ] ; then
-        echo "Creds Already Exist Don't Gen"
-    else
-    cat <<EOF >/cncf/data/awsconfig
-[default]
-output = ${AWS_DEFAULT_OUTPUT:-json}
-region = ${AWS_DEFAULT_REGION:-ap-southeast-2}
-aws_access_key_id = ${AWS_ACCESS_KEY_ID}
-aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}
+function write_terraformrc {
+    cat <<EOF >~/.terraformrc
+providers {
+    gzip = "terraform-provider-gzip"
+}
 EOF
     fi
 }
@@ -29,7 +19,7 @@ export TF_VAR_name="$2"
 
 # Run CMD
 if [ "$1" = "aws-deploy" ] ; then
-    write_aws_config
+    write_terraformrc
     terraform get /deploy/aws && \
         terraform apply -target null_resource.ssl_gen /deploy/aws && \
         time terraform apply /deploy/aws && \
