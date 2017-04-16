@@ -33,14 +33,6 @@ resource "aws_iam_role_policy" "worker" {
     {
       "Effect": "Allow",
       "Action": [
-        "s3:List*",
-        "s3:Get*"
-      ],
-      "Resource": [ "arn:aws:s3:::${ var.s3_bucket }/*" ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
         "ec2:Describe*",
         "ec2:AttachVolume",
         "ec2:DetachVolume",

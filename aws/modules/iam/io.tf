@@ -1,5 +1,5 @@
-variable "s3_bucket" {}
-variable "depends-id" {}
+# variable "s3_bucket" {}
+# variable "depends-id" {}
 variable "name" {}
 
 output "depends-id" { value = "${ null_resource.dummy_dependency.id }" }

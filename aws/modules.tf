@@ -1,13 +1,3 @@
-# module "s3" {
-#   source = "./modules/s3"
-#   depends-id = "${ module.vpc.depends-id }"
-#   s3_bucket= "${ var.name }-demobucket"
-#   name = "${ var.name }"
-#   region = "${ var.aws_region }"
-#   data_dir = "${ var.data_dir }"
-# }
-
-
 module "vpc" {
   source = "./modules/vpc"
   depends-id = ""
@@ -28,12 +18,14 @@ module "security" {
   vpc-id = "${ module.vpc.id }"
 }
 
-#   module "iam" {
-#   source = "./modules/iam"
-#   depends-id = "${ module.s3.depends-id }"
-#   s3_bucket = "${ module.s3.bucket }"
-#   name = "${ var.name }"
-# }
+
+module "iam" {
+  source = "./modules/iam"
+  # depends-id = "${ module.s3.depends-id }"
+  # s3_bucket = "${ module.s3.bucket }"
+  name = "${ var.name }"
+}
+
 
 module "route53" {
   source = "./modules/route53"
@@ -47,8 +39,7 @@ module "route53" {
 module "etcd" {
   source = "./modules/etcd"
   depends-id = "${ module.route53.depends-id }"
-  # s3_bucket = "${ module.s3.bucket }"
-  # instance-profile-name = "${ module.iam.instance-profile-name-master }"
+  instance-profile-name = "${ module.iam.instance-profile-name-master }"
 
   ami-id = "${ var.aws_image_ami }"
   cluster_domain = "${ var.cluster_domain }"
@@ -92,7 +83,7 @@ module "bastion" {
 module "worker" {
   source = "./modules/worker"
   depends-id = "${ module.route53.depends-id }"
-  # s3_bucket = "${ module.s3.bucket }"
+  instance-profile-name = "${ module.iam.instance-profile-name-worker }"
 
   ami-id = "${ var.aws_image_ami }"
   capacity = {
@@ -100,7 +91,6 @@ module "worker" {
     max = 5
     min = 3
   }
-  # instance-profile-name = "${ module.iam.instance-profile-name-worker }"
   cluster_domain = "${ var.cluster_domain }"
   kubelet_aci = "${ var.kubelet_aci }"
   kubelet_version = "${ var.kubelet_version }"
@@ -112,6 +102,10 @@ module "worker" {
   region = "${ var.aws_region }"
   security-group-id = "${ module.security.worker-id }"
   subnet-ids = "${ module.vpc.subnet-ids-private }"
+  ca = "${file("${ var.data_dir }/.cfssl/ca.pem")}"
+  k8s-worker = "${file("${ var.data_dir }/.cfssl/k8s-worker.pem")}"
+  k8s-worker-key = "${file("${ var.data_dir }/.cfssl/k8s-worker-key.pem")}"
+
   volume_size = {
     ebs = 250
     root = 52
