@@ -40,8 +40,8 @@ module "etcd" {
   ami_id                         = "${ var.aws_image_ami }"
   key_name                       = "${ var.aws_key_name }"
   cluster_domain                 = "${ var.cluster_domain }"
-  kubelet_aci                    = "${ var.kubelet_aci }"
-  kubelet_version                = "${ var.kubelet_version }"
+  kubelet_image_url                    = "${ var.kubelet_image_url }"
+  kubelet_image_tag                = "${ var.kubelet_image_tag }"
   dns_service_ip                 = "${ var.dns_service_ip }"
   etcd_ips                       = "${ var.etcd_ips }"
   etcd_security_group_id         = "${ module.security.etcd_id }"
@@ -87,8 +87,8 @@ module "worker" {
     min = 3
   }
   cluster_domain = "${ var.cluster_domain }"
-  kubelet_aci = "${ var.kubelet_aci }"
-  kubelet_version = "${ var.kubelet_version }"
+  kubelet_image_url = "${ var.kubelet_image_url }"
+  kubelet_image_tag = "${ var.kubelet_image_tag }"
   dns_service_ip = "${ var.dns_service_ip }"
   instance_type = "${ var.aws_worker_vm_size }"
   internal_tld = "${ var.internal_tld }"

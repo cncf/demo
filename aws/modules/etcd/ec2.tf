@@ -23,7 +23,7 @@ resource "aws_instance" "etcd" {
     kz8s = "${ var.name }"
     Name = "etcd${ count.index + 1 }-${ var.name }"
     role = "etcd,apiserver"
-    version = "${ var.kubelet_version }"
+    version = "${ var.kubelet_image_tag }"
     visibility = "private"
   }
 

@@ -29,18 +29,18 @@ resource "gzip_me" "k8s_apiserver_key" {
   input = "${ var.k8s_apiserver_key }"
 }
 
-data "template_file" "kube-apiserver" {
+data "template_file" "kube_apiserver" {
   template = "${ file( "${ path.module }/kube-apiserver.yml" )}"
   vars {
     internal_tld = "${ var.internal_tld }"
     service_cidr = "${ var.service_cidr }"
-    hyperkube = "${ var.kubelet_aci }:${ var.kubelet_version }"
-    kubelet_aci = "${ var.kubelet_aci }"
-    kubelet_version = "${ var.kubelet_version }"
+    hyperkube = "${ var.kubelet_image_url }:${ var.kubelet_image_tag }"
+    kubelet_image_url = "${ var.kubelet_image_url }"
+    kubelet_image_tag = "${ var.kubelet_image_tag }"
   }
 }
 
-data "template_file" "etcd-cloud-config" {
+data "template_file" "etcd_cloud_config" {
   count = "${ var.master_node_count }"
   template = "${ file( "${ path.module }/etcd-cloud-config.yml" )}"
 

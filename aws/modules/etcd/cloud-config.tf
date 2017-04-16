@@ -24,9 +24,9 @@ data "template_file" "kube-apiserver" {
   vars {
     internal_tld = "${ var.internal_tld }"
     service_cidr = "${ var.service_cidr }"
-    hyperkube = "${ var.kubelet_aci }:${ var.kubelet_version }"
-    kubelet_aci = "${ var.kubelet_aci }"
-    kubelet_version = "${ var.kubelet_version }"
+    hyperkube = "${ var.kubelet_image_url }:${ var.kubelet_image_tag }"
+    kubelet_image_url = "${ var.kubelet_image_url }"
+    kubelet_image_tag = "${ var.kubelet_image_tag }"
   }
 }
 
@@ -44,9 +44,9 @@ data "template_file" "cloud-config" {
     dns_service_ip = "${ var.dns_service_ip }"
     fqdn = "etcd${ count.index + 1 }.${ var.internal_tld }"
     hostname = "etcd${ count.index + 1 }"
-    hyperkube = "${ var.kubelet_aci }:${ var.kubelet_version }"
-    kubelet_aci = "${ var.kubelet_aci }"
-    kubelet_version = "${ var.kubelet_version }"
+    hyperkube = "${ var.kubelet_image_url }:${ var.kubelet_image_tag }"
+    kubelet_image_url = "${ var.kubelet_image_url }"
+    kubelet_image_tag = "${ var.kubelet_image_tag }"
     internal_tld = "${ var.internal_tld }"
     pod_cidr = "${ var.pod_cidr }"
     region = "${ var.region }"

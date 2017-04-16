@@ -57,8 +57,8 @@ coreos:
         [Unit]
         ConditionFileIsExecutable=/usr/lib/coreos/kubelet-wrapper
         [Service]
-        Environment="KUBELET_ACI=${ kubelet_aci }"
-        Environment="KUBELET_VERSION=${ kubelet_version }"
+        Environment="KUBELET_IMAGE_URL=${ kubelet_image_url }"
+        Environment="KUBELET_IMAGE_TAG=${ kubelet_image_tag }"
         Environment="RKT_OPTS=\
           --volume dns,kind=host,source=/etc/resolv.conf \
           --mount volume=dns,target=/etc/resolv.conf \

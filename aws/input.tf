@@ -20,7 +20,7 @@ variable "aws_worker_vm_size" { default = "m3.medium" }
 variable "aws_bastion_vm_size" { default = "t2.nano" }
 
 # Set from https://quay.io/repository/coreos/hyperkube?tab=tags
-variable "kubelet_aci" { default = "quay.io/coreos/hyperkube"}
-variable "kubelet_version" { default = "v1.5.1_coreos.0"}
+variable "kubelet_image_url" { default = "quay.io/coreos/hyperkube"}
+variable "kubelet_image_tag" { default = "v1.5.1_coreos.0"}
 
 variable "data_dir" { default = "/cncf/data/aws" }

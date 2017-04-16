@@ -7,8 +7,8 @@ variable "capacity" {
   }
 }
 variable "cluster_domain" {}
-variable "kubelet_aci" {}
-variable "kubelet_version" {}
+variable "kubelet_image_url" {}
+variable "kubelet_image_tag" {}
 variable "depends_id" {}
 variable "dns_service_ip" {}
 variable "instance_type" {}
