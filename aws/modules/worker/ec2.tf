@@ -65,7 +65,7 @@ resource "aws_autoscaling_group" "worker" {
 
   tag {
     key = "Name"
-    value = "kz8s-worker"
+    value = "worker-${ var.name }"
     propagate_at_launch = true
   }
 

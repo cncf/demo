@@ -21,7 +21,7 @@ resource "aws_instance" "etcd" {
     depends-id = "${ var.depends-id }"
     KubernetesCluster = "${ var.name }" # used by kubelet's aws provider to determine cluster
     kz8s = "${ var.name }"
-    Name = "kz8s-etcd${ count.index + 1 }"
+    Name = "etcd${ count.index + 1 }-${ var.name }"
     role = "etcd,apiserver"
     version = "${ var.kubelet_version }"
     visibility = "private"

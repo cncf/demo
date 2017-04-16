@@ -1,6 +1,6 @@
-variable "name" {}
+variable "name" { default = "aws" }
 variable "aws_region" { default = "ap-southeast-2" }
-variable "aws_key_name" { default = "ii-cncfdemo" }
+variable "aws_key_name" { default = "aws" }
 variable "aws_azs" { default = "ap-southeast-2a,ap-southeast-2b,ap-southeast-2c" }
 
 variable "internal_tld" { default = "aws.cncf.demo" }
@@ -23,4 +23,4 @@ variable "aws_bastion_vm_size" { default = "t2.nano" }
 variable "kubelet_aci" { default = "quay.io/coreos/hyperkube"}
 variable "kubelet_version" { default = "v1.5.1_coreos.0"}
 
-variable "data_dir" { default = "/cncf/data" }
+variable "data_dir" { default = "/cncf/data/aws" }
