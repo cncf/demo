@@ -9,6 +9,6 @@ data "template_file" "cloud-config" {
     internal_tld = "${ var.internal_tld }"
     region = "${ var.region }"
     ssl_tar = "/ssl/k8s-worker.tar.bz2"
-    bucket = "${ var.s3_bucket }"
+    # bucket = "${ var.s3_bucket }"
   }
 }

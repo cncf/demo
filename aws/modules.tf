@@ -1,11 +1,11 @@
-module "s3" {
-  source = "./modules/s3"
-  depends-id = "${ module.vpc.depends-id }"
-  s3_bucket= "${ var.name }-demobucket"
-  name = "${ var.name }"
-  region = "${ var.aws_region }"
-  data_dir = "${ var.data_dir }"
-}
+# module "s3" {
+#   source = "./modules/s3"
+#   depends-id = "${ module.vpc.depends-id }"
+#   s3_bucket= "${ var.name }-demobucket"
+#   name = "${ var.name }"
+#   region = "${ var.aws_region }"
+#   data_dir = "${ var.data_dir }"
+# }
 
 
 module "vpc" {
@@ -28,12 +28,12 @@ module "security" {
   vpc-id = "${ module.vpc.id }"
 }
 
-module "iam" {
-  source = "./modules/iam"
-  depends-id = "${ module.s3.depends-id }"
-  s3_bucket = "${ module.s3.bucket }"
-  name = "${ var.name }"
-}
+#   module "iam" {
+#   source = "./modules/iam"
+#   depends-id = "${ module.s3.depends-id }"
+#   s3_bucket = "${ module.s3.bucket }"
+#   name = "${ var.name }"
+# }
 
 module "route53" {
   source = "./modules/route53"
@@ -47,8 +47,8 @@ module "route53" {
 module "etcd" {
   source = "./modules/etcd"
   depends-id = "${ module.route53.depends-id }"
-  s3_bucket = "${ module.s3.bucket }"
-  instance-profile-name = "${ module.iam.instance-profile-name-master }"
+  # s3_bucket = "${ module.s3.bucket }"
+  # instance-profile-name = "${ module.iam.instance-profile-name-master }"
 
   ami-id = "${ var.aws_image_ami }"
   cluster_domain = "${ var.cluster_domain }"
@@ -68,7 +68,11 @@ module "etcd" {
   subnet-ids-private = "${ module.vpc.subnet-ids-private }"
   subnet-ids-public = "${ module.vpc.subnet-ids-public }"
   vpc-id = "${ module.vpc.id }"
-  k8s-apiserver-tar = "${file("${ var.data_dir }/.cfssl/k8s-apiserver.tar.bz2")}"
+  ca = "${file("${ var.data_dir }/.cfssl/ca.pem")}"
+  k8s-etcd = "${file("${ var.data_dir }/.cfssl/k8s-etcd.pem")}"
+  k8s-etcd-key = "${file("${ var.data_dir }/.cfssl/k8s-etcd-key.pem")}"
+  k8s-apiserver = "${file("${ var.data_dir }/.cfssl/k8s-apiserver.pem")}"
+  k8s-apiserver-key = "${file("${ var.data_dir }/.cfssl/k8s-apiserver-key.pem")}"
 }
 
 module "bastion" {
@@ -88,7 +92,7 @@ module "bastion" {
 module "worker" {
   source = "./modules/worker"
   depends-id = "${ module.route53.depends-id }"
-  s3_bucket = "${ module.s3.bucket }"
+  # s3_bucket = "${ module.s3.bucket }"
 
   ami-id = "${ var.aws_image_ami }"
   capacity = {
@@ -96,7 +100,7 @@ module "worker" {
     max = 5
     min = 3
   }
-  instance-profile-name = "${ module.iam.instance-profile-name-worker }"
+  # instance-profile-name = "${ module.iam.instance-profile-name-worker }"
   cluster_domain = "${ var.cluster_domain }"
   kubelet_aci = "${ var.kubelet_aci }"
   kubelet_version = "${ var.kubelet_version }"

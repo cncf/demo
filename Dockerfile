@@ -36,6 +36,10 @@ RUN unzip terraform*.zip -d /usr/bin
 # Install CFSSL
 RUN go get -u github.com/cloudflare/cfssl/cmd/cfssl && \
 go get -u github.com/cloudflare/cfssl/cmd/...
+
+# Install Gzip+base64 Provider
+RUN go get -u github.com/jakexks/terraform-provider-gzip
+
 #Add Terraform Modules
 
 COPY aws /aws/
