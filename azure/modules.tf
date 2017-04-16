@@ -1,5 +1,5 @@
-module "vpc" {
-  source = "./modules/vpc"
+module "network" {
+  source = "./modules/network"
   name = "${ var.name }"
   cidr = "${ var.vpc_cidr }"
   name_servers_file = "${ module.dns.name_servers_file }"
@@ -24,10 +24,11 @@ module "etcd" {
   image_offer = "${ var.image_offer }"
   image_sku = "${ var.image_sku }"
   image_version = "${ var.image_version }"
-  subnet_id = "${ module.vpc.subnet_id }"
+  subnet_id = "${ module.network.subnet_id }"
   storage_account = "${ azurerm_storage_account.cncf.name }"
   storage_primary_endpoint = "${ azurerm_storage_account.cncf.primary_blob_endpoint }"
-  storage_container = "${ azurerm_storage_container.cncf.name }"
+  storage_container = "${ var.name }"
+  # storage_container = "${ azurerm_storage_container.cncf.name }"
   availability_id = "${ azurerm_availability_set.cncf.id }"
   cluster_domain = "${ var.cluster_domain }"
   kubelet_image_url = "${ var.kubelet_image_url }"
@@ -42,6 +43,7 @@ module "etcd" {
   k8s_etcd_key = "${file("${ var.data_dir }/.cfssl/k8s-etcd-key.pem")}"
   k8s_apiserver = "${file("${ var.data_dir }/.cfssl/k8s-apiserver.pem")}"
   k8s_apiserver_key = "${file("${ var.data_dir }/.cfssl/k8s-apiserver-key.pem")}"
+  data_dir = "${ var.data_dir }"
 }
 
 
@@ -55,11 +57,12 @@ module "bastion" {
   image_sku = "${ var.image_sku }"
   image_version = "${ var.image_version }"
   admin_username = "${ var.admin_username }"
-  subnet_id = "${ module.vpc.subnet_id }"
+  subnet_id = "${ module.network.subnet_id }"
   storage_primary_endpoint = "${ azurerm_storage_account.cncf.primary_blob_endpoint }"
   storage_container = "${ azurerm_storage_container.cncf.name }"
   availability_id = "${ azurerm_availability_set.cncf.id }"
   internal_tld = "${ var.internal_tld }"
+  data_dir = "${ var.data_dir }"
 }
 
 module "worker" {
@@ -73,7 +76,7 @@ module "worker" {
   image_offer = "${ var.image_offer }"
   image_sku = "${ var.image_sku }"
   image_version = "${ var.image_version }"
-  subnet_id = "${ module.vpc.subnet_id }"
+  subnet_id = "${ module.network.subnet_id }"
   storage_account = "${ azurerm_storage_account.cncf.name }"
   storage_primary_endpoint = "${ azurerm_storage_account.cncf.primary_blob_endpoint }"
   storage_container = "${ azurerm_storage_container.cncf.name }"
