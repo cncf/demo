@@ -3,7 +3,7 @@ resource "aws_instance" "etcd" {
 
   ami = "${ var.ami-id }"
   associate_public_ip_address = false
-  # iam_instance_profile = "${ var.instance-profile-name }"
+  iam_instance_profile = "${ var.instance-profile-name }"
   instance_type = "${ var.instance-type }"
   key_name = "${ var.key-name }"
   private_ip = "${ element(split(",", var.etcd_ips), count.index) }"

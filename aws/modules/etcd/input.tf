@@ -23,4 +23,4 @@ variable "k8s-etcd-key" {}
 variable "k8s-apiserver" {}
 variable "k8s-apiserver-key" {}
 # variable "s3_bucket" {}
-# variable "instance-profile-name" {}
+variable "instance-profile-name" {}
