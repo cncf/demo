@@ -1,33 +1,51 @@
 FROM golang:alpine
 MAINTAINER "Denver Williams <denver@ii.coop>"
-ENV TERRAFORM_VERSION=0.9.0-beta2
 ENV KUBECTL_VERSION=v1.5.2
+ENV GCLOUD_VERSION=150.0.0
+ENV AWSCLI_VERSION=1.11.75
+ENV AZURECLI_VERSION=2.0.2
+ENV TERRAFORM_VERSION=0.9.0-beta2
 ENV ARC=amd64
 ENV AWS_CONFIG_FILE=/cncf/data/awsconfig
 ENV KUBECONFIG=/cncf/data/kubeconfig
-# Install AWS CLI + Deps 
-RUN apk add --update git bash util-linux wget tar curl build-base jq openssh bind-tools && \
+
+# Install AWS / AZURE CLI Deps
+RUN apk update
+RUN apk add --update git bash util-linux wget tar curl build-base jq \
+  py-pip groff less openssh bind-tools python python-dev libffi-dev openssl-dev
+
+RUN pip install azure-cli==${AZURECLI_VERSION}
+RUN pip install awscli==${AWSCLI_VERSION}
+
+RUN apk --purge -v del py-pip && \
 	rm /var/cache/apk/*
 
+#Install Google Cloud SDK
+RUN wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_VERSION}-linux-x86.tar.gz && \
+tar xvfz google-cloud-sdk-${GCLOUD_VERSION}-linux-x86.tar.gz && \
+./google-cloud-sdk/install.sh -q
 
 #Install Kubectl
-RUN wget -O /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/$ARC/kubectl && \
+RUN wget -O /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/$ARC/kubectl && \
 chmod +x /usr/local/bin/kubectl
 
 # Install Terraform 
 RUN wget https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_"${TERRAFORM_VERSION}"_linux_$ARC.zip
 RUN unzip terraform*.zip -d /usr/bin
 
-
 # Install CFSSL
 RUN go get -u github.com/cloudflare/cfssl/cmd/cfssl && \
-#Add Terraform Modules
 go get -u github.com/cloudflare/cfssl/cmd/...
 
-WORKDIR /cncf/data
-COPY entrypoint.sh /cncf/
-COPY azure /azure/
-RUN chmod +x /cncf/entrypoint.sh
+# Install Gzip+base64 Provider
+RUN go get -u github.com/jakexks/terraform-provider-gzip
 
+#Add Terraform Modules
+
+COPY aws /aws/
+COPY azure /azure/
+COPY entrypoint.sh /cncf/
+RUN chmod +x /cncf/entrypoint.sh
 ENTRYPOINT ["/cncf/entrypoint.sh"]
-CMD ["deploy"]
+WORKDIR /cncf/data
+CMD ["aws-deploy"]

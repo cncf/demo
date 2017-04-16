@@ -103,8 +103,8 @@ module "kubeconfig" {
 module "azuresecurity" {
   source = "./modules/security"
 
-  cidr-allow-ssh = "${ var.cidr["allow-ssh"] }"
-  cidr-vpc = "${ var.cidr["vpc"] }"
+  allow_ssh_cidr = "${ var.cidr["allow-ssh"] }"
+  vpc_cidr = "${ var.cidr["vpc"] }"
   name = "${ var.name }"
   vpc-id = "${ module.vpc.id }"
 }

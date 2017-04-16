@@ -12,6 +12,6 @@ variable "availability-id" {}
 variable "storage-container" {}
 variable "storage-primary-endpoint" {}
 
-# variable "cidr-allow-ssh" {}
+# variable "allow_ssh_cidr" {}
 # variable "security-group-id" {}
 # variable "subnet-ids" {}

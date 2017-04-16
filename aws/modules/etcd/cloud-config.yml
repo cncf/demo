@@ -6,15 +6,15 @@ coreos:
   etcd2:
     advertise-client-urls: http://${ fqdn }:2379
     # cert-file: /etc/kubernetes/ssl/k8s-etcd.pem
-    debug: true
+    # debug: true
     discovery-srv: ${ internal_tld }
     initial-advertise-peer-urls: https://${ fqdn }:2380
     initial-cluster-state: new
     initial-cluster-token: ${ cluster-token }
     # key-file: /etc/kubernetes/ssl/k8s-etcd-key.pem
-    listen-client-urls: http://${ node-ip }:2379,http://127.0.0.1:2379
-    listen-peer-urls: https://${ node-ip }:2380
-    name: ${ hostname } 
+    listen-client-urls: http://0.0.0.0:2379
+    listen-peer-urls: https://0.0.0.0:2380
+    name: ${ hostname }
     peer-trusted-ca-file: /etc/kubernetes/ssl/ca.pem
     peer-client-cert-auth: true
     peer-cert-file: /etc/kubernetes/ssl/k8s-etcd.pem
@@ -23,28 +23,33 @@ coreos:
   units:
     - name: etcd2.service
       command: start
+
+    - name: flanneld.service
+      command: start
       drop-ins:
-        - name: wait-for-certs.conf
+        - name: 50-network-config.conf
           content: |
-            [Unit]
-            After=get-ssl.service
-            Requires=get-ssl.service
+            [Service]
+            ExecStartPre=-/usr/bin/etcdctl mk /coreos.com/network/config \
+              '{ "Network": "${ pod-ip-range }", "Backend": { "Type": "vxlan" } }'
+            Restart=always
+            RestartSec=10
 
     - name: docker.service
       command: start
       drop-ins:
+        - name: 40-flannel.conf
+          content: |
+            [Unit]
+            After=flanneld.service
+            Requires=flanneld.service
+            [Service]
+            Restart=always
+            RestartSec=10
         - name: overlay.conf
           content: |
             [Service]
             Environment="DOCKER_OPTS=--storage-driver=overlay"
-
-    - name: get-ssl.service
-      command: start
-      content: |
-        [Service]
-        ExecStart=/bin/sh -c "tar xvj -f /etc/kubernetes/ssl/k8s-apiserver.tar.bz2 -C /etc/kubernetes/ssl/"
-        RemainAfterExit=yes
-        Type=oneshot
 
     - name: kubelet.service
       command: start
@@ -52,8 +57,8 @@ coreos:
         [Unit]
         ConditionFileIsExecutable=/usr/lib/coreos/kubelet-wrapper
         [Service]
-        Environment="KUBELET_IMAGE_URL=${ kubelet_image_url }"
-        Environment="KUBELET_IMAGE_TAG=${ kubelet_image_tag }"
+        Environment="KUBELET_ACI=${ kubelet_aci }"
+        Environment="KUBELET_VERSION=${ kubelet_version }"
         Environment="RKT_OPTS=\
           --volume dns,kind=host,source=/etc/resolv.conf \
           --mount volume=dns,target=/etc/resolv.conf \
@@ -72,10 +77,9 @@ coreos:
         ExecStart=/usr/lib/coreos/kubelet-wrapper \
           --allow-privileged=true \
           --api-servers=http://127.0.0.1:8080 \
-          --cloud-provider=azure \
-          --cloud-config=/etc/kubernetes/ssl/azure-config.json \
+          --cloud-provider=aws \
           --cluster-dns=${ dns_service_ip } \
-          --cluster_domain=${ cluster_domain } \
+          --cluster-domain=${ cluster_domain } \
           --config=/etc/kubernetes/manifests \
           --register-schedulable=false
         Restart=always
@@ -95,67 +99,10 @@ write-files:
       exec nsenter -m -u -i -n -p -t 1 -- /usr/bin/rkt "$@"
 
   - path: /etc/kubernetes/manifests/kube-apiserver.yml
+    encoding: "gzip+base64"
     content: |
-      apiVersion: v1
-      kind: Pod
-      metadata:
-        name: kube-apiserver
-        namespace: kube-system
-      spec:
-        hostNetwork: true
-        containers:
-        - name: kube-apiserver
-          image: ${ kubelet_image_url }:${ kubelet_image_tag }
-          command:
-          - /hyperkube
-          - apiserver
-          - --admission-control=LimitRanger
-          - --admission-control=NamespaceExists
-          - --admission-control=NamespaceLifecycle
-          - --admission-control=ResourceQuota
-          - --admission-control=SecurityContextDeny
-          - --admission-control=ServiceAccount
-          - --allow-privileged=true
-          - --client-ca-file=/etc/kubernetes/ssl/ca.pem
-          - --cloud-provider=azure
-          - --cloud-config=/etc/kubernetes/ssl/azure-config.json
-          - --etcd-servers=http://etcd.${ internal_tld }:2379
-          - --insecure-bind-address=0.0.0.0
-          - --secure-port=443
-          - --service-account-key-file=/etc/kubernetes/ssl/k8s-apiserver-key.pem
-          - --service-cluster-ip-range=${ service_cidr }
-          - --tls-cert-file=/etc/kubernetes/ssl/k8s-apiserver.pem
-          - --tls-private-key-file=/etc/kubernetes/ssl/k8s-apiserver-key.pem
-          - --v=2
-          livenessProbe:
-            httpGet:
-              host: 127.0.0.1
-              port: 8080
-              path: /healthz
-            initialDelaySeconds: 15
-            timeoutSeconds: 15
-          ports:
-          - containerPort: 443
-            hostPort: 443
-            name: https
-          - containerPort: 8080
-            hostPort: 8080
-            name: local
-          volumeMounts:
-          - mountPath: /etc/kubernetes/ssl
-            name: ssl-certs-kubernetes
-            readOnly: true
-          - mountPath: /etc/ssl/certs
-            name: ssl-certs-host
-            readOnly: true
-        volumes:
-        - hostPath:
-            path: /etc/kubernetes/ssl
-          name: ssl-certs-kubernetes
-        - hostPath:
-            path: /usr/share/ca-certificates
-          name: ssl-certs-host
-
+      ${ kube-apiserver-yml }
+      
   - path: /etc/kubernetes/manifests/kube-controller-manager.yml
     content: |
       apiVersion: v1
@@ -167,12 +114,11 @@ write-files:
         hostNetwork: true
         containers:
         - name: kube-controller-manager
-          image: ${ kubelet_image_url }:${ kubelet_image_tag }
+          image: ${ hyperkube }
           command:
           - /hyperkube
           - controller-manager
-          - --cloud-provider=azure
-          - --cloud-config=/etc/kubernetes/ssl/azure-config.json
+          - --cloud-provider=aws
           - --leader-elect=true
           - --master=http://127.0.0.1:8080
           - --root-ca-file=/etc/kubernetes/ssl/ca.pem
@@ -213,7 +159,7 @@ write-files:
         hostNetwork: true
         containers:
         - name: kube-proxy
-          image: ${ kubelet_image_url }:${ kubelet_image_tag }
+          image: ${ hyperkube }
           command:
           - /hyperkube
           - proxy
@@ -241,7 +187,7 @@ write-files:
         hostNetwork: true
         containers:
         - name: kube-scheduler
-          image: ${ kubelet_image_url }:${ kubelet_image_tag }
+          image: ${ hyperkube }
           command:
           - /hyperkube
           - scheduler
@@ -270,11 +216,33 @@ write-files:
         copytruncate
       }
 
-  - encoding: b64 
-    content: ${ k8s-apiserver-tar }
-    path: /etc/kubernetes/ssl/k8s-apiserver.tar.bz2
+  - path: /etc/kubernetes/ssl/ca.pem
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${ ca }
+      
+  - path: /etc/kubernetes/ssl/k8s-etcd.pem
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${ k8s-etcd }
+      
+  - path: /etc/kubernetes/ssl/k8s-etcd-key.pem
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${ k8s-etcd-key }
+      
+  - path: /etc/kubernetes/ssl/k8s-apiserver.pem
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${ k8s-apiserver }
 
-  - encoding: b64
-    content: ${ cloud-config }
-    path: /etc/kubernetes/ssl/azure-config.json
+  - path: /etc/kubernetes/ssl/k8s-apiserver-key.pem
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${ k8s-apiserver-key }
 

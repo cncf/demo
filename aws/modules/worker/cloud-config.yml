@@ -12,19 +12,55 @@ coreos:
     proxy: on
 
   units:
+    - name: format-ephemeral.service
+      command: start
+      content: |
+        [Unit]
+        Description=Formats the ephemeral drive
+        After=dev-xvdf.device
+        Requires=dev-xvdf.device
+        [Service]
+        ExecStart=/usr/sbin/wipefs -f /dev/xvdf
+        ExecStart=/usr/sbin/mkfs.ext4 -F /dev/xvdf
+        RemainAfterExit=yes
+        Type=oneshot
+
+    - name: var-lib-docker.mount
+      command: start
+      content: |
+        [Unit]
+        Description=Mount ephemeral to /var/lib/docker
+        Requires=format-ephemeral.service
+        After=format-ephemeral.service
+        Before=docker.service
+        [Mount]
+        What=/dev/xvdf
+        Where=/var/lib/docker
+        Type=ext4
+
     - name: etcd2.service
       command: start
 
+    - name: flanneld.service
+      command: start
+      drop-ins:
+        - name: 50-network-config.conf
+          content: |
+            [Service]
+            Restart=always
+            RestartSec=10
+
     - name: docker.service
       command: start
-
-    - name: get-ssl.service
-      command: start
-      content: |
-        [Service]
-        ExecStart=/bin/sh -c "tar xvj -f /etc/kubernetes/ssl/k8s-worker.tar.bz2 -C /etc/kubernetes/ssl/"
-        RemainAfterExit=yes
-        Type=oneshot
+      drop-ins:
+        - name: 40-flannel.conf
+          content: |
+            [Unit]
+            After=flanneld.service
+            Requires=flanneld.service
+            [Service]
+            Restart=always
+            RestartSec=10
 
     - name: kubelet.service
       command: start
@@ -32,8 +68,8 @@ coreos:
         [Unit]
         ConditionFileIsExecutable=/usr/lib/coreos/kubelet-wrapper
         [Service]
-        Environment="KUBELET_IMAGE_URL=${ kubelet_image_url }"
-        Environment="KUBELET_IMAGE_TAG=${ kubelet_image_tag }"
+        Environment="KUBELET_ACI=${ kubelet_aci }"
+        Environment="KUBELET_VERSION=${ kubelet_version }"
         Environment="RKT_OPTS=\
           --volume dns,kind=host,source=/etc/resolv.conf \
           --mount volume=dns,target=/etc/resolv.conf \
@@ -52,10 +88,9 @@ coreos:
         ExecStart=/usr/lib/coreos/kubelet-wrapper \
           --allow-privileged=true \
           --api-servers=http://master.${ internal_tld }:8080 \
-          --cloud-provider=azure \
-          --cloud-config=/etc/kubernetes/ssl/azure-config.json \
+          --cloud-provider=aws \
           --cluster-dns=${ dns_service_ip } \
-          --cluster_domain=${ cluster_domain } \
+          --cluster-domain=${ cluster_domain } \
           --config=/etc/kubernetes/manifests \
           --kubeconfig=/etc/kubernetes/kubeconfig.yml \
           --register-node=true \
@@ -108,7 +143,7 @@ write-files:
         hostNetwork: true
         containers:
         - name: kube-proxy
-          image: ${ kubelet_image_url }:${ kubelet_image_tag }
+          image: ${ kubelet_aci }:${ kubelet_version }
           command:
           - /hyperkube
           - proxy
@@ -148,11 +183,21 @@ write-files:
         delaycompress
         copytruncate
       }
-      
-  - encoding: b64 
-    content: ${ k8s-worker-tar }
-    path: /etc/kubernetes/ssl/k8s-worker.tar.bz2
 
-  - encoding: b64
-    content: ${ cloud-config }
-    path: /etc/kubernetes/ssl/azure-config.json
+  - path: /etc/kubernetes/ssl/ca.pem
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${ ca }
+      
+  - path: /etc/kubernetes/ssl/k8s-worker.pem
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${ k8s-worker }
+      
+  - path: /etc/kubernetes/ssl/k8s-worker-key.pem
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${ k8s-worker-key }

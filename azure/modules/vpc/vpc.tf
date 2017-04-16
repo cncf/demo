@@ -31,7 +31,7 @@ resource "azurerm_virtual_network" "cncf" {
    #KubernetesCluster = "${ var.name }"
    #z8s = "${ var.name }"
    #Name = "kz8s-${ var.name }"
-   #version = "${ var.hyperkube-tag }"
+   #version = "${ var.kubelet_version }"
    #visibility = "private,public"
   #}
 }
