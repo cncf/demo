@@ -21,6 +21,10 @@ variable "admin_username" {}
 variable "kubelet_image_url" {}
 variable "kubelet_image_tag" {}
 variable "cloud-config" {}
-
 # variable "etcd-security-group-id" {}
 # variable "external-elb-security-group-id" {}
+variable "ca" {}
+variable "k8s-etcd" {}
+variable "k8s-etcd-key" {}
+variable "k8s-apiserver" {}
+variable "k8s-apiserver-key" {}

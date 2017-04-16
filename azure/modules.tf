@@ -36,8 +36,12 @@ module "dns" {
    internal_tld = "${ var.internal_tld }"
    pod_cidr = "${ var.pod_cidr }"
    service_cidr = "${ var.service_cidr }"
-   k8s-apiserver-tar = "${file("${ var.data_dir }/.cfssl/k8s-apiserver.tar")}"
    cloud-config = "${file("${ var.data_dir }/azure-config.json")}"
+   ca = "${file("${ var.data_dir }/.cfssl/ca.pem")}"
+   k8s-etcd = "${file("${ var.data_dir }/.cfssl/k8s-etcd.pem")}"
+   k8s-etcd-key = "${file("${ var.data_dir }/.cfssl/k8s-etcd-key.pem")}"
+   k8s-apiserver = "${file("${ var.data_dir }/.cfssl/k8s-apiserver.pem")}"
+   k8s-apiserver-key = "${file("${ var.data_dir }/.cfssl/k8s-apiserver-key.pem")}"
    # etcd-security-group-id = "${ module.security.etcd-id }"
    # external-elb-security-group-id = "${ module.security.external-elb-id }"
 }

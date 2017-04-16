@@ -1,5 +1,4 @@
 #cloud-config
-
 ---
 coreos:
 
@@ -17,14 +16,6 @@ coreos:
 
     - name: docker.service
       command: start
-
-    - name: get-ssl.service
-      command: start
-      content: |
-        [Service]
-        ExecStart=/bin/sh -c "tar xvj -f /etc/kubernetes/ssl/k8s-worker.tar.bz2 -C /etc/kubernetes/ssl/"
-        RemainAfterExit=yes
-        Type=oneshot
 
     - name: kubelet.service
       command: start
@@ -148,11 +139,27 @@ write-files:
         delaycompress
         copytruncate
       }
-      
-  - encoding: b64 
-    content: ${ k8s-worker-tar }
-    path: /etc/kubernetes/ssl/k8s-worker.tar.bz2
 
-  - encoding: b64
-    content: ${ cloud-config }
-    path: /etc/kubernetes/ssl/azure-config.json
+  - path: /etc/kubernetes/ssl/ca.pem
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${ ca }
+      
+  - path: /etc/kubernetes/ssl/k8s-worker.pem
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${ k8s-worker }
+      
+  - path: /etc/kubernetes/ssl/k8s-worker-key.pem
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${ k8s-worker-key }
+
+  - path: /etc/kubernetes/ssl/azure-config.json
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${ cloud-config }
