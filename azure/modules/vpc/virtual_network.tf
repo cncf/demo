@@ -1,10 +1,15 @@
-#resource "null_resource" "dummy_dependency" {
-#  depends_on = [
-#    "aws_vpc.main",
-#    "aws_nat_gateway.nat"
-#  ]
-#}
+resource "azurerm_network_security_group" "cncf" {
+  name                = "${ var.name }"
+}
 
+resource "azurerm_subnet" "cncf" {
+  name = "${ var.name }"
+  resource_group_name = "${ var.name }"
+  virtual_network_name = "${azurerm_virtual_network.cncf.name}"
+  address_prefix = "10.0.10.0/24"
+  route_table_id = "${ azurerm_route_table.cncf.id }"
+
+}
 
 resource "azurerm_virtual_network" "cncf" {
   name                = "${ var.name }"
@@ -25,15 +30,6 @@ resource "azurerm_virtual_network" "cncf" {
   # dns_servers.1:       "" => "13.107.24.9"
   # dns_servers.2:       "" => "64.4.48.9"
   # dns_servers.3:       "" => "13.107.160.9"
-
-  # tags {
-   #builtWith = "terraform"
-   #KubernetesCluster = "${ var.name }"
-   #z8s = "${ var.name }"
-   #Name = "kz8s-${ var.name }"
-   #version = "${ var.kubelet_version }"
-   #visibility = "private,public"
-  #}
 }
 
 resource "azurerm_route_table" "cncf" {

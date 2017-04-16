@@ -1,3 +1,18 @@
+data "template_file" "worker-cloud-config" {
+  template = "${ file( "${ path.module }/worker-cloud-config.yml" )}"
+
+  vars {
+    cluster_domain = "${ var.cluster_domain }"
+    dns_service_ip = "${ var.dns_service_ip }"
+    kubelet_image_url = "${ var.kubelet_image_url }"
+    kubelet_image_tag = "${ var.kubelet_image_tag }"
+    internal_tld = "${ var.internal_tld }"
+    location = "${ var.location }"
+    k8s-worker-tar = "${ base64encode(var.k8s-worker-tar) }"
+    cloud-config = "${ base64encode(var.cloud-config) }"
+  }
+}
+
 resource "azurerm_network_interface" "cncf" {
   count               = "${ var.worker_node_count }"
   name                = "worker-interface${ count.index + 1 }"
