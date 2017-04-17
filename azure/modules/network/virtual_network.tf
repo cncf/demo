@@ -16,7 +16,7 @@ resource "azurerm_subnet" "cncf" {
 resource "azurerm_virtual_network" "cncf" {
   name                = "${ var.name }"
   resource_group_name = "${ var.name }"
-  address_space       = ["${ var.cidr }"]
+  address_space       = ["${ var.vpc_cidr }"]
   location            = "${ var.location }"
   dns_servers         = [
     "${ element(split( ",", file(var.name_servers_file) ),0) }",
