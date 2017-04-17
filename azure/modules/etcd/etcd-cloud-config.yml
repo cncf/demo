@@ -81,7 +81,10 @@ write-files:
       exec nsenter -m -u -i -n -p -t 1 -- /usr/bin/rkt "$@"
 
   - path: /etc/kubernetes/manifests/kube-apiserver.yml
+    encoding: "gzip+base64"
     content: |
+      ${ k8s_apiserver_yml }
+      
   - path: /etc/kubernetes/manifests/kube-controller-manager.yml
     content: |
       apiVersion: v1

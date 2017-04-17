@@ -63,7 +63,7 @@ data "template_file" "etcd_cloud_config" {
     k8s_etcd_key = "${ gzip_me.k8s_etcd_key.output }"
     k8s_apiserver = "${ gzip_me.k8s_apiserver.output }"
     k8s_apiserver_key = "${ gzip_me.k8s_apiserver_key.output }"
-    k8s-apiserver-yml = "${ gzip_me.kube-apiserver.output }"
+    k8s_apiserver_yml = "${ gzip_me.kube-apiserver.output }"
     node-ip = "${ element(azurerm_network_interface.cncf.*.private_ip_address, count.index) }"
 
   }
