@@ -6,21 +6,12 @@ set -e
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-function write_terraformrc {
-    cat <<EOF >~/.terraformrc
-providers {
-    gzip = "terraform-provider-gzip"
-}
-EOF
-}
-
 export TF_VAR_name="$2"
 export TF_VAR_internal_tld=${TF_VAR_name}.cncf.demo
 export TF_VAR_data_dir=/cncf/data/${TF_VAR_name}
 
 # Run CMD
 if [ "$1" = "aws-deploy" ] ; then
-    write_terraformrc
     terraform get /build/aws && \
         terraform apply -target null_resource.ssl_gen /build/aws && \
         time terraform apply /deploy/aws && \
