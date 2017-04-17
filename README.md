@@ -1,46 +1,46 @@
 
 # CNCF Technologies Demonstration
-The goal of this project is to demonstrate each of the technologies that have been adopted by the [Cloud Native Computing Foundation] (http://cncf.io) (CNCF) in a publicly available repository in order to facilitate their understanding through simple deployment tooling and by providing sample applications as common-ground for conversation. This project will enable replicable deployments and facilitate quantification of performance, latency, throughput, and cost between various deployment models.
+The goal of this project is to demonstrate each of the technologies that have been adopted by the [Cloud Native Computing Foundation](http://cncf.io) (CNCF) in a publicly available repository in order to facilitate their understanding through simple deployment tooling and by providing sample applications as common-ground for conversation. This project will enable replicable deployments and facilitate quantification of performance, latency, throughput, and cost between various deployment models.
 
 ## Beta Preview
 Demo run results are displayed at: [beta.cncfdemo.io](http://beta.cncfdemo.io/).
 
 # Table of Contents <a id="toc"></a>
-- [Project Overview] (#projectoverview)
-  - [Sample Applications] (#sampleapps) 
-  - [Deployment Models] (#deploymentmodels)
-- [Getting Started] (#quickstart)
-  - [Dependencies] (#dependencies)
-  - [Create Cluster] (#cluster)
-  - [Run Demo] (#demo)
-- [Architecture] (#arch)
-  - [Kubernetes Architecture] (#kubearch)
-- [Postmortem & Suggestions] (#postmortem)
+- [Project Overview](#projectoverview)
+  - [Sample Applications](#sampleapps) 
+  - [Deployment Models](#deploymentmodels)
+- [Getting Started](#quickstart)
+  - [Dependencies](#dependencies)
+  - [Create Cluster](#cluster)
+  - [Run Demo](#demo)
+- [Architecture](#arch)
+  - [Kubernetes Architecture](#kubearch)
+- [Postmortem & Suggestions](#postmortem)
 
 ---
 
 ## Technologies <a id="techoverview"></a>
-1. Kubernetes - [Project] (http://kubernetes.io), [Source] (https://github.com/kubernetes/kubernetes)
-2. Prometheus - [Project] (https://prometheus.io), [Source] (https://github.com/prometheus)
+1. Kubernetes - [Project](http://kubernetes.io), [Source](https://github.com/kubernetes/kubernetes)
+2. Prometheus - [Project](https://prometheus.io), [Source](https://github.com/prometheus)
 
 ## Summary of Sample Applications <a id="sampleapps"></a>
-1. Count.ly - [Project] (https://count.ly), [Source] (https://github.com/countly/countly-server) 
+1. Count.ly - [Project](https://count.ly), [Source](https://github.com/countly/countly-server) 
   * Goals:
     1. demonstrate autoscaling of Countly
     2. illustrate background, lower priority jobs vs foreground, higher priority jobs
-  * [Details of sample application] (#countly)
+  * [Details of sample application](#countly)
 
-2. Boinc - [Project] (http://boinc.berkeley.edu), [Source] (https://github.com/BOINC)
+2. Boinc - [Project](http://boinc.berkeley.edu), [Source](https://github.com/BOINC)
   * Goals:
     1. demonstrate grid computing use case
-    2. contribute cycles to curing [Zika] (https://en.wikipedia.org/wiki/Zika_virus) in IBM [World Community Grid] (https://www.worldcommunitygrid.org)
+    2. contribute cycles to curing [Zika](https://en.wikipedia.org/wiki/Zika_virus) in IBM [World Community Grid](https://www.worldcommunitygrid.org)
   * Details of sample application
 
 ## Supported Deployments <a id="deploymentmodels"></a>
 A variety of deployments models will be supported. Support for each deployment model will be delivered in this order of priority:
 
 1. Local (on your machine)
-2. [CNCF Community Cluster] (#cncf-cluster)
+2. [CNCF Community Cluster](#cncf-cluster)
 3. AWS
 4. Azure
 5. GCP
@@ -49,20 +49,20 @@ A variety of deployments models will be supported. Support for each deployment m
 Given this breadth of supported deployment models using the same sample applications, performance, cost, etc. characteristics between this variety of clusters may be compared.
 
 ### CNCF Community Cluster <a id="cncf-cluster"></a>
-Donated by Intel, a 1,000 node cluster of servers is running in Switch, Las Vegas, to be used by the CNCF community. Visit these links for a description of the cluster [project page] (https://cncf.io/cluster) or to be involved in the [cluster community] (https://github.com/cncf/cluster). 
+Donated by Intel, a 1,000 node cluster of servers is running in Switch, Las Vegas, to be used by the CNCF community. Visit these links for a description of the cluster [project page](https://cncf.io/cluster) or to be involved in the [cluster community](https://github.com/cncf/cluster). 
 
 ## An Open Commitment
 The project output will be an open source GitHub repo that will become widely referenced within the CNCF community. All work will occur on a public repo, all externally referenced projects will be open source, and this project itself will be licensed under Apache 2.0. 
 
 ## Disclaimer
-Note that these are explicitly marketing demos, not reference stacks. The CNCF’s [Technical Oversight Committee] (https://github.com/cncf/toc) will over time be adopting additional projects and may eventually publish reference stacks. By contrast, this project is designed to take the shortest possible path to successful multi-cloud deployments of diverse applications.
+Note that these are explicitly marketing demos, not reference stacks. The CNCF’s [Technical Oversight Committee](https://github.com/cncf/toc) will over time be adopting additional projects and may eventually publish reference stacks. By contrast, this project is designed to take the shortest possible path to successful multi-cloud deployments of diverse applications.
 
-# Quick Start Guide <a id="quickstart"></a> <sub><sup>([back to TOC] (#toc))</sup></sub>
+# Quick Start Guide <a id="quickstart"></a> <sub><sup>([back to TOC](#toc))</sup></sub>
 Getting started with the `cncfdemo` is a three-step process:
 
-1. [Install cncfdemo] (#dependencies)
-2. [Create a Kubernetes cluster, running Prometheus] (#cluster)
-3. [Run demo apps & benchmarks] (#demo)
+1. [Install cncfdemo](#dependencies)
+2. [Create a Kubernetes cluster, running Prometheus](#cluster)
+3. [Run demo apps & benchmarks](#demo)
 
 ## 1. Install cncfdemo <a id="dependencies"></a>
 
@@ -124,7 +124,7 @@ The demo was accomplished with [Jinja](http://jinja.pocoo.org/) templating, seve
 - Additional cloud providers support
 - A visualization/UI layer to display the progress of cluster bootstraps, deployments, and benchmarks
 
-# Architecture <a id="arch"></a> <sub><sup>([back to TOC] (#toc))</sup></sub>
+# Architecture <a id="arch"></a> <sub><sup>([back to TOC](#toc))</sup></sub>
 
 ## Image based Kubernetes deployments
 
@@ -305,7 +305,7 @@ Once the quorum has been reached you can see how the IP allocation has been divv
 Countly is an open source web & mobile analytics and marketing platform. It provides insights about user actions.
 
 ## Configuration Files
-Two configuration files used to dictate the behavior of this demo application are [api.js] (configMaps/countly/api.js) and [frontend.js] (configMaps/countly/frontend.js). Each configuration file contains only one change from the default configurationonly line changed from the default config:
+Two configuration files used to dictate the behavior of this demo application are [api.js](configMaps/countly/api.js) and [frontend.js](configMaps/countly/frontend.js). Each configuration file contains only one change from the default configurationonly line changed from the default config:
 
   `Host: "mongos:default"`
 
