@@ -37,6 +37,11 @@ go get -u github.com/cloudflare/cfssl/cmd/...
 
 # Install Gzip+base64 Provider
 RUN go get -u github.com/jakexks/terraform-provider-gzip
+RUN echo providers { >> ~/.terraformrc
+RUN echo "   gzip = "terraform-provider-gzip"" >> ~/.terraformrc
+RUN echo } >> ~/.terraformrc
+
+
 
 #Add Terraform Modules
 
