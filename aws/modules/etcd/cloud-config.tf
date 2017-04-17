@@ -35,7 +35,7 @@ resource "gzip_me" "kube-apiserver" {
 }
 
 data "template_file" "cloud-config" {
-  count = "${ length( split(",", var.etcd_ips) ) }"
+  count = "${ var.master_node_count }"
   template = "${ file( "${ path.module }/cloud-config.yml" )}"
 
   vars {

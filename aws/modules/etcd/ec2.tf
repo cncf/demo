@@ -1,12 +1,11 @@
 resource "aws_instance" "etcd" {
-  count = "${ length( split(",", var.etcd_ips) ) }"
+  count = "${ var.master_node_count }"
 
   ami = "${ var.ami_id }"
   associate_public_ip_address = false
   iam_instance_profile = "${ var.instance_profile_name }"
   instance_type = "${ var.instance_type }"
   key_name = "${ var.key_name }"
-  private_ip = "${ element(split(",", var.etcd_ips), count.index) }"
 
   root_block_device {
     volume_size = 124

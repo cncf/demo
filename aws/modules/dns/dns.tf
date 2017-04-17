@@ -11,21 +11,18 @@ resource "aws_route53_zone" "internal" {
 
 resource "aws_route53_record" "A-etcd" {
   name = "etcd"
-  records = [ "${ split(",", var.etcd_ips) }" ]
+  records = [ "${ var.master_ips }" ]
   ttl = "300"
   type = "A"
   zone_id = "${ aws_route53_zone.internal.zone_id }"
 }
 
 resource "aws_route53_record" "A-etcds" {
-  count = "${ length( split(",", var.etcd_ips) ) }"
-
   name = "etcd${ count.index+1 }"
+  count = "${ var.master_node_count }"
   ttl = "300"
   type = "A"
-  records = [
-    "${ element(split(",", var.etcd_ips), count.index) }"
-  ]
+  records = [ "${ element(var.master_ips, count.index) }" ]
   zone_id = "${ aws_route53_zone.internal.zone_id }"
 }
 

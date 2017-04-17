@@ -22,18 +22,18 @@ module "iam" {
 }
 
 
-module "route53" {
-  source = "./modules/route53"
+module "dns" {
+  source = "./modules/dns"
   name         = "${ var.name }"
 
-  etcd_ips     = "${ var.etcd_ips }"
+  master_ips = "${ module.etcd.master_ips }"
   internal_tld = "${ var.internal_tld }"
   vpc_id       = "${ module.vpc.id }"
 }
 
 module "etcd" {
   source = "./modules/etcd"
-  depends_id = "${ module.route53.depends_id }"
+  #depends_id = "${ module.dns.depends_id }"
   instance_profile_name = "${ module.iam.instance_profile_name_master }"
 
   name                           = "${ var.name }"
@@ -43,7 +43,6 @@ module "etcd" {
   kubelet_image_url                    = "${ var.kubelet_image_url }"
   kubelet_image_tag                = "${ var.kubelet_image_tag }"
   dns_service_ip                 = "${ var.dns_service_ip }"
-  etcd_ips                       = "${ var.etcd_ips }"
   etcd_security_group_id         = "${ module.security.etcd_id }"
   external_elb_security_group_id = "${ module.security.external_elb_id }"
   instance_type                  = "${ var.aws_master_vm_size }"
@@ -77,14 +76,14 @@ module "bastion" {
 
 module "worker" {
   source = "./modules/worker"
-  depends_id = "${ module.route53.depends_id }"
+  depends_id = "${ module.dns.depends_id }"
   instance_profile_name = "${ module.iam.instance_profile_name_worker }"
 
   ami_id = "${ var.aws_image_ami }"
   capacity = {
-    desired = 3
-    max = 5
-    min = 3
+    desired = "${ var.worker_node_count}"
+    max = "${ var.worker_node_max}"
+    min = "${ var.worker_node_min}"
   }
   cluster_domain = "${ var.cluster_domain }"
   kubelet_image_url = "${ var.kubelet_image_url }"
