@@ -1,7 +1,7 @@
 module "network" {
   source = "./modules/network"
   name = "${ var.name }"
-  cidr = "${ var.vpc_cidr }"
+  vpc_cidr = "${ var.vpc_cidr }"
   name_servers_file = "${ module.dns.name_servers_file }"
   location = "${ var.location }"
  }
@@ -12,6 +12,8 @@ module "dns" {
   internal_tld = "${ var.internal_tld }"
   master_ips = "${ module.etcd.master_ips }"
   master_node_count = "${ var.master_node_count }"
+  name_servers_file = "${ var.data_dir }/dns"
+
 }
 
 module "etcd" {
