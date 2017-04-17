@@ -47,7 +47,7 @@ resource "azurerm_dns_a_record" "A-etcd"  {
 }
 
 resource "azurerm_dns_a_record" "A-etcds" {
-  count = "${ length(var.master_ips) }"
+  count = "${ var.master_node_count }"
 
   name = "etcd${ count.index+1 }"
   zone_name = "${azurerm_dns_zone.cncf.name}"
@@ -67,7 +67,7 @@ resource "azurerm_dns_a_record" "A-master" {
 }
 
 resource "azurerm_dns_a_record" "A-masters" {
-  count = "${ length(var.master_ips) }"
+  count = "${ var.master_node_count }"
   name = "master${ count.index+1 }"
   zone_name = "${azurerm_dns_zone.cncf.name}"
   resource_group_name = "${ var.name }"
