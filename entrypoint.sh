@@ -38,6 +38,16 @@ elif [ "$1" = "azure-deploy" ] ; then
         printf "${RED}\n#Commands to Configue Kubectl \n\n" && \
         printf 'sudo chown -R $(whoami):$(whoami) $(pwd)/data/${name} \n\n' && \
         printf 'export KUBECONFIG=$(pwd)/data/${name}/kubeconfig \n\n'${NC}
-elif [ "$1" = "destroy" ] ; then
-    time terraform destroy -force /delpoy/azure
+elif [ "$1" = "azure-destroy" ] ; then
+    time terraform destroy -force /build/azure
+elif [ "$1" = "packet-deploy" ] ; then
+    terraform get /build/packet && \
+        terraform apply -target module.etcd.null_resource.discovery_gen /build/packet && \
+        terraform apply -target null_resource.ssl_ssh_gen /build/packet && \
+        time terraform apply /build/packet && \
+        printf "${RED}\n#Commands to Configue Kubectl \n\n" && \
+        printf 'sudo chown -R $(whoami):$(whoami) $(pwd)/data/${name} \n\n' && \
+        printf 'export KUBECONFIG=$(pwd)/data/${name}/kubeconfig \n\n'${NC}
+elif [ "$1" = "packet-destroy" ] ; then
+    time terraform destroy -force /build/packet
 fi
