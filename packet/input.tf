@@ -1,24 +1,19 @@
 variable "name" { default = "packet" }
-# required for now
-variable "packet_project_id" { }
+
+# Set with env TF_VAR_packet_project_id
+variable "packet_project_id" {} # required for now
+variable "packet_facility" { default = "nrt1" }
+variable "packet_billing_cycle" { default = "hourly" }
+variable "packet_operating_system" { default = "coreos_stable" }
+variable "packet_bastion_device_plan" { default = "baremetal_0" }
+variable "packet_master_device_plan" { default = "baremetal_0" }
+variable "packet_worker_device_plan" { default = "baremetal_0" }
 
 variable "internal_tld" { default = "packet.cncf.demo" }
 variable "data_dir" { default = "/cncf/data/packet" }
 
-# Azure Cloud Specific Settings
-# New York Metro (EWR1)
-# Silicon Valley (SJC1)
-# Amsterdam, NL (AMS1)
-# Tokyo, JP (NRT1)
-variable "packet_facility"        { default = "nrt1" }
-
 # VM Image and size
-variable "admin_username" { default = "cncf"}
-# https://www.terraform.io/docs/providers/packet/r/device.html#operating_system-1
-variable "packet_operating_system"   { default = "1298.6.0" }
-variable "master_vm_size"   { default = "Standard_A2" }
-variable "worker_vm_size"   { default = "Standard_A2" }
-variable "bastion_vm_size"   { default = "Standard_A2" }
+variable "admin_username" { default = "core"}
 
 # Kubernetes
 variable "cluster_domain" { default = "cluster.local" }
@@ -34,6 +29,6 @@ variable "worker_node_count" { default = "3" }
 
 # Deployment Artifact Versions
 # Hyperkube
-# Set from https://quay.io/repository/coreos/hyperkube?tab=tags
+# Set from https://quay.io/repository/coreos/hyperkube
 variable "kubelet_image_url" { default = "quay.io/coreos/hyperkube"}
 variable "kubelet_image_tag" { default = "v1.4.7_coreos.0"}
