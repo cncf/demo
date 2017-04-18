@@ -4,6 +4,7 @@ ENV KUBECTL_VERSION=v1.5.2
 ENV GCLOUD_VERSION=150.0.0
 ENV AWSCLI_VERSION=1.11.75
 ENV AZURECLI_VERSION=2.0.2
+ENV PACKETCLI_VERSION=1.33
 ENV TERRAFORM_VERSION=0.9.3
 ENV ARC=amd64
 
@@ -12,16 +13,20 @@ RUN apk update
 RUN apk add --update git bash util-linux wget tar curl build-base jq \
   py-pip groff less openssh bind-tools python python-dev libffi-dev openssl-dev
 
+# no way to pin this packet-cli at the moment
+RUN go get -u github.com/ebsarr/packet
+RUN pip install packet-python==${PACKETCLI_VERSION} argh tabulate
 RUN pip install azure-cli==${AZURECLI_VERSION}
 RUN pip install awscli==${AWSCLI_VERSION}
 
 RUN apk --purge -v del py-pip && \
 	rm /var/cache/apk/*
 
-#Install Google Cloud SDK
+# Install Google Cloud SDK
 RUN wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_VERSION}-linux-x86.tar.gz && \
 tar xvfz google-cloud-sdk-${GCLOUD_VERSION}-linux-x86.tar.gz && \
 ./google-cloud-sdk/install.sh -q
+
 
 #Install Kubectl
 RUN wget -O /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/$ARC/kubectl && \
