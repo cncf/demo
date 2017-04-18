@@ -5,7 +5,7 @@ variable "region" {}
 variable "zone" {}
 variable "project" {}
 # variable "master-vm-size" {}
-variable "master-node-count" {}
+variable "master_node_count" {}
 # variable "image-publisher" {}
 # variable "image-offer"     {}
 # variable "image-sku"       {}
@@ -28,6 +28,7 @@ variable "service-cidr" {}
 variable "kubelet-image-url" {}
 variable "kubelet-image-tag" {}
 variable "name-servers-file" {}
+variable "etcd_discovery" {}
 # variable "cloud-config" {}
 
 # variable "etcd-security-group-id" {}
