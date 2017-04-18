@@ -4,7 +4,7 @@ resource "null_resource" "ssl_gen" {
   provisioner "local-exec" {
     command = <<EOF
 ${ path.module }/init-cfssl \
-${ var.data-dir }/.cfssl \
+${ var.data_dir }/.cfssl \
 ${ var.region } \
 ${ var.internal-tld } \
 ${ var.k8s-service-ip }
@@ -15,7 +15,7 @@ EOF
     when = "destroy"
     on_failure = "continue"
     command = <<EOF
-rm -rf ${ var.data-dir }/.cfssl
+rm -rf ${ var.data_dir }/.cfssl
 EOF
   }
 
