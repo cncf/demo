@@ -1,5 +1,5 @@
 #Gen Certs and SSH KeyPair
-resource "null_resource" "ssl_ssh_cloud_gen" {
+resource "null_resource" "ssl_ssh_gen" {
 
   provisioner "local-exec" {
     command = <<EOF
@@ -37,6 +37,6 @@ EOF
 }
 
 resource "null_resource" "dummy_dependency" {
-  depends_on = [ "null_resource.ssl_ssh_cloud_gen" ]
+  depends_on = [ "null_resource.ssl_ssh_gen" ]
 }
 

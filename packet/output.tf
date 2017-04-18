@@ -4,7 +4,6 @@
 # output "k8s_admin" { value = "${ k8s_admin}"}
 # # fixme for use outside container
 output "ssh_key_setup" { value = "eval $(ssh-agent) ; ssh-add ${ var.data_dir }/.ssh/id_rsa"}
-output "ssh_via_bastion" { value = "ssh -At core@${ packet_device.bastion.network.0.address }" }
 output "ssh_first_master" { value = "ssh -At core@${ module.etcd.first_master_ip }" }
 output "ssh_second_master" { value = "ssh -At core@${ module.etcd.second_master_ip }" }
 output "ssh_third_master" { value = "ssh -At core@${ module.etcd.third_master_ip }" }

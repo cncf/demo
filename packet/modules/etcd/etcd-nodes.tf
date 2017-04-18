@@ -1,5 +1,5 @@
 resource "packet_device" "masters" {
-  hostname         = "etcd-master${ count.index + 1 }"
+  hostname         = "master-${ count.index + 1 }-${ var.name }"
   count            = "${ var.master_node_count }"
   facility         = "${ var.packet_facility }"
   project_id       = "${ var.packet_project_id }"
