@@ -1,6 +1,6 @@
 variable "name" { default = "test" }
 variable "internal-tld" { default = "cncf.demo" }
-variable "master-node-count" { default = "3" }
+variable "master_node_count" { default = "3" }
 variable "worker-node-count" { default = "3" }
 variable "master-vm-size"   { default = "Standard_A2" }
 variable "worker-vm-size"   { default = "Standard_A2" }
@@ -23,5 +23,5 @@ variable "service-cidr"   { default = "10.3.0.0/24" }
 variable "k8s-service-ip" { default = "10.3.0.1" }
 variable "dns-service-ip" { default = "10.3.0.10" }
 variable "allow-ssh-cidr" { default = "0.0.0.0/0" }
-variable "data-dir" { default = "/cncf/data" }
+variable "data_dir" { default = "/cncf/data" }
 variable "name-servers-file" { default = "google_dns_zone"}
