@@ -2,7 +2,7 @@
 variable "internal-tld" {}
 variable "name" {}
 variable "master-ips" { type = "list" }
-variable "master-node-count" { default = "3" }
+variable "master_node_count" {}
 variable "name-servers-file" {}
 
 

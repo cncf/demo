@@ -1,5 +1,5 @@
 data "template_file" "cloud-config" {
-  count = "${ var.master-node-count }"
+  count = "${ var.master_node_count }"
   template = "${ file( "${ path.module }/cloud-config.yml" )}"
 
   vars {
@@ -20,6 +20,7 @@ data "template_file" "cloud-config" {
     k8s-apiserver = "${ base64encode(var.k8s-apiserver) }"
     k8s-apiserver-key = "${ base64encode(var.k8s-apiserver-key) }"
     name-servers-file = "${ var.name-servers-file }"
+    etcd_discovery = "${ file(var.etcd_discovery) }"
     # cloud-config = "${ base64encode(var.cloud-config) }"
 
   }
