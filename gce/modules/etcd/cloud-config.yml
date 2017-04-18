@@ -1,30 +1,18 @@
 #cloud-config
 
 ---
-# manage_resolv_conf: true
-
-# resolv_conf:
-#   nameservers: ['169.254.169.254']
-#   searchdomains:
-#     - c.test-163823.internal
-#     options:
-#       rotate: true
-#       timeout: 1
-
 coreos:
 
   etcd2:
-    advertise-client-urls: http://${ fqdn }:2379
+    advertise-client-urls: http://$private_ipv4:2379
     # cert-file: /etc/kubernetes/ssl/k8s-etcd.pem
     debug: true
-    discovery-srv: ${ internal-tld }
-    initial-advertise-peer-urls: https://${ fqdn }:2380
-    initial-cluster-state: new
-    initial-cluster-token: ${ cluster-token }
+    initial-advertise-peer-urls: https://$private_ipv4:2380
     # key-file: /etc/kubernetes/ssl/k8s-etcd-key.pem
-    listen-client-urls: http://${ fqdn }:2379,http://127.0.0.1:2379
-    listen-peer-urls: https://${ fqdn }:2380
+    listen-client-urls: http://$private_ipv4:2379,http://127.0.0.1:2379
+    listen-peer-urls: https://$private_ipv4:2380
     name: ${ hostname } 
+    discovery: ${ etcd_discovery }
     peer-trusted-ca-file: /etc/kubernetes/ssl/ca.pem
     peer-client-cert-auth: true
     peer-cert-file: /etc/kubernetes/ssl/k8s-etcd.pem
