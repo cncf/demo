@@ -6,13 +6,13 @@
 #   location = "${ var.location }"
 #  }
 
-# module "dns" {
-#   source = "./modules/dns"
-#   name = "${ var.name }"
-#   internal_tld = "${ var.internal_tld }"
-#   master_ips = "${ module.etcd.master_ips }"
-#   master_node_count = "${ var.master_node_count }"
-# }
+module "dns" {
+  source = "./modules/dns"
+  name = "${ var.name }"
+  master_ips = "${ module.etcd.master_ips }"
+  master_node_count = "${ var.master_node_count }"
+  domain = "${ var.domain }"
+}
 
 module "etcd" {
   source                    = "./modules/etcd"
@@ -28,7 +28,7 @@ module "etcd" {
   kubelet_image_tag         = "${ var.kubelet_image_tag }"
   dns_service_ip            = "${ var.dns_service_ip }"
   cluster_domain            = "${ var.cluster_domain }"
-  internal_tld              = "${ var.internal_tld }"
+  internal_tld              = "${ var.name }.${ var.domain }"
   pod_cidr                  = "${ var.pod_cidr }"
   service_cidr              = "${ var.service_cidr }"
   ca                        = "${file("${ var.data_dir }/.cfssl/ca.pem")}"
@@ -70,7 +70,7 @@ module "worker" {
   kubelet_image_tag         = "${ var.kubelet_image_tag }"
   dns_service_ip            = "${ var.dns_service_ip }"
   cluster_domain            = "${ var.cluster_domain }"
-  internal_tld              = "${ var.internal_tld }"
+  internal_tld              = "${ var.name }.${ var.domain }"
   pod_cidr                  = "${ var.pod_cidr }"
   service_cidr              = "${ var.service_cidr }"
   ca                        = "${file("${ var.data_dir }/.cfssl/ca.pem")}"

@@ -9,7 +9,7 @@ variable "packet_bastion_device_plan" { default = "baremetal_0" }
 variable "packet_master_device_plan" { default = "baremetal_0" }
 variable "packet_worker_device_plan" { default = "baremetal_0" }
 
-variable "internal_tld" { default = "packet.cncf.demo" }
+variable "domain" { default = "cncf.ci" }
 variable "data_dir" { default = "/cncf/data/packet" }
 
 # VM Image and size

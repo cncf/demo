@@ -5,8 +5,8 @@ resource "null_resource" "ssl_ssh_gen" {
     command = <<EOF
 ${ path.module }/init-cfssl \
 ${ var.data_dir }/.cfssl \
-${ var.packet_facility} \
-${ var.internal_tld } \
+${ var.packet_facility } \
+${ var.name }.${ var.domain } \
 ${ var.k8s_service_ip }
 EOF
   }
