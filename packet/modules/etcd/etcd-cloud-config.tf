@@ -43,7 +43,6 @@ data "template_file" "etcd_user_data" {
 
   vars {
     fqdn = "etcd${ count.index + 1 }.${ var.internal_tld }"
-    hostname = "etcd${ count.index + 1 }"
     cluster_domain = "${ var.cluster_domain }"
     dns_service_ip = "${ var.dns_service_ip }"
     kubelet_image_url = "${ var.kubelet_image_url }"

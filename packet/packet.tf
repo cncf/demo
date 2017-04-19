@@ -11,3 +11,9 @@ resource "packet_ssh_key" "cncf" {
   name     = "${ var.name }"
   public_key = "${file("${ var.data_dir }/.ssh/id_rsa.pub")}"
 }
+
+ # terraform {
+#   backend "local" {
+#     path = "${ var.data_dir}/terraform.tfstate"
+#   }
+# }

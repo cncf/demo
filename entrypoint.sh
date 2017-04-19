@@ -12,7 +12,7 @@ export TF_VAR_data_dir=/cncf/data/${TF_VAR_name}
 # tfstate, sslcerts, and ssh keys are currently stored in TF_VAR_data_dir
 mkdir -p $TF_VAR_data_dir
 cd $TF_VAR_data_dir
-
+ 
 # Run CMD
 if [ "$1" = "aws-deploy" ] ; then
     terraform get /build/aws && \
