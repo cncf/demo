@@ -50,4 +50,20 @@ elif [ "$1" = "packet-deploy" ] ; then
         printf 'export KUBECONFIG=$(pwd)/data/${name}/kubeconfig \n\n'${NC}
 elif [ "$1" = "packet-destroy" ] ; then
     time terraform destroy -force /build/packet
+elif [ "$1" = "cross-cloud-deploy" ] ; then
+    terraform get /build/cross-cloud && \
+        terraform apply -target module.aws.null_resource.ssl_gen /build/cross-cloud && \
+        terraform apply -target module.azure.azurerm_resource_group.cncf /build/cross-cloud && \
+        terraform apply -target module.azure.null_resource.ssl_ssh_cloud_gen /build/cross-cloud && \
+        terraform apply -target module.azure.module.dns.null_resource.dns_gen /build/cross-cloud && \
+        terraform apply -target module.etcd.azurerm_network_interface.cncf /build/cross-cloud && \
+        terraform apply -target module.packet.null_resource.ssl_ssh_gen /build/cross-cloud && \
+        terraform apply -target module.packet.module.etcd.null_resource.discovery_gen /build/cross-cloud && \
+        time terraform apply /build/cross-cloud && \
+        printf "${RED}\n#Commands to Configue Kubectl \n\n" && \
+        printf 'sudo chown -R $(whoami):$(whoami) $(pwd)/data/${name} \n\n' && \
+        printf 'export KUBECONFIG=$(pwd)/data/${name}/kubeconfig \n\n'${NC}
+elif [ "$1" = "cross-cloud-destroy" ] ; then
+    time terraform destroy -force /build/cross-cloud
 fi
+
