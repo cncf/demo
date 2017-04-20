@@ -107,15 +107,15 @@ module "worker" {
 }
 
 
-# module "kubeconfig" {
-#   source = "./modules/kubeconfig"
+module "kubeconfig" {
+  source = "./modules/kubeconfig"
 
-#   admin-key-pem = "${ var.data-dir }/.cfssl/k8s-admin-key.pem"
-#   admin-pem = "${ var.data-dir }/.cfssl/k8s-admin.pem"
-#   ca-pem = "${ var.data-dir }/.cfssl/ca.pem"
-#   fqdn-k8s = "${ module.etcd.fqdn-lb }"
-#   name = "${ var.name }"
-# }
+  admin-key-pem = "${ var.data_dir }/.cfssl/k8s-admin-key.pem"
+  admin-pem = "${ var.data_dir }/.cfssl/k8s-admin.pem"
+  ca-pem = "${ var.data_dir }/.cfssl/ca.pem"
+  external-lb = "${ module.etcd.external-lb }"
+  name = "${ var.name }"
+}
 
 
 

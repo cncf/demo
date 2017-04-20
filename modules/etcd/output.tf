@@ -1,4 +1,4 @@
-# output "external-lb" { value = "${azurerm_lb_backend_address_pool.cncf.id }" }
+output "external-lb" { value = "${google_compute_forwarding_rule.external.ip_address }" }
 # output "fqdn-lb" { value = "${azurerm_public_ip.cncf.fqdn}" }
 
 
