@@ -20,6 +20,12 @@ INTERNAL_TLD=$3
 K8S_SERVICE_IP=$4
 [ -z "$K8S_SERVICE_IP" ] && usage
 
+INTERNAL_LB=$5
+[ -z "$INTERNAL_LB" ] && usage
+
+PROJECT=$6
+[ -z "$PROJECT" ] && usage
+
 set -o nounset
 set -o pipefail
 
@@ -100,10 +106,10 @@ _chmod ca
 
 # generate keys and certs
 generate k8s-admin client-server "${DEFAULT_HOSTS}"
-generate k8s-apiserver client-server "${DEFAULT_HOSTS},${K8S_SERVICE_IP},master.${INTERNAL_TLD},*.${REGION}.cloudapp.azure.com"
-generate k8s-etcd client-server "etcd.${INTERNAL_TLD},etcd1.${INTERNAL_TLD},etcd2.${INTERNAL_TLD},etcd3.${INTERNAL_TLD}"
+generate k8s-apiserver client-server "${DEFAULT_HOSTS},${K8S_SERVICE_IP},${INTERNAL_LB}"
+generate k8s-etcd client-server "*.c.${PROJECT}.internal,test-master1.c.${PROJECT}.internal,test-master2.c.${PROJECT}.internal,test-master3.c.${PROJECT}.internal"
 generate k8s-worker client "${DEFAULT_HOSTS}"
 
-# TODO: fix cert provisioning hacks
+# Fix cert provisioning hacks
 tar -rf k8s-apiserver.tar k8s-etcd.pem k8s-etcd-key.pem
 tar -rf k8s-worker.tar ca.pem
