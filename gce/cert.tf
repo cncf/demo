@@ -9,7 +9,9 @@ ${ var.region } \
 ${ var.internal-tld } \
 ${ var.k8s-service-ip } \
 ${ var.internal_lb } \
-${ var.project }
+${ var.project } \
+${ var.domain } \
+${ var.name }
 EOF
   }
 
