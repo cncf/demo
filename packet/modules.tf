@@ -10,7 +10,10 @@ module "dns" {
   source = "./modules/dns"
   name = "${ var.name }"
   master_ips = "${ module.etcd.master_ips }"
+  public_master_ips = "${ module.etcd.public_master_ips }"
+  public_worker_ips = "${ module.worker.public_worker_ips }"
   master_node_count = "${ var.master_node_count }"
+  worker_node_count = "${ var.worker_node_count }"
   domain = "${ var.domain }"
 }
 
@@ -79,13 +82,13 @@ module "worker" {
   data_dir                  = "${ var.data_dir }"
 }
 
-# module "kubeconfig" {
-#   source = "./modules/kubeconfig"
+module "kubeconfig" {
+  source = "./modules/kubeconfig"
 
-#   admin_key_pem = "${ var.data_dir }/.cfssl/k8s-admin-key.pem"
-#   admin_pem = "${ var.data_dir }/.cfssl/k8s-admin.pem"
-#   ca_pem = "${ var.data_dir }/.cfssl/ca.pem"
-#   data_dir = "${ var.data_dir }"
-#   fqdn_k8s = "${ module.etcd.fqdn_lb }"
-#   name = "${ var.name }"
-# }
+  admin_key_pem = "${ var.data_dir }/.cfssl/k8s-admin-key.pem"
+  admin_pem = "${ var.data_dir }/.cfssl/k8s-admin.pem"
+  ca_pem = "${ var.data_dir }/.cfssl/ca.pem"
+  data_dir = "${ var.data_dir }"
+  fqdn_k8s = "endpoint.${ var.name }.${ var.domain }"
+  name = "${ var.name }"
+}

@@ -41,6 +41,33 @@ resource "dnsimple_record" "A-master" {
   domain = "${ var.domain }"
 }
 
+resource "dnsimple_record" "A-public-endpoint" {
+  count = "${ var.master_node_count }"
+  name = "endpoint.${ var.name }"
+  value = "${ element(var.public_master_ips, count.index) }"
+  type = "A"
+  ttl = "${ var.record_ttl }"
+  domain = "${ var.domain }"
+}
+
+resource "dnsimple_record" "A-public-masters" {
+  count = "${ var.master_node_count }"
+  name = "master${ count.index + 1 }.${ var.name }"
+  value = "${ element(var.public_master_ips, count.index) }"
+  type = "A"
+  ttl = "${ var.record_ttl }"
+  domain = "${ var.domain }"
+}
+
+resource "dnsimple_record" "A-public-workers" {
+  count = "${ var.worker_node_count }"
+  name = "worker${ count.index + 1 }.${ var.name }"
+  value = "${ element(var.public_worker_ips, count.index) }"
+  type = "A"
+  ttl = "${ var.record_ttl }"
+  domain = "${ var.domain }"
+}
+
 # resource "dnsimple_record" "etcd-client-tcp" {
 #    count = "${ var.master_node_count }"
 #    name = "_etcd-client._tcp.${ var.name }"
