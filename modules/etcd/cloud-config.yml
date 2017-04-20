@@ -4,14 +4,15 @@
 coreos:
 
   etcd2:
-    advertise-client-urls: http://$private_ipv4:2379
+    advertise-client-urls: http://${ fqdn }:2379
     # cert-file: /etc/kubernetes/ssl/k8s-etcd.pem
     debug: true
-    initial-advertise-peer-urls: https://$private_ipv4:2380
+    initial-advertise-peer-urls: https://${ fqdn }:2380
     # key-file: /etc/kubernetes/ssl/k8s-etcd-key.pem
-    listen-client-urls: http://$private_ipv4:2379,http://127.0.0.1:2379
-    listen-peer-urls: https://$private_ipv4:2380
-    name: ${ hostname } 
+    listen-client-urls: http://${ fqdn }:2379,http://127.0.0.1:2379
+    listen-peer-urls: https://${ fqdn }:2380
+    advertise-client-urls: http://${ fqdn }:2379 
+    name: ${ hostname }
     discovery: ${ etcd_discovery }
     peer-trusted-ca-file: /etc/kubernetes/ssl/ca.pem
     peer-client-cert-auth: true
@@ -101,7 +102,7 @@ write-files:
           - --allow-privileged=true
           - --client-ca-file=/etc/kubernetes/ssl/ca.pem
           - --cloud-provider=gce
-          - --etcd-servers=http://etcd.${ internal-tld }:2379
+          - --etcd-servers=http://${ fqdn }:2379
           - --insecure-bind-address=0.0.0.0
           - --secure-port=443
           - --service-account-key-file=/etc/kubernetes/ssl/k8s-apiserver-key.pem
@@ -153,8 +154,7 @@ write-files:
           command:
           - /hyperkube
           - controller-manager
-          - --cloud-provider=azure
-          - --cloud-config=/etc/kubernetes/ssl/azure-config.json
+          - --cloud-provider=gce
           - --leader-elect=true
           - --master=http://127.0.0.1:8080
           - --root-ca-file=/etc/kubernetes/ssl/ca.pem
