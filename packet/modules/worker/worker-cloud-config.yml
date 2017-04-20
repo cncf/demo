@@ -43,8 +43,6 @@ coreos:
         ExecStart=/usr/lib/coreos/kubelet-wrapper \
           --allow-privileged=true \
           --api-servers=http://master.${ internal_tld }:8080 \
-          --cloud-provider=azure \
-          --cloud-config=/etc/kubernetes/ssl/azure-config.json \
           --cluster-dns=${ dns_service_ip } \
           --cluster_domain=${ cluster_domain } \
           --config=/etc/kubernetes/manifests \
