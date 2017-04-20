@@ -116,16 +116,15 @@ module "worker" {
 
 
 module "kubeconfig" {
-  source = "./modules/kubeconfig"
+  source = "../kubeconfig"
 
-  admin-key-pem = "${ var.data_dir }/.cfssl/k8s-admin-key.pem"
-  admin-pem = "${ var.data_dir }/.cfssl/k8s-admin.pem"
-  ca-pem = "${ var.data_dir }/.cfssl/ca.pem"
-  external_fqdn = "endpoint.${ var.name }.${ var.domain }"
+  admin_key_pem = "${ var.data_dir }/.cfssl/k8s-admin-key.pem"
+  admin_pem = "${ var.data_dir }/.cfssl/k8s-admin.pem"
+  ca_pem = "${ var.data_dir }/.cfssl/ca.pem"
+  data_dir = "${ var.data_dir }"
+  fqdn_k8s = "endpoint.${ var.name }.${ var.domain }"
   name = "${ var.name }"
 }
-
-
 
 module "security" {
   source = "./modules/security"
