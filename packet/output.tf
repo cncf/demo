@@ -11,3 +11,4 @@ output "ssh_first_worker" { value = "ssh -At core@worker1.${ var.name }.${ var.d
 output "ssh_second_worker" { value = "ssh -At core@worker2.${ var.name }.${ var.domain }" }
 output "ssh_third_worker" { value = "ssh -At core@worker3.${ var.name }.${ var.domain }" }
 # " ssh ${ var.admin_username }@etcd1.${ var.name }.${ var.domain }"}
+output "kubeconfig" { value = "${ module.kubeconfig.kubeconfig }"}
