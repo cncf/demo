@@ -5,6 +5,7 @@ variable "project" {}
 variable "name" {}
 # variable "worker-vm-size" {}
 variable "worker-node-count" {}
+variable "internal_lb" {}
 # variable "image-publisher" {}
 # variable "image-offer"     {}
 # variable "image-sku"       {}
