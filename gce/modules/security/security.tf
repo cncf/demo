@@ -1,123 +1,56 @@
-resource "aws_security_group" "bastion" {
-  description = "k8s bastion security group"
+resource "google_compute_firewall" "allow-internal-lb" {
+  name    = "allow-internal-lb"
+  network = "${ var.name }"
 
-  egress = {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = [ "0.0.0.0/0" ]
-  }
-
-  ingress = {
-    from_port = 22
-    to_port = 22
+  allow {
     protocol = "tcp"
-    cidr_blocks = [ "${ var.cidr-allow-ssh }" ]
+    ports    = ["8080", "443"]
   }
 
-  name = "bastion-k8s-${ var.name }"
-
-  tags {
-    KubernetesCluster = "${ var.name }"
-    Name = "bastion-k8s-${ var.name }"
-    builtWith = "terraform"
-  }
-
-  vpc_id = "${ var.vpc-id }"
+  source_ranges = ["10.0.0.0/16"]
+  target_tags = ["int-lb"]
 }
 
-resource "aws_security_group" "etcd" {
-  description = "k8s etcd security group"
+resource "google_compute_firewall" "allow-health-check" {
+  name    = "allow-health-check"
+  network = "${ var.name }"
 
-  egress = {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    /*self = true*/
-    cidr_blocks = [ "0.0.0.0/0" ]
+  allow {
+    protocol = "tcp"
+    ports = ["8080"]
   }
 
-  ingress = {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    self = true
-    cidr_blocks = [ "${ var.cidr-vpc }" ]
-  }
-
-  name = "etcd-k8s-${ var.name }"
-
-  tags {
-    KubernetesCluster = "${ var.name }"
-    Name = "etcd-k8s-${ var.name }"
-    builtWith = "terraform"
-  }
-
-  vpc_id = "${ var.vpc-id }"
+  source_ranges = ["130.211.0.0/22","35.191.0.0/16","10.0.0.0/16"]
 }
 
-resource "aws_security_group" "external-elb" {
-  description = "k8s-${ var.name } master (apiserver) external elb"
+resource "google_compute_firewall" "allow-all-internal" {
+  name    = "allow-all-10-128-0-0-20"
+  network = "${ var.name }"
 
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    /*cidr_blocks = [ "${ var.cidr-vpc }" ]*/
-    security_groups = [ "${ aws_security_group.etcd.id }" ]
+  allow {
+    protocol = "tcp"
   }
 
-  ingress {
-    from_port = -1
-    to_port = -1
+  allow {
+    protocol = "udp"
+  }
+
+  allow {
     protocol = "icmp"
-    cidr_blocks = [ "0.0.0.0/0" ]
   }
 
-  ingress {
-    from_port = 443
-    to_port   = 443
-    protocol  = "tcp"
-    cidr_blocks = [ "0.0.0.0/0" ]
-  }
-
-  name = "master-external-elb-k8s-${ var.name }"
-
-  tags {
-    KubernetesCluster = "${ var.name }"
-    Name = "master-external-elb-k8s-${ var.name }"
-    builtWith = "terraform"
-  }
-
-  vpc_id = "${ var.vpc-id }"
+  source_ranges = ["10.0.0.0/16"]
 }
 
-resource "aws_security_group" "worker" {
-  description = "k8s worker security group"
+resource "google_compute_firewall" "allow-ssh-bastion" {
+  name    = "allow-ssh-bastion"
+  network = "${ var.name }"
 
-  egress = {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    /*self = true*/
-    cidr_blocks = [ "0.0.0.0/0" ]
+  allow {
+    protocol = "tcp"
+    ports = ["22"]
   }
 
-  ingress = {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    self = true
-    cidr_blocks = [ "${ var.cidr-vpc }" ]
-  }
-
-  name = "worker-k8s-${ var.name }"
-
-  tags {
-    KubernetesCluster = "${ var.name }"
-    Name = "worker-k8s-${ var.name }"
-    builtWith = "terraform"
-  }
-
-  vpc_id = "${ var.vpc-id }"
+  source_ranges = ["0.0.0.0/0"]
+  target_tags = ["bastion"]
 }
