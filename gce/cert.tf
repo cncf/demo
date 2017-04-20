@@ -7,7 +7,9 @@ ${ path.module }/init-cfssl \
 ${ var.data_dir }/.cfssl \
 ${ var.region } \
 ${ var.internal-tld } \
-${ var.k8s-service-ip }
+${ var.k8s-service-ip } \
+${ var.internal_lb } \
+${ var.project }
 EOF
   }
 
