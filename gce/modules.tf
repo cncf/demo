@@ -14,6 +14,14 @@ module "vpc" {
 #   name-servers-file = "${ var.name-servers-file }"
 # }
 
+module "dns" {
+  source = "./modules/dns"
+  name = "${ var.name }"
+  external_lb = "${ module.etcd.external-lb }"
+  master_node_count = "${ var.master_node_count }"
+  domain = "${ var.domain }"
+}
+
  module "etcd" {
    source = "./modules/etcd"
    name = "${ var.name }"
@@ -113,7 +121,7 @@ module "kubeconfig" {
   admin-key-pem = "${ var.data_dir }/.cfssl/k8s-admin-key.pem"
   admin-pem = "${ var.data_dir }/.cfssl/k8s-admin.pem"
   ca-pem = "${ var.data_dir }/.cfssl/ca.pem"
-  external-lb = "${ module.etcd.external-lb }"
+  external_fqdn = "endpoint.${ var.name }.${ var.domain }"
   name = "${ var.name }"
 }
 
