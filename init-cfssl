@@ -26,6 +26,14 @@ INTERNAL_LB=$5
 PROJECT=$6
 [ -z "$PROJECT" ] && usage
 
+DOMAIN=$7
+[ -z "$DOMAIN" ] && usage
+
+NAME=$8
+[ -z "$NAME" ] && usage
+
+
+
 set -o nounset
 set -o pipefail
 
@@ -106,7 +114,7 @@ _chmod ca
 
 # generate keys and certs
 generate k8s-admin client-server "${DEFAULT_HOSTS}"
-generate k8s-apiserver client-server "${DEFAULT_HOSTS},${K8S_SERVICE_IP},${INTERNAL_LB}"
+generate k8s-apiserver client-server "${DEFAULT_HOSTS},${K8S_SERVICE_IP},${INTERNAL_LB},endpoint.${NAME}.${DOMAIN}"
 generate k8s-etcd client-server "*.c.${PROJECT}.internal,test-master1.c.${PROJECT}.internal,test-master2.c.${PROJECT}.internal,test-master3.c.${PROJECT}.internal"
 generate k8s-worker client "${DEFAULT_HOSTS}"
 
