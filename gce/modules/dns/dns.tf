@@ -12,3 +12,11 @@ resource "dnsimple_record" "A-public-endpoint" {
   ttl = "${ var.record_ttl }"
   domain = "${ var.domain }"
 }
+
+resource "dnsimple_record" "A-internal-lb" {
+  name = "master.${ var.name }"
+  value = "${ var.internal_lb}"
+  type = "A"
+  ttl = "${ var.record_ttl }"
+  domain = "${ var.domain }"
+}

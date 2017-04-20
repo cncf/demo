@@ -5,7 +5,6 @@ variable "project" {}
 variable "name" {}
 # variable "worker-vm-size" {}
 variable "worker-node-count" {}
-variable "internal_lb" {}
 # variable "image-publisher" {}
 # variable "image-offer"     {}
 # variable "image-sku"       {}
@@ -24,4 +23,5 @@ variable "kubelet-image-tag" {}
 variable "ca" {}
 variable "k8s-worker" {}
 variable "k8s-worker-key" {}
+variable "domain" {}
 # variable "cloud-config" {}

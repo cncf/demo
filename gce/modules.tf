@@ -17,7 +17,8 @@ module "vpc" {
 module "dns" {
   source = "./modules/dns"
   name = "${ var.name }"
-  external_lb = "${ module.etcd.external-lb }"
+  external_lb = "${ module.etcd.external_lb }"
+  internal_lb = "${ module.etcd.internal_lb}"
   master_node_count = "${ var.master_node_count }"
   domain = "${ var.domain }"
 }
@@ -30,7 +31,6 @@ module "dns" {
    project = "${ var.project }"
    network = "${ module.vpc.network }"
    subnetwork = "${ module.vpc.subnetwork }"
-   internal_lb = "${ var.internal_lb }"
    name-servers-file = "${ var.name-servers-file }"
 # admin-username = "${ var.admin-username }"
    master_node_count = "${ var.master_node_count }"
@@ -88,7 +88,6 @@ module "worker" {
   region = "${ var.region }"
   zone = "${ var.zone }"
   project = "${ var.project }"
-  internal_lb = "${ var.internal_lb }"
   # admin-username = "${ var.admin-username }"
   worker-node-count = "${ var.worker-node-count }"
   # worker-vm-size = "${ var.worker-vm-size }"
@@ -107,6 +106,7 @@ module "worker" {
   kubelet-image-tag = "${ var.kubelet-image-tag }"
   dns-service-ip = "${ var.dns-service-ip }"
   internal-tld = "${ var.internal-tld }"
+  domain = "${ var.domain }"
   ca = "${file("${ var.data_dir }/.cfssl/ca.pem")}"
   k8s-worker = "${file("${ var.data_dir }/.cfssl/k8s-worker.pem")}"
   k8s-worker-key = "${file("${ var.data_dir }/.cfssl/k8s-worker-key.pem")}"

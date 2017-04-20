@@ -1,7 +1,6 @@
 # variable "location" {}
 # variable "subnet-id" {}
 variable "name" {}
-variable "internal_lb" {}
 variable "region" {}
 variable "zone" {}
 variable "project" {}

@@ -20,16 +20,13 @@ INTERNAL_TLD=$3
 K8S_SERVICE_IP=$4
 [ -z "$K8S_SERVICE_IP" ] && usage
 
-INTERNAL_LB=$5
-[ -z "$INTERNAL_LB" ] && usage
-
-PROJECT=$6
+PROJECT=$5
 [ -z "$PROJECT" ] && usage
 
-DOMAIN=$7
+DOMAIN=$6
 [ -z "$DOMAIN" ] && usage
 
-NAME=$8
+NAME=$7
 [ -z "$NAME" ] && usage
 
 
@@ -114,7 +111,7 @@ _chmod ca
 
 # generate keys and certs
 generate k8s-admin client-server "${DEFAULT_HOSTS}"
-generate k8s-apiserver client-server "${DEFAULT_HOSTS},${K8S_SERVICE_IP},${INTERNAL_LB},endpoint.${NAME}.${DOMAIN}"
+generate k8s-apiserver client-server "${DEFAULT_HOSTS},${K8S_SERVICE_IP},master.${NAME}.${DOMAIN},endpoint.${NAME}.${DOMAIN}"
 generate k8s-etcd client-server "*.c.${PROJECT}.internal,test-master1.c.${PROJECT}.internal,test-master2.c.${PROJECT}.internal,test-master3.c.${PROJECT}.internal"
 generate k8s-worker client "${DEFAULT_HOSTS}"
 

@@ -25,10 +25,17 @@ resource "google_compute_target_pool" "cncf" {
 resource "google_compute_instance_group" "cncf" {
   name       = "${ var.name }"
   instances  = ["${google_compute_instance.cncf.*.self_link}"]
+
   named_port = {
     name = "http"
     port = "8080"
   }
+
+  named_port {
+    name = "https"
+    port = "443"
+  }
+
   zone        = "${ var.zone }"
 }
 

@@ -25,5 +25,4 @@ variable "dns-service-ip" { default = "10.3.0.10" }
 variable "allow-ssh-cidr" { default = "0.0.0.0/0" }
 variable "data_dir" { default = "/cncf/data" }
 variable "name-servers-file" { default = "google_dns_zone"}
-variable "internal_lb" { default = "10.0.0.100" }
 variable "domain" { default = "cncf.ci" }
