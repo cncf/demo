@@ -12,6 +12,16 @@ resource "google_compute_region_backend_service" "cncf" {
     health_checks = ["${google_compute_health_check.cncf.self_link}"]
 }
 
+resource "google_compute_target_pool" "cncf" {
+  name = "${var.name}-external"
+
+  instances = [
+    "${google_compute_instance.cncf.*.self_link}"
+  ]
+
+  # health_checks = ["${google_compute_health_check.cncf.self_link}"]
+}
+
 resource "google_compute_instance_group" "cncf" {
   name       = "${ var.name }"
   instances  = ["${google_compute_instance.cncf.*.self_link}"]
@@ -73,3 +83,4 @@ resource "google_compute_health_check" "cncf" {
     request_path = "/"
   }
 }
+
