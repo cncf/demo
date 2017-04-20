@@ -5,6 +5,9 @@ provider "google" {
   region      = "${ var.region }"
 }
 
+provider "dnsimple" {
+}
+
 # resource "google_project" "company-env" {
 #   project_id         = "${var.ENVIRONMENT}"
 #   org_id             = "${var.GCP_ORG_ID}"
