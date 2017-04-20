@@ -1,6 +1,7 @@
 # variable "location" {}
 # variable "subnet-id" {}
 variable "name" {}
+variable "internal_lb" {}
 variable "region" {}
 variable "zone" {}
 variable "project" {}
@@ -29,6 +30,8 @@ variable "kubelet-image-url" {}
 variable "kubelet-image-tag" {}
 variable "name-servers-file" {}
 variable "etcd_discovery" {}
+variable "network" {}
+variable "subnetwork" {}
 # variable "cloud-config" {}
 
 # variable "etcd-security-group-id" {}
