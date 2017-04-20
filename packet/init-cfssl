@@ -97,10 +97,10 @@ echo "$(ca-config)" >ca-config.json
 # generate ca
 cfssl gencert -initca ca-csr.json | cfssljson -bare ca -
 _chmod ca
-
+ 
 # generate keys and certs
 generate k8s-admin client-server "${DEFAULT_HOSTS}"
-generate k8s-apiserver client-server "${DEFAULT_HOSTS},${K8S_SERVICE_IP},master.${INTERNAL_TLD},*.${REGION}.cloudapp.azure.com"
+generate k8s-apiserver client-server "${DEFAULT_HOSTS},${K8S_SERVICE_IP},master.${INTERNAL_TLD},endpoint.${INTERNAL_TLD}"
 generate k8s-etcd client-server "etcd.${INTERNAL_TLD},etcd1.${INTERNAL_TLD},etcd2.${INTERNAL_TLD},etcd3.${INTERNAL_TLD}"
 generate k8s-worker client "${DEFAULT_HOSTS}"
 
