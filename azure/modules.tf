@@ -99,7 +99,7 @@ module "worker" {
 
 
 module "kubeconfig" {
-  source = "./modules/kubeconfig"
+  source = "../kubeconfig"
 
   admin_key_pem = "${ var.data_dir }/.cfssl/k8s-admin-key.pem"
   admin_pem = "${ var.data_dir }/.cfssl/k8s-admin.pem"

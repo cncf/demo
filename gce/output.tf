@@ -20,3 +20,4 @@ output "external_lb" { value = "${ module.etcd.external_lb }" }
 #output "subnet-ids-private" { value = "${ module.vpc.subnet-ids-private }" }
 #output "subnet-ids-public" { value = "${ module.vpc.subnet-ids-public }" }
 #output "worker-autoscaling-group-name" { value = "${ module.worker.autoscaling-group-name }" }
+output "kubeconfig" { value = "${ module.kubeconfig.kubeconfig }"}

@@ -6,3 +6,4 @@ output "ssh_key_setup" { value = "eval $(ssh-agent) ; ssh-add ${ var.data_dir }/
 output "aws_bastion" { value = "${ module.aws.ssh_via_bastion }" }
 output "azure_k8s_fqdn" { value = "${ module.azure.fqdn_k8s }" }
 output "azure_bastion" { value = "${ module.azure.ssh_via_bastion }" }
+output "kubeconfig" { value = "${ data.template_file.kubeconfig.rendered }" }

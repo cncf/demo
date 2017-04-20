@@ -1,4 +1,4 @@
-# output "fqdn_k8s" { value = "${ module.etcd.fqdn_lb}" }
+output "fqdn_k8s" { value = "endpoint.${ var.name }.${ var.domain }" }
 # output "bastion_ip" { value = "${ module.bastion.bastion_ip}" }
 # output "bastion_fqdn" { value = "${ module.bastion.bastion_fqdn}" }
 # output "k8s_admin" { value = "${ k8s_admin}"}
@@ -11,3 +11,4 @@ output "ssh_first_worker" { value = "ssh -At core@worker1.${ var.name }.${ var.d
 output "ssh_second_worker" { value = "ssh -At core@worker2.${ var.name }.${ var.domain }" }
 output "ssh_third_worker" { value = "ssh -At core@worker3.${ var.name }.${ var.domain }" }
 # " ssh ${ var.admin_username }@etcd1.${ var.name }.${ var.domain }"}
+output "kubeconfig" { value = "${ module.kubeconfig.kubeconfig }"}

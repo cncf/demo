@@ -18,3 +18,12 @@ module "packet" {
   data_dir                  = "${ var.data_dir }/packet"
   packet_project_id         = "${ var.packet_project_id }"
 }
+
+data "template_file" "kubeconfig" {
+  template = <<EOF
+${ module.aws.kubeconfig } && ${ module.azure.kubeconfig } && ${ module.packet.kubeconfig }
+# Run this command to configure your kubeconfig:
+# eval $(terraform output kubeconfig)
+EOF
+}
+
