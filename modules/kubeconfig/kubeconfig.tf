@@ -3,7 +3,7 @@ resource "null_resource" "kubeconfig" {
   provisioner "local-exec" {
     command = <<LOCAL_EXEC
 kubectl config set-cluster cluster-${ var.name } \
-  --server=https://${ var.external-lb } \
+  --server=https://${ var.external_fqdn } \
   --certificate-authority=${ var.ca-pem } &&\
 kubectl config set-credentials admin-${ var.name } \
   --certificate-authority=${ var.ca-pem } \
