@@ -3,7 +3,7 @@ resource "google_compute_instance" "cncf" {
   machine_type = "n1-standard-1"
   zone         = "${ var.zone }"
 
-  tags = ["foo", "bar"]
+  tags = ["bastion", "bar"]
 
   disk {
     image = "coreos-stable-1298-7-0-v20170401"
