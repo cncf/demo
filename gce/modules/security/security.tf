@@ -54,3 +54,16 @@ resource "google_compute_firewall" "allow-ssh-bastion" {
   source_ranges = ["0.0.0.0/0"]
   target_tags = ["bastion"]
 }
+
+resource "google_compute_firewall" "allow-kubectl" {
+  name    = "allow-kubectl-lb"
+  network = "${ var.name }"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["443"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags = ["foo"]
+}
