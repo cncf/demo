@@ -12,7 +12,7 @@
 #output "cluster-domain" { value = "${ var.cluster-domain }" }
 #output "dns-service-ip" { value = "${ var.dns-service-ip }" }
 #output "etcd1-ip" { value = "${ element( split(",", var.etcd-ips), 0 ) }" }
-#output "external-elb" { value = "${ module.etcd.external-elb }" }
+output "external-elb" { value = "${ module.etcd.external-lb }" }
 #output "internal-tld" { value = "${ var.internal-tld }" }
 #output "name" { value = "${ var.name }" }
 #output "region" { value = "${ var.aws["region"] }" }
