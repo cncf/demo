@@ -1,7 +1,7 @@
 variable "admin-key-pem" {}
 variable "admin-pem" {}
 variable "ca-pem" {}
-variable "external-lb" {}
+variable "external_fqdn" {}
 variable "name" {}
 
 
