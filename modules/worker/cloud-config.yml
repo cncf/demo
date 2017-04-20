@@ -43,7 +43,7 @@ coreos:
         ExecStartPre=/usr/bin/mount --make-shared /var/lib/kubelet
         ExecStart=/usr/lib/coreos/kubelet-wrapper \
           --allow-privileged=true \
-          --api-servers=http://master.${ internal-tld }:8080 \
+          --api-servers=http://${ internal_lb }:8080 \
           --cloud-provider=gce \
           --cluster-dns=${ dns-service-ip } \
           --cluster-domain=${ cluster-domain } \
