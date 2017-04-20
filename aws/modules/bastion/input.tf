@@ -1,5 +1,4 @@
 variable "ami_id" {}
-variable "depends_id" {}
 variable "instance_type" {}
 variable "internal_tld" {}
 variable "key_name" {}

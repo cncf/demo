@@ -17,7 +17,6 @@ resource "aws_instance" "etcd" {
 
   tags {
     builtWith = "terraform"
-    depends-id = "${ var.depends_id }"
     KubernetesCluster = "${ var.name }" # used by kubelet's aws provider to determine cluster
     kz8s = "${ var.name }"
     Name = "etcd${ count.index + 1 }-${ var.name }"

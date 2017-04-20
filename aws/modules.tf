@@ -50,19 +50,18 @@ module "etcd" {
   pod_cidr                       = "${ var.pod_cidr }"
   region                         = "${ var.aws_region }"
   service_cidr                   = "${ var.service_cidr }"
-  subnet_ids_private = "${ module.vpc.subnet_ids_private }"
-  subnet_ids_public  = "${ module.vpc.subnet_ids_public }"
-  vpc_id = "${ module.vpc.id }"
-  ca = "${file("${ var.data_dir }/.cfssl/ca.pem")}"
-  k8s_etcd = "${file("${ var.data_dir }/.cfssl/k8s-etcd.pem")}"
-  k8s_etcd_key = "${file("${ var.data_dir }/.cfssl/k8s-etcd-key.pem")}"
-  k8s_apiserver = "${file("${ var.data_dir }/.cfssl/k8s-apiserver.pem")}"
-  k8s_apiserver_key = "${file("${ var.data_dir }/.cfssl/k8s-apiserver-key.pem")}"
+  subnet_ids_private             = "${ module.vpc.subnet_ids_private }"
+  subnet_ids_public              = "${ module.vpc.subnet_ids_public }"
+  vpc_id                         = "${ module.vpc.id }"
+  ca                             = "${file("${ var.data_dir }/.cfssl/ca.pem")}"
+  k8s_etcd                       = "${file("${ var.data_dir }/.cfssl/k8s-etcd.pem")}"
+  k8s_etcd_key                   = "${file("${ var.data_dir }/.cfssl/k8s-etcd-key.pem")}"
+  k8s_apiserver                  = "${file("${ var.data_dir }/.cfssl/k8s-apiserver.pem")}"
+  k8s_apiserver_key              = "${file("${ var.data_dir }/.cfssl/k8s-apiserver-key.pem")}"
 }
 
 module "bastion" {
   source = "./modules/bastion"
-  depends_id = "${ module.etcd.depends_id }"
 
   ami_id = "${ var.aws_image_ami }"
   instance_type = "${ var.aws_bastion_vm_size }"

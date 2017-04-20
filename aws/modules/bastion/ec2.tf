@@ -12,7 +12,6 @@ resource "aws_instance" "bastion" {
   tags  {
     builtWith = "terraform"
     kz8s = "${ var.name }"
-    depends-id = "${ var.depends_id }"
     Name = "kz8s-bastion"
     role = "bastion"
   }
