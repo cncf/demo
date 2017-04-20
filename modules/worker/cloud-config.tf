@@ -7,9 +7,9 @@ data "template_file" "cloud-config" {
     kubelet-image-url = "${ var.kubelet-image-url }"
     kubelet-image-tag = "${ var.kubelet-image-tag }"
     internal-tld = "${ var.internal-tld }"
-    ca = "${ var.ca }"
-    k8s-worker = "${ var.k8s-worker }"
-    k8s-worker-key = "${ var.k8s-worker-key }"
+    ca = "${ base64encode(var.ca) }"
+    k8s-worker = "${ base64encode(var.k8s-worker)  }"
+    k8s-worker-key = "${ base64encode(var.k8s-worker-key) }"
     internal_lb = "${ var.internal_lb }"
     # cloud-config = "${ base64encode(var.cloud-config) }"
   }
