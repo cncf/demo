@@ -1,3 +1,27 @@
+resource "google_compute_region_backend_service" "cncf" {
+  name             = "${ var.name }"
+  region           = "${ var.region }"
+  protocol         = "TCP"
+  timeout_sec      = 10
+  session_affinity = "CLIENT_IP"
+
+  backend {
+    group = "${google_compute_instance_group.cncf.self_link}"
+  }
+
+    health_checks = ["${google_compute_health_check.cncf.self_link}"]
+}
+
+resource "google_compute_instance_group" "cncf" {
+  name       = "${ var.name }"
+  instances  = ["${google_compute_instance.cncf.*.self_link}"]
+  named_port = {
+    name = "http"
+    port = "8080"
+  }
+  zone        = "${ var.zone }"
+}
+
 resource "google_compute_instance" "cncf" {
   count        = "${ var.master_node_count }"
   name         = "${ var.name }-master${ count.index + 1 }"
@@ -36,56 +60,16 @@ resource "google_compute_instance" "cncf" {
   }
 }
 
-# resource "azurerm_network_interface" "cncf" {
-#   count = "${ var.master-node-count }"
-#   name                = "etcd-interface${ count.index + 1 }"
-#   location            = "${ var.location }"
-#   resource_group_name = "${ var.name }"
+resource "google_compute_health_check" "cncf" {
+  name         = "${ var.name }"
+  check_interval_sec = 30
+  healthy_threshold = 2
+  unhealthy_threshold  = 2
+  timeout_sec = 3
 
-#   ip_configuration {
-#     name                          = "etcd-nic${ count.index + 1 }"
-#     subnet_id                     = "${ var.subnet-id }"
-#     private_ip_address_allocation = "dynamic"
-#     # private_ip_address            = "${ element( split(",", var.etcd-ips), count.index ) }"
-#     load_balancer_backend_address_pools_ids = ["${ azurerm_lb_backend_address_pool.cncf.id }"]
-#   }
-# }
-
-# resource "azurerm_virtual_machine" "cncf" {
-#   count = "${ var.master-node-count }"
-#   name                  = "etcd-master${ count.index + 1 }"
-#   location              = "${ var.location }"
-#   availability_set_id   = "${ var.availability-id }"
-#   resource_group_name = "${ var.name }"
-#   network_interface_ids = ["${ element(azurerm_network_interface.cncf.*.id, count.index) }"] 
-#   vm_size               = "${ var.master-vm-size }"
-
-#   storage_image_reference {
-#     publisher = "${ var.image-publisher }"
-#     offer     = "${ var.image-offer }"
-#     sku       = "${ var.image-sku }"
-#     version   = "${ var.image-version}"
-#   }
-
-#   storage_os_disk {
-#     name          = "etcd-disks${ count.index + 1 }"
-#     vhd_uri       = "${ var.storage-primary-endpoint }${ var.storage-container }/etcd-vhd${ count.index + 1 }.vhd"
-#     caching       = "ReadWrite"
-#     create_option = "FromImage"
-#   }
-
-#   os_profile {
-#     computer_name  = "etcd-master${ count.index + 1 }"
-#     admin_username = "${ var.admin-username }"
-#     admin_password = "Password1234!"
-#     custom_data = "${ element(data.template_file.cloud-config.*.rendered, count.index) }"
-#   }
-
-#   os_profile_linux_config {
-#     disable_password_authentication = true
-#     ssh_keys {
-#       path = "/home/${ var.admin-username }/.ssh/authorized_keys"
-#       key_data = "${file("/cncf/data/.ssh/id_rsa.pub")}"
-#   }
-#  }
-# }
+  http_health_check {
+    port = "8080"
+    host = ""
+    request_path = "/"
+  }
+}
