@@ -5,15 +5,14 @@ module "vpc" {
   # name-servers-file = "${ module.dns.name-servers-file }"
   region = "${ var.region }"
  }
-
-module "dns" {
-  source = "./modules/dns"
-  name = "${ var.name }"
-  internal-tld = "${ var.internal-tld }"
-  master-ips = "${ module.etcd.master-ips }"
-  master_node_count = "${ var.master_node_count }"
-  name-servers-file = "${ var.name-servers-file }"
-}
+# module "dns" {
+#   source = "./modules/dns"
+#   name = "${ var.name }"
+#   internal-tld = "${ var.internal-tld }"
+#   # master-ips = "${ module.etcd.master-ips }"
+#   master_node_count = "${ var.master_node_count }"
+#   name-servers-file = "${ var.name-servers-file }"
+# }
 
  module "etcd" {
    source = "./modules/etcd"
@@ -21,6 +20,9 @@ module "dns" {
    region = "${ var.region }"
    zone = "${ var.zone }"
    project = "${ var.project }"
+   network = "${ module.vpc.network }"
+   subnetwork = "${ module.vpc.subnetwork }"
+   internal_lb = "${ var.internal_lb }"
    name-servers-file = "${ var.name-servers-file }"
 # admin-username = "${ var.admin-username }"
    master_node_count = "${ var.master_node_count }"
@@ -78,6 +80,7 @@ module "worker" {
   region = "${ var.region }"
   zone = "${ var.zone }"
   project = "${ var.project }"
+  internal_lb = "${ var.internal_lb }"
   # admin-username = "${ var.admin-username }"
   worker-node-count = "${ var.worker-node-count }"
   # worker-vm-size = "${ var.worker-vm-size }"
@@ -115,13 +118,13 @@ module "worker" {
 # }
 
 
-# /*
-# module "azuresecurity" {
-#   source = "./modules/security"
 
-#   cidr-allow-ssh = "${ var.cidr["allow-ssh"] }"
-#   cidr-vpc = "${ var.cidr["vpc"] }"
-#   name = "${ var.name }"
-#   vpc-id = "${ module.vpc.id }"
-# }
-# */
+module "security" {
+  source = "./modules/security"
+
+  network = "${ module.vpc.network }"
+  # cidr-allow-ssh = "${ var.cidr["allow-ssh"] }"
+  # cidr-vpc = "${ var.cidr["vpc"] }"
+  name = "${ var.name }"
+  # vpc-id = "${ module.vpc.id }"
+}
