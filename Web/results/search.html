@@ -91,11 +91,10 @@ footer { background-color: #333; color: #ccc; padding: 1em; }
 function formatRelativeTime(absolute) {
 
   var delta = (absolute - cncfdemo.state.results.timestart) * 1000;
-  console.log('abs', absolute);
-  console.log('delta', delta);
+  //console.log('delta', delta);
   if (!delta) return " ";
   var milliseconds = Math.abs(delta);
-  return "T" + (delta < 0 ? "-" : "+")
+  return "" + (delta < 0 ? "-" : "")
       + Math.floor(milliseconds / 6e4) + ":"
       + d3.format("02d")(Math.floor(milliseconds % 6e4 / 1e3));
 }
@@ -170,18 +169,22 @@ function formatRelativeTime(absolute) {
                 var colors = d3.scale.category20();
                 var chart;
                 nv.addGraph(function() {
-                    chart = nv.models.stackedAreaChart()
+                    //chart = nv.models.stackedAreaChart()
+                    chart = nv.models.multiBarChart()
                         .useInteractiveGuideline(true)
                         .x(function(d) { return d[0] })
-                        .y(function(d) { return d[1] })
+                        .y(function(d) { return Math.trunc(d[1]) })
                         .duration(300);
 
-                    chart.showControls(false)
-                    chart.style("expand");
+                    chart.showControls(false);
+                    chart.stacked('true');
+
+                    chart.color(['#389B3C', '#E46D70', '#F89B27', 'transparent'])
+
                     //chart.xAxis.tickFormat(function(d) { return d3.time.format('%H:%M')(new Date(d*1000)) });
                     chart.xAxis.tickFormat(formatRelativeTime);
 
-                    chart.yAxis.tickFormat(d3.format(',.4f'));
+                    chart.yAxis.tickFormat(d3.format(','));
                     chart.interactiveLayer.tooltip.headerFormatter(function (d) { return d;    });
                     chart.legend.vers('furious');
                     d3.select('#chart1')
