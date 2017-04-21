@@ -87,9 +87,23 @@ footer { background-color: #333; color: #ccc; padding: 1em; }
   <footer><span>Copyright © 2017 The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our Trademark Usage page. Linux is a registered trademark of Linus Torvalds. Privacy Policy and Terms of Use</span></footer>
 
 <script>
+
+function formatRelativeTime(absolute) {
+
+  var delta = (absolute - cncfdemo.state.results.timestart) * 1000;
+  console.log('abs', absolute);
+  console.log('delta', delta);
+  if (!delta) return " ";
+  var milliseconds = Math.abs(delta);
+  return "T" + (delta < 0 ? "-" : "+")
+      + Math.floor(milliseconds / 6e4) + ":"
+      + d3.format("02d")(Math.floor(milliseconds % 6e4 / 1e3));
+}
+
+
   const cncfdemo = {
 
-    debug: false,
+    debug: true,
     base_url: 'http://stats.cncfdemo.io',
     debug_url: 'http://localhost:8000',
     urlParams: new URLSearchParams(window.location.search),
@@ -161,11 +175,12 @@ footer { background-color: #333; color: #ccc; padding: 1em; }
                         .x(function(d) { return d[0] })
                         .y(function(d) { return d[1] })
                         .duration(300);
-            
+
                     chart.showControls(false)
                     chart.style("expand");
-            
-                    chart.xAxis.tickFormat(function(d) { return d3.time.format('%H:%M')(new Date(d*1000)) });
+                    //chart.xAxis.tickFormat(function(d) { return d3.time.format('%H:%M')(new Date(d*1000)) });
+                    chart.xAxis.tickFormat(formatRelativeTime);
+
                     chart.yAxis.tickFormat(d3.format(',.4f'));
                     chart.interactiveLayer.tooltip.headerFormatter(function (d) { return d;    });
                     chart.legend.vers('furious');
