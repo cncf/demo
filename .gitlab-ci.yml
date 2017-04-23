@@ -7,6 +7,8 @@ services:
 
 build:
   stage: build
+  tags:
+    - foo
   script:
     - export IMAGE_TAG=$(echo -en $CI_COMMIT_REF_NAME | tr -c '[:alnum:]_.-' '-')
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
