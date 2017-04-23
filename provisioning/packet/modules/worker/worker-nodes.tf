@@ -1,5 +1,5 @@
 resource "packet_device" "workers" {
-  hostname         = "worker-${ count.index + 1 }-${ var.name }"
+  hostname         = "worker${ count.index + 1 }.${ var.internal_tld }"
   count            = "${ var.worker_node_count }"
   facility         = "${ var.packet_facility }"
   project_id       = "${ var.packet_project_id }"
