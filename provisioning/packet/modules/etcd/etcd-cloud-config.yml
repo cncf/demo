@@ -29,7 +29,7 @@ coreos:
           content: |
             [Service]
             ExecStartPre=-/usr/bin/etcdctl mk /coreos.com/network/config \
-              '{ "Network": "${ pod-cidr }", "Backend": { "Type": "vxlan" } }'
+              '{ "Network": "${ pod_cidr }", "Backend": { "Type": "vxlan" } }'
             Restart=always
             RestartSec=10
 
