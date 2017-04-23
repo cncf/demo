@@ -4,7 +4,7 @@ variable "project" {}
 # variable "subnet-id" {}
 variable "name" {}
 # variable "worker-vm-size" {}
-variable "worker-node-count" {}
+variable "worker_node_count" {}
 # variable "image-publisher" {}
 # variable "image-offer"     {}
 # variable "image-sku"       {}
@@ -14,12 +14,12 @@ variable "worker-node-count" {}
 # variable "storage-container" {}
 # variable "availability-id" {}
 # variable "external-lb" {}
-variable "cluster-domain" {}
-variable "dns-service-ip" {}
-variable "internal-tld" {}
-# variable "admin-username" {}
-variable "kubelet-image-url" {}
-variable "kubelet-image-tag" {}
+variable "cluster_domain" {}
+variable "dns_service_ip" {}
+variable "internal_tld" {}
+# variable "admin_username" {}
+variable "kubelet_image_url" {}
+variable "kubelet_image_tag" {}
 variable "ca" {}
 variable "k8s-worker" {}
 variable "k8s-worker-key" {}

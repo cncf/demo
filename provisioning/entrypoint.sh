@@ -29,11 +29,8 @@ elif [ "$1" = "azure-deploy" ] ; then
     # since they use files on disk that are created on the fly
     # should probably move these to data resources
     terraform get /cncf/azure && \
-        terraform apply -target null_resource.sshkey_gen /cncf/azure && \
-        terraform apply -target null_resource.ssl_gen /cncf/azure && \
-        terraform apply -target null_resource.cloud_gen /cncf/azure && \
-        terraform apply -target module.dns.null_resource.dns_gen /cncf/azure && \
-        terraform apply -target module.etcd.azurerm_network_interface.cncf /cncf/azure && \
+        terraform apply -target null_resource.ssl_ssh_cloud_gen /cncf/cross-cloud && \
+        terraform apply -target null_resource.dns_gen /cncf/azure && \
         time terraform apply /cncf/azure && \
         printf "${RED}\n#Commands to Configue Kubectl \n\n" && \
         printf 'sudo chown -R $(whoami):$(whoami) $(pwd)/data/${name} \n\n' && \
@@ -63,17 +60,17 @@ elif [ "$1" = "gce-destroy" ] ; then
 elif [ "$1" = "cross-cloud-deploy" ] ; then
     terraform get /cncf/cross-cloud && \
         terraform apply -target module.aws.null_resource.ssl_gen /cncf/cross-cloud && \
-        terraform apply -target module.azure.azurerm_resource_group.cncf /cncf/cross-cloud && \
+        terraform apply -target module.gce.null_resource.ssl_gen /cncf/cross-cloud && \
+        terraform apply -target module.gce.module.etcd.null_resource.discovery_gen /cncf/cross-cloud && \
         terraform apply -target module.azure.null_resource.ssl_ssh_cloud_gen /cncf/cross-cloud && \
         terraform apply -target module.azure.module.dns.null_resource.dns_gen /cncf/cross-cloud && \
-        terraform apply -target module.etcd.azurerm_network_interface.cncf /cncf/cross-cloud && \
         terraform apply -target module.packet.null_resource.ssl_ssh_gen /cncf/cross-cloud && \
         terraform apply -target module.packet.module.etcd.null_resource.discovery_gen /cncf/cross-cloud && \
         time terraform apply /cncf/cross-cloud && \
         printf "${RED}\n#Commands to Configue Kubectl \n\n" && \
         printf 'sudo chown -R $(whoami):$(whoami) $(pwd)/data/${name} \n\n' && \
         printf 'export KUBECONFIG=$(pwd)/data/${name}/kubeconfig \n\n'${NC}
+    # terraform apply -target module.azure.azurerm_resource_group.cncf /cncf/cross-cloud && \
 elif [ "$1" = "cross-cloud-destroy" ] ; then
     time terraform destroy -force /cncf/cross-cloud
 fi
-

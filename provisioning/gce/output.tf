@@ -4,16 +4,16 @@
 # output "k8s-admin" { value = "${ k8s-admin}"}
 # # fixme for use outside container
 # output "ssh-key-setup" { value = "eval $(ssh-agent) ; ssh-add /cncf/data/.ssh/id_rsa"}
-# output "ssh-via-bastion" { value = "ssh -At ${ var.admin-username }@${ module.bastion.bastion-fqdn } ssh ${ var.admin-username }@master1.cncf.demo"}
+# output "ssh-via-bastion" { value = "ssh -At ${ var.admin_username }@${ module.bastion.bastion-fqdn } ssh ${ var.admin_username }@master1.cncf.demo"}
 
 #output "availability-id" { value = "${ azurerm_availability_set.cncf.id }" }
 #output "azs" { value = "${ var.aws["azs"] }" }
 #output "bastion-ip" { value = "${ module.bastion.ip }" }
-#output "cluster-domain" { value = "${ var.cluster-domain }" }
-#output "dns-service-ip" { value = "${ var.dns-service-ip }" }
+#output "cluster_domain" { value = "${ var.cluster_domain }" }
+#output "dns-service-ip" { value = "${ var.dns_service_ip }" }
 #output "etcd1-ip" { value = "${ element( split(",", var.etcd-ips), 0 ) }" }
 output "external_lb" { value = "${ module.etcd.external_lb }" }
-#output "internal-tld" { value = "${ var.internal-tld }" }
+#output "internal_tld" { value = "${ var.internal_tld }" }
 #output "name" { value = "${ var.name }" }
 #output "region" { value = "${ var.aws["region"] }" }
 #output "s3-bucket" { value = "${ var.s3-bucket }" }

@@ -4,7 +4,7 @@
 coreos:
 
   etcd2:
-    discovery-srv: ${ internal-tld }
+    discovery-srv: ${ internal_tld }
     peer-trusted-ca-file: /etc/kubernetes/ssl/ca.pem
     peer-client-cert-auth: true
     peer-cert-file: /etc/kubernetes/ssl/k8s-worker.pem
@@ -24,8 +24,8 @@ coreos:
         [Unit]
         ConditionFileIsExecutable=/usr/lib/coreos/kubelet-wrapper
         [Service]
-        Environment="KUBELET_IMAGE_URL=${ kubelet-image-url }"
-        Environment="KUBELET_IMAGE_TAG=${ kubelet-image-tag }"
+        Environment="KUBELET_IMAGE_URL=${ kubelet_image_url }"
+        Environment="KUBELET_IMAGE_TAG=${ kubelet_image_tag }"
         Environment="RKT_OPTS=\
           --volume dns,kind=host,source=/etc/resolv.conf \
           --mount volume=dns,target=/etc/resolv.conf \
@@ -45,8 +45,8 @@ coreos:
           --allow-privileged=true \
           --api-servers=http://master.${ name }.${ domain }:8080 \
           --cloud-provider=gce \
-          --cluster-dns=${ dns-service-ip } \
-          --cluster-domain=${ cluster-domain } \
+          --cluster-dns=${ dns_service_ip } \
+          --cluster-domain=${ cluster_domain } \
           --config=/etc/kubernetes/manifests \
           --kubeconfig=/etc/kubernetes/kubeconfig.yml \
           --register-node=true \
@@ -99,7 +99,7 @@ write-files:
         hostNetwork: true
         containers:
         - name: kube-proxy
-          image: ${ kubelet-image-url }:${ kubelet-image-tag }
+          image: ${ kubelet_image_url }:${ kubelet_image_tag }
           command:
           - /hyperkube
           - proxy

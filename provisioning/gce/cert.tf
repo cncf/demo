@@ -6,8 +6,8 @@ resource "null_resource" "ssl_gen" {
 ${ path.module }/init-cfssl \
 ${ var.data_dir }/.cfssl \
 ${ var.region } \
-${ var.internal-tld } \
-${ var.k8s-service-ip } \
+${ var.internal_tld} \
+${ var.k8s_service_ip } \
 ${ var.project } \
 ${ var.domain } \
 ${ var.name }

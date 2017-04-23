@@ -8,8 +8,8 @@ variable "zone" {}
 # variable "image-offer"     {}
 # variable "image-sku"       {}
 # variable "image-version"   {}
-# variable "admin-username" {}
-variable "internal-tld" {}
+# variable "admin_username" {}
+variable "internal_tld" {}
 # variable "subnet-id" {}
 # variable "availability-id" {}
 # variable "storage-container" {}

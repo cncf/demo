@@ -19,9 +19,30 @@ module "packet" {
   packet_project_id         = "${ var.packet_project_id }"
 }
 
+module "gce" {
+  source                    = "../gce"
+  name                      = "${ var.name }-gce"
+  data_dir                  = "${ var.data_dir }/gce"
+}
+
+
+resource "null_resource" "kubeconfig" {
+
+  provisioner "local-exec" {
+    command = <<LOCAL_EXEC
+export KUBECONFIG="${ var.data_dir}/kubeconfig"
+${ module.aws.kubeconfig }
+${ module.azure.kubeconfig }
+${ module.packet.kubeconfig }
+${ module.gce.kubeconfig }
+LOCAL_EXEC
+  }
+
+}
+
 data "template_file" "kubeconfig" {
   template = <<EOF
-${ module.aws.kubeconfig } && ${ module.azure.kubeconfig } && ${ module.packet.kubeconfig }
+${ module.aws.kubeconfig } && ${ module.azure.kubeconfig } && ${ module.packet.kubeconfig } && ${ module.gce.kubeconfig }
 # Run this command to configure your kubeconfig:
 # eval $(terraform output kubeconfig)
 EOF

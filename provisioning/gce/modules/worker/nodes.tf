@@ -1,5 +1,5 @@
 resource "google_compute_instance" "cncf" {
-  count        = "${ var.worker-node-count }"
+  count        = "${ var.worker_node_count }"
   name         = "${ var.name }-worker${ count.index + 1 }"
   machine_type = "n1-standard-1"
   zone         = "${ var.zone }"
@@ -37,7 +37,7 @@ resource "google_compute_instance" "cncf" {
 }
 
 # resource "azurerm_network_interface" "cncf" {
-#   count               = "${ var.worker-node-count }"
+#   count               = "${ var.worker_node_count }"
 #   name                = "worker-interface${ count.index + 1 }"
 #   location            = "${ var.location }"
 #   resource_group_name = "${ var.name }"
@@ -50,7 +50,7 @@ resource "google_compute_instance" "cncf" {
 # }
 
 # resource "azurerm_virtual_machine" "cncf" {
-#   count = "${ var.worker-node-count }"
+#   count = "${ var.worker_node_count }"
 #   name                  = "worker-node${ count.index + 1 }"
 #   location              = "${ var.location }"
 #   availability_set_id   = "${ var.availability-id }"
@@ -74,7 +74,7 @@ resource "google_compute_instance" "cncf" {
 
 #   os_profile {
 #     computer_name  = "worker-node${ count.index + 1 }"
-#     admin_username = "${ var.admin-username }"
+#     admin_username = "${ var.admin_username }"
 #     admin_password = "Password1234!"
 #     custom_data = "${ element(data.template_file.cloud-config.*.rendered, count.index) }"
 #   }
@@ -82,7 +82,7 @@ resource "google_compute_instance" "cncf" {
 #   os_profile_linux_config {
 #     disable_password_authentication = true
 #     ssh_keys {
-#       path = "/home/${ var.admin-username }/.ssh/authorized_keys"
+#       path = "/home/${ var.admin_username }/.ssh/authorized_keys"
 #       key_data = "${file("/cncf/data/.ssh/id_rsa.pub")}"
 #   }
 #  }
