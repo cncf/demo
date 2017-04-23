@@ -46,14 +46,12 @@ RUN go get -u github.com/jakexks/terraform-provider-gzip && \
   echo '    gzip = "terraform-provider-gzip"' >> ~/.terraformrc && \
   echo } >> ~/.terraformrc
 
-
-
 #Add Terraform Modules
 
 COPY aws /aws/
 COPY azure /azure/
-COPY entrypoint.sh /cncf/
-RUN chmod +x /cncf/entrypoint.sh
-ENTRYPOINT ["/cncf/entrypoint.sh"]
+COPY provision.sh /cncf/
+RUN chmod +x /cncf/provision.sh
+ENTRYPOINT ["/cncf/provision.sh"]
 WORKDIR /cncf/data
 CMD ["aws-deploy"]
