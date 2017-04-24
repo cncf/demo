@@ -79,6 +79,7 @@ module "worker" {
   ca                        = "${file("${ var.data_dir }/.cfssl/ca.pem")}"
   k8s_worker                = "${file("${ var.data_dir }/.cfssl/k8s-worker.pem")}"
   k8s_worker_key            = "${file("${ var.data_dir }/.cfssl/k8s-worker-key.pem")}"
+  etcd_discovery            = "${ var.data_dir }/etcd"
   data_dir                  = "${ var.data_dir }"
 }
 

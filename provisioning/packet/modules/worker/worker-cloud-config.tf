@@ -26,6 +26,7 @@ data "template_file" "worker_user_data" {
     ca                = "${ gzip_me.ca.output }"
     k8s_worker        = "${ gzip_me.k8s_worker.output }"
     k8s_worker_key    = "${ gzip_me.k8s_worker_key.output }"
+    etcd_discovery    = "${file(var.etcd_discovery)}"
   }
 }
 

@@ -16,3 +16,4 @@ variable "ca" {}
 variable "k8s_worker" {}
 variable "k8s_worker_key" {}
 variable "data_dir" {}
+variable "etcd_discovery" {}
