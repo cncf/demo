@@ -77,6 +77,8 @@ module "worker" {
   pod_cidr                  = "${ var.pod_cidr }"
   service_cidr              = "${ var.service_cidr }"
   ca                        = "${file("${ var.data_dir }/.cfssl/ca.pem")}"
+  k8s_etcd                  = "${file("${ var.data_dir }/.cfssl/k8s-etcd.pem")}"
+  k8s_etcd_key              = "${file("${ var.data_dir }/.cfssl/k8s-etcd-key.pem")}"
   k8s_worker                = "${file("${ var.data_dir }/.cfssl/k8s-worker.pem")}"
   k8s_worker_key            = "${file("${ var.data_dir }/.cfssl/k8s-worker-key.pem")}"
   etcd_discovery            = "${ var.data_dir }/etcd"

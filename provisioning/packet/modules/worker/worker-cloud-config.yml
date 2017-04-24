@@ -162,13 +162,25 @@ write-files:
     encoding: "gzip+base64"
     content: |
       ${ ca }
-      
+
+  - path: /etc/kubernetes/ssl/k8s-etcd.pem
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${ k8s_etcd }
+
+  - path: /etc/kubernetes/ssl/k8s-etcd-key.pem
+    permissions: "0644"
+    encoding: "gzip+base64"
+    content: |
+      ${ k8s_etcd_key }
+
   - path: /etc/kubernetes/ssl/k8s-worker.pem
     permissions: "0644"
     encoding: "gzip+base64"
     content: |
       ${ k8s_worker }
-      
+
   - path: /etc/kubernetes/ssl/k8s-worker-key.pem
     permissions: "0644"
     encoding: "gzip+base64"
