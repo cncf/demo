@@ -12,14 +12,19 @@ spec:
     - /hyperkube
     - proxy
     - --master=http://127.0.0.1:8080
-    - --proxy-mode=iptables
     securityContext:
       privileged: true
     volumeMounts:
     - mountPath: /etc/ssl/certs
       name: ssl-certs-host
       readOnly: true
+    - mountPath: /var/run/dbus
+      name: dbus
+      readOnly: false
     volumes:
     - hostPath:
         path: /usr/share/ca-certificates
       name: ssl-certs-host
+    - hostPath:
+        path: /var/run/dbus
+      name: dbus
