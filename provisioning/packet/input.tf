@@ -2,7 +2,8 @@ variable "name" { default = "packet" }
 
 # Set with env TF_VAR_packet_project_id
 variable "packet_project_id" {} # required for now
-variable "packet_facility" { default = "nrt1" }
+# https://www.packet.net/locations/
+variable "packet_facility" { default = "sjc1" }
 variable "packet_billing_cycle" { default = "hourly" }
 variable "packet_operating_system" { default = "coreos_stable" }
 variable "packet_master_device_plan" { default = "baremetal_0" }
