@@ -93,7 +93,7 @@ data "template_file" "etcd_user_data" {
     k8s_apiserver_key = "${ gzip_me.k8s_apiserver_key.output }"
     k8s_apiserver_yml = "${ gzip_me.kube_apiserver.output }"
     k8s_proxy_yml = "${ gzip_me.kube_proxy.output }"
-    k8s_scheduler = "${ gzip_me.kube_scheduler.output }"
+    k8s_scheduler_yml = "${ gzip_me.kube_scheduler.output }"
     k8s_controller_manager_yml = "${ gzip_me.kube_controller_manager.output }"
     etcd_discovery = "${ file(var.etcd_discovery) }"
   }
