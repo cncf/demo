@@ -48,6 +48,7 @@ coreos:
         content: |
           [Service]
           Environment="DOCKER_OPTS=--storage-driver=overlay"
+          EnvironmentFile=/run/flannel/flannel_docker_opts.env
 
     - name: kubelet.service
       command: start
