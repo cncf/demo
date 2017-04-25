@@ -22,33 +22,13 @@ coreos:
     - name: etcd2.service
       command: start
 
-    - name: flanneld.service
-      command: start
-      drop-ins:
-        - name: 50-network-config.conf
-          content: |
-            [Service]
-            ExecStartPre=-/usr/bin/etcdctl mk /coreos.com/network/config \
-              '{ "Network": "${ pod_cidr }", "Backend": { "Type": "vxlan" } }'
-            Restart=always
-            RestartSec=10
-
     - name: docker.service
       command: start
       drop-ins:
-      - name: 40-flannel.conf
-        content: |
-          [Unit]
-          After=flanneld.service
-          Requires=flanneld.service
-          [Service]
-          Restart=always
-          RestartSec=10
       - name: overlay.conf
         content: |
           [Service]
           Environment="DOCKER_OPTS=--storage-driver=overlay"
-          EnvironmentFile=/run/flannel/flannel_docker_opts.env
 
     - name: kubelet.service
       command: start
