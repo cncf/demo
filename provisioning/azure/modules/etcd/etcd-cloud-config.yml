@@ -62,8 +62,7 @@ coreos:
           --cloud-config=/etc/kubernetes/ssl/azure-config.json \
           --cluster-dns=${ dns_service_ip } \
           --cluster_domain=${ cluster_domain } \
-          --config=/etc/kubernetes/manifests \
-          --register-schedulable=false
+          --config=/etc/kubernetes/manifests
         Restart=always
         RestartSec=5
         [Install]
