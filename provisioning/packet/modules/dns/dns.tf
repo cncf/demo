@@ -52,7 +52,7 @@ resource "dnsimple_record" "A-public-endpoint" {
 
 resource "dnsimple_record" "A-public-masters" {
   count = "${ var.master_node_count }"
-  name = "master${ count.index + 1 }.${ var.name }"
+  name = "master${ count.index + 1 }.public.${ var.name }"
   value = "${ element(var.public_master_ips, count.index) }"
   type = "A"
   ttl = "${ var.record_ttl }"
