@@ -22,8 +22,8 @@ spec:
     - --cloud-provider=azure
     - --cloud-config=/etc/kubernetes/ssl/azure-config.json
     - --etcd-servers=http://etcd.${ internal_tld }:2379
-    - --insecure-bind-address=0.0.0.0
     - --secure-port=443
+    - --bind-address=0.0.0.0
     - --service-account-key-file=/etc/kubernetes/ssl/k8s-apiserver-key.pem
     - --service-cluster-ip-range=${ service_cidr }
     - --tls-cert-file=/etc/kubernetes/ssl/k8s-apiserver.pem

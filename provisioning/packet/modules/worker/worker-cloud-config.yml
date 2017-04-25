@@ -61,7 +61,7 @@ coreos:
         ExecStartPre=/usr/bin/mount --make-shared /var/lib/kubelet
         ExecStart=/usr/lib/coreos/kubelet-wrapper \
           --allow-privileged=true \
-          --api-servers=http://master.${ internal_tld }:8080 \
+          --api-servers=https://master.${ internal_tld } \
           --cluster-dns=${ dns_service_ip } \
           --cluster_domain=${ cluster_domain } \
           --config=/etc/kubernetes/manifests \
