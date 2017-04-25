@@ -46,8 +46,8 @@ coreos:
           --api-servers=https://master.${ internal_tld } \
           --cluster-dns=${ dns_service_ip } \
           --cluster_domain=${ cluster_domain } \
-          --config=/etc/kubernetes/manifests \
           --kubeconfig=/etc/kubernetes/kubeconfig.yml \
+          --pod-manifest-path=/etc/kubernetes/manifests \
           --register-node=true \
           --tls-cert-file=/etc/kubernetes/ssl/k8s-worker.pem \
           --tls-private-key-file=/etc/kubernetes/ssl/k8s-worker-key.pem

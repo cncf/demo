@@ -38,7 +38,7 @@ coreos:
         [Service]
         Environment="KUBELET_IMAGE_URL=${ kubelet_image_url }"
         Environment="KUBELET_IMAGE_TAG=${ kubelet_image_tag }"
-        Environment="RKT_OPTS=\
+        Environment="RKT_RUN_ARGS=\
           --volume dns,kind=host,source=/etc/resolv.conf \
           --mount volume=dns,target=/etc/resolv.conf \
           --volume rkt,kind=host,source=/opt/bin/host-rkt \
@@ -58,7 +58,7 @@ coreos:
           --api-servers=http://127.0.0.1:8080 \
           --cluster-dns=${ dns_service_ip } \
           --cluster_domain=${ cluster_domain } \
-          --config=/etc/kubernetes/manifests \
+          --pod-manifest-path=/etc/kubernetes/manifests \
           --register-schedulable=false
         Restart=always
         RestartSec=5

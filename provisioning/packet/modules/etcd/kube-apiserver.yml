@@ -19,8 +19,6 @@ spec:
     - --admission-control=ServiceAccount
     - --allow-privileged=true
     - --client-ca-file=/etc/kubernetes/ssl/ca.pem
-    - --cloud-provider=azure
-    - --cloud-config=/etc/kubernetes/ssl/azure-config.json
     - --etcd-servers=http://etcd.${ internal_tld }:2379
     - --secure-port=443
     - --bind-address=0.0.0.0
