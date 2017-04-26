@@ -16,12 +16,11 @@ cd $TF_VAR_data_dir
 if [ "$1" = "aws-deploy" ] ; then
     terraform get ${DIR}/aws && \
         terraform apply -target null_resource.ssl_gen ${DIR}/aws && \
-        time terraform apply /deploy/aws && \
+        time terraform apply ${DIR}/aws && \
         printf "${RED}\n#Commands to Configue Kubectl \n\n" && \
         printf 'sudo chown -R $(whoami):$(whoami) $(pwd)/data/ \n\n' && \
         printf 'export KUBECONFIG=$(pwd)/data/kubeconfig \n\n'${NC}
 elif [ "$1" = "aws-destroy" ] ; then
-    write_aws_config
     time terraform destroy -force ${DIR}/aws
 elif [ "$1" = "azure-deploy" ] ; then
     # There are some dependency issues around cert,sshkey,k8s_cloud_config, and dns
