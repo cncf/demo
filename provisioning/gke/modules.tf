@@ -16,6 +16,7 @@ module "cluster" {
   subnetwork = "${ module.vpc.subnetwork }"
   node_version = "${ var.node_version }"
   master_user = "${ var.master_user }"
-  master_password = ${ var.master_password }
-  vm_size = ${ var.vm_size }
+  master_password = "${ var.master_password }"
+  vm_size = "${ var.vm_size }"
+  node_pool_count = "${ var.node_pool_count }"
 }

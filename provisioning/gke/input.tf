@@ -7,4 +7,6 @@ variable "node_count" { default = "3" }
 variable "node_version" { default = "1.6.2" }
 variable "master_user" { default = "aoeui" }
 variable "master_password" { default = "iueoadhtns"}
-variable "vm_size" { default = "g1-small"}
+variable "vm_size" { default = "n1-standard-1"}
+variable "node_pool_count" { default = "3"}
+
