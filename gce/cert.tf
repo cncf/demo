@@ -1,0 +1,31 @@
+#Gen Certs
+resource "null_resource" "ssl_gen" {
+
+  provisioner "local-exec" {
+    command = <<EOF
+${ path.module }/init-cfssl \
+${ var.data_dir }/.cfssl \
+${ var.region } \
+${ var.internal-tld } \
+${ var.k8s-service-ip } \
+${ var.internal_lb } \
+${ var.project } \
+${ var.domain } \
+${ var.name }
+EOF
+  }
+
+  provisioner "local-exec" {
+    when = "destroy"
+    on_failure = "continue"
+    command = <<EOF
+rm -rf ${ var.data_dir }/.cfssl
+EOF
+  }
+
+}
+
+resource "null_resource" "dummy_dependency" {
+  depends_on = [ "null_resource.ssl_gen" ]
+}
+
