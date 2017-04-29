@@ -27,6 +27,5 @@ resource "azurerm_availability_set" "cncf" {
   name                = "${ var.name }"
   resource_group_name = "${ var.name }"
   location            = "${ var.location }"
-
 }
 

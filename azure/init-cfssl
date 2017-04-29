@@ -87,7 +87,7 @@ function generate {
 
   _chmod $CN
 
-  tar -cf $CN.tar ca.pem $CN.pem ${CN}-key.pem
+  #tar -cf $CN.tar ca.pem $CN.pem ${CN}-key.pem
 }
 
 mkdir -p $OUTDIR && cd $OUTDIR
@@ -105,5 +105,7 @@ generate k8s-etcd client-server "etcd.${INTERNAL_TLD},etcd1.${INTERNAL_TLD},etcd
 generate k8s-worker client "${DEFAULT_HOSTS}"
 
 # TODO: fix cert provisioning hacks
-tar -rf k8s-apiserver.tar k8s-etcd.pem k8s-etcd-key.pem
-tar -rf k8s-worker.tar ca.pem
+#tar -rf k8s-apiserver.tar k8s-etcd.pem k8s-etcd-key.pem
+#tar -rf k8s-worker.tar ca.pem
+#bzip2 k8s-apiserver.tar
+#bzip2 k8s-worker.tar

@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-ELB=$(terraform output fqdn-k8s)
+ELB=$(terraform output fqdn_k8s)
 
 _retry() {
   [ -z "${2}" ] && return 1

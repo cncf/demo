@@ -1,26 +1,30 @@
 variable "location" {}
-variable "subnet-id" {}
+variable "subnet_id" {}
 variable "name" {}
-variable "master-vm-size" {}
-variable "master-node-count" {}
-variable "image-publisher" {}
-variable "image-offer"     {}
-variable "image-sku"       {}
-variable "image-version"   {}
-variable "availability-id" {}
-variable "storage-account" {}
-variable "storage-primary-endpoint" {}
-variable "storage-container" {}
-variable "k8s-apiserver-tar" {}
-variable "cluster-domain" {}
-variable "dns-service-ip" {}
-variable "internal-tld" {}
-variable "pod-cidr" {}
-variable "service-cidr" {}
-variable "admin-username" {}
-variable "kubelet-image-url" {}
-variable "kubelet-image-tag" {}
-variable "cloud-config" {}
-
-# variable "etcd-security-group-id" {}
-# variable "external-elb-security-group-id" {}
+variable "master_vm_size" {}
+variable "master_node_count" {}
+variable "image_publisher" {}
+variable "image_offer"     {}
+variable "image_sku"       {}
+variable "image_version"   {}
+variable "availability_id" {}
+variable "storage_account" {}
+variable "storage_primary_endpoint" {}
+variable "storage_container" {}
+variable "cluster_domain" {}
+variable "dns_service_ip" {}
+variable "internal_tld" {}
+variable "pod_cidr" {}
+variable "service_cidr" {}
+variable "admin_username" {}
+variable "kubelet_image_url" {}
+variable "kubelet_image_tag" {}
+variable "k8s_cloud_config" {}
+# variable "etcd_security_group_id" {}
+# variable "external_elb_security_group_id" {}
+variable "ca" {}
+variable "k8s_etcd" {}
+variable "k8s_etcd_key" {}
+variable "k8s_apiserver" {}
+variable "k8s_apiserver_key" {}
+variable "data_dir" {}
