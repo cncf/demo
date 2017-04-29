@@ -188,7 +188,7 @@ az network lb show --name TestLoadBalancer --resource-group deploy -o table
 
 #+BEGIN_SRC 
 
-openssl x509 -in .cfssl/k8s-admin.pem -noout -text
+openssl x509 -in .cfssl/k8s_admin.pem -noout -text
 openssl x509 -in .cfssl/k8s-apiserver.pem -noout -text
 
 

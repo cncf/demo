@@ -1,17 +1,18 @@
 variable "name" {}
 variable "location" {}
-variable "bastion-vm-size" {}
-variable "image-publisher" {}
-variable "image-offer"     {}
-variable "image-sku"       {}
-variable "image-version"   {}
-variable "admin-username" {}
-variable "internal-tld" {}
-variable "subnet-id" {}
-variable "availability-id" {}
-variable "storage-container" {}
-variable "storage-primary-endpoint" {}
+variable "bastion_vm_size" {}
+variable "image_publisher" {}
+variable "image_offer"     {}
+variable "image_sku"       {}
+variable "image_version"   {}
+variable "admin_username" {}
+variable "internal_tld" {}
+variable "subnet_id" {}
+variable "availability_id" {}
+variable "storage_container" {}
+variable "storage_primary_endpoint" {}
+variable "data_dir" {}
 
-# variable "cidr-allow-ssh" {}
-# variable "security-group-id" {}
-# variable "subnet-ids" {}
+# variable "allow_ssh_cidr" {}
+# variable "security_group_id" {}
+# variable "subnet_ids" {}

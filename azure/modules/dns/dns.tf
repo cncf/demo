@@ -1,5 +1,5 @@
 resource "azurerm_dns_zone" "cncf" {
-  name = "${ var.internal-tld }"
+  name = "${ var.internal_tld }"
   resource_group_name = "${ var.name }"
 }
 
@@ -15,7 +15,7 @@ resource "null_resource" "dns_dig" {
     # filename = "/dev/null"
     command = <<EOF
 # grab ip for this nameserver into a file
-dig +short ${ element(azurerm_dns_zone.cncf.name_servers,count.index) } > ${ var.name-servers-file }.${ count.index }.ip
+dig +short ${ element(azurerm_dns_zone.cncf.name_servers,count.index) } > ${ var.name_servers_file }.${ count.index }.ip
 EOF
   }
 }
@@ -28,10 +28,10 @@ resource "null_resource" "dns_gen" {
 # collect them all into a csv
 # wait for them all to appear
 sleep 4
-cat ${ var.name-servers-file }.*.ip \
+cat ${ var.name_servers_file }.*.ip \
 | sed -n -e 'H;$${x;s/\n/,/g;s/^,//;p;}' \
 | tr -d '\n' \
-> ${ var.name-servers-file}
+> ${ var.name_servers_file}
 EOF
   }
 }
@@ -42,19 +42,19 @@ resource "azurerm_dns_a_record" "A-etcd"  {
   resource_group_name = "${ var.name }"
   ttl = "300"
   records = [
-    "${ var.master-ips }"
+    "${ var.master_ips }"
   ]
 }
 
 resource "azurerm_dns_a_record" "A-etcds" {
-  count = "${ length(var.master-ips) }"
+  count = "${ var.master_node_count }"
 
   name = "etcd${ count.index+1 }"
   zone_name = "${azurerm_dns_zone.cncf.name}"
   resource_group_name = "${ var.name }"
   ttl = "300"
   records = [
-    "${ element(var.master-ips, count.index) }"
+    "${ element(var.master_ips, count.index) }"
   ]
 }
 
@@ -63,17 +63,17 @@ resource "azurerm_dns_a_record" "A-master" {
   zone_name = "${azurerm_dns_zone.cncf.name}"
   resource_group_name = "${ var.name }"
   ttl = "300"
-  records = [ "${ var.master-ips }" ]
+  records = [ "${ var.master_ips }" ]
 }
 
 resource "azurerm_dns_a_record" "A-masters" {
-  count = "${ length(var.master-ips) }"
+  count = "${ var.master_node_count }"
   name = "master${ count.index+1 }"
   zone_name = "${azurerm_dns_zone.cncf.name}"
   resource_group_name = "${ var.name }"
   ttl = "300"
   records = [
-    "${ element(var.master-ips, count.index) }"
+    "${ element(var.master_ips, count.index) }"
   ]
 }
 
@@ -87,21 +87,21 @@ resource "azurerm_dns_srv_record" "etcd-client-tcp" {
     priority = 0
     weight = 0
     port = 2379
-    target = "etcd1.${ var.internal-tld }"
+    target = "etcd1.${ var.internal_tld }"
   }
 
   record {
     priority = 0
     weight = 0
     port = 2379
-    target = "etcd2.${ var.internal-tld }"
+    target = "etcd2.${ var.internal_tld }"
   }
 
   record {
     priority = 0
     weight = 0
     port = 2379
-    target = "etcd3.${ var.internal-tld }"
+    target = "etcd3.${ var.internal_tld }"
   }
 
 }
@@ -116,21 +116,21 @@ resource "azurerm_dns_srv_record" "etcd-server-tcp" {
     priority = 0
     weight = 0
     port = 2380
-    target = "etcd1.${ var.internal-tld }"
+    target = "etcd1.${ var.internal_tld }"
   }
 
   record {
     priority = 0
     weight = 0
     port = 2380
-    target = "etcd2.${ var.internal-tld }"
+    target = "etcd2.${ var.internal_tld }"
   }
 
   record {
     priority = 0
     weight = 0
     port = 2380
-    target = "etcd3.${ var.internal-tld }"
+    target = "etcd3.${ var.internal_tld }"
   }
 
 }
