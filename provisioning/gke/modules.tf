@@ -20,3 +20,14 @@ module "cluster" {
   vm_size = "${ var.vm_size }"
   node_pool_count = "${ var.node_pool_count }"
 }
+
+module "kubeconfig" {
+  source = "./modules/kubeconfig"
+  name = "${ var.name }"
+  project = "${ var.project }"
+  zone = "${ var.zone }"
+  endpoint = "${ module.cluster.endpoint }"
+  ca = "${ module.cluster.ca }"
+  admin = "${ module.cluster.admin }"
+  admin_key = "${ module.cluster.admin_key }"
+}
