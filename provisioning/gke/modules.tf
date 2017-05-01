@@ -30,4 +30,5 @@ module "kubeconfig" {
   ca = "${ module.cluster.ca }"
   admin = "${ module.cluster.admin }"
   admin_key = "${ module.cluster.admin_key }"
+  data_dir = "${ var.data_dir }"
 }
