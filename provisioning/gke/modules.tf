@@ -19,16 +19,16 @@ module "cluster" {
   master_password = "${ var.master_password }"
   vm_size = "${ var.vm_size }"
   node_pool_count = "${ var.node_pool_count }"
+  data_dir = "${ var.data_dir }"
 }
 
 module "kubeconfig" {
-  source = "./modules/kubeconfig"
-  name = "${ var.name }"
-  project = "${ var.project }"
-  zone = "${ var.zone }"
-  endpoint = "${ module.cluster.endpoint }"
-  ca = "${ module.cluster.ca }"
-  admin = "${ module.cluster.admin }"
-  admin_key = "${ module.cluster.admin_key }"
+  source = "../kubeconfig"
+
+  ca_pem = "${ var.data_dir }/ca.pem"
+  admin_pem = "${ var.data_dir }/k8s-admin.pem"
+  admin_key_pem = "${ var.data_dir }/k8s-admin-key.pem"
+  fqdn_k8s = "${ module.cluster.fqdn_k8s }"
   data_dir = "${ var.data_dir }"
+  name = "gke_${ var.project }_${ var.zone }-a_${ var.name }"
 }

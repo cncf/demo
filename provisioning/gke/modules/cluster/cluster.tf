@@ -28,3 +28,15 @@ resource "google_container_cluster" "cncf" {
     ]
   }
 }
+
+
+resource "null_resource" "file" {
+
+  provisioner "local-exec" {
+    command = <<LOCAL_EXEC
+echo "${ base64decode(google_container_cluster.cncf.master_auth.0.cluster_ca_certificate) }" > "${ var.data_dir }/ca.pem"
+echo  "${ base64decode(google_container_cluster.cncf.master_auth.0.client_certificate) }" > "${ var.data_dir }/k8s-admin.pem"
+echo "${ base64decode(google_container_cluster.cncf.master_auth.0.client_key) }" > "${ var.data_dir }/k8s-admin-key.pem"
+LOCAL_EXEC
+  }
+}
