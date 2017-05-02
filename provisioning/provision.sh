@@ -55,7 +55,7 @@ elif [ "$1" = "gce-deploy" ] ; then
         printf 'export KUBECONFIG=$(pwd)/data/${name}/kubeconfig \n\n'${NC}
 elif [ "$1" = "gce-destroy" ] ; then
     time terraform destroy -force ${DIR}/gce
-eelif [ "$1" = "gke-deploy" ] ; then
+elif [ "$1" = "gke-deploy" ] ; then
     terraform get ${DIR}/gke && \
         time terraform apply ${DIR}/gke
 elif [ "$1" = "gke-destroy" ] ; then
