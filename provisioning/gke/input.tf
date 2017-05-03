@@ -11,4 +11,3 @@ variable "vm_size" { default = "n1-standard-1"}
 variable "node_pool_count" { default = "3"}
 variable "data_dir" { default = "/cncf/data" }
 
-output "kubeconfig" { value = "${ module.kubeconfig.kubeconfig }" }

@@ -25,6 +25,12 @@ module "gce" {
   data_dir                  = "${ var.data_dir }/gce"
 }
 
+module "gke" {
+  source                    = "../gke"
+  name                      = "${ var.name }-gke"
+  data_dir                  = "${ var.data_dir}/gke"
+}
+
 
 resource "null_resource" "kubeconfig" {
 
@@ -35,6 +41,7 @@ ${ module.aws.kubeconfig }
 ${ module.azure.kubeconfig }
 ${ module.packet.kubeconfig }
 ${ module.gce.kubeconfig }
+${ module.gke.kubeconfig }
 LOCAL_EXEC
   }
 
@@ -42,7 +49,7 @@ LOCAL_EXEC
 
 data "template_file" "kubeconfig" {
   template = <<EOF
-${ module.aws.kubeconfig } && ${ module.azure.kubeconfig } && ${ module.packet.kubeconfig } && ${ module.gce.kubeconfig }
+    ${ module.aws.kubeconfig } && ${ module.azure.kubeconfig } && ${ module.packet.kubeconfig } && ${ module.gce.kubeconfig } && ${ module.gke.kubeconfig }
 # Run this command to configure your kubeconfig:
 # eval $(terraform output kubeconfig)
 EOF
