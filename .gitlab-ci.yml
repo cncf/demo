@@ -7,10 +7,21 @@ services:
 
 build:
   stage: build
-  tags:
-    - foo
+  only:
+    - master
   script:
     - export IMAGE_TAG=$(echo -en $CI_COMMIT_REF_NAME | tr -c '[:alnum:]_.-' '-')
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
     - docker build --pull -t "$CI_REGISTRY_IMAGE:$IMAGE_TAG" ./provisioning
-    - docker push "$CI_REGISTRY_IMAGE:$IMAGE_TAG"
+    - docker push "$CI_REGISTRY_IMAGE/provisioning:latest"
+
+cross-cloud:
+  image: registry.gitlab.com/cncf/demo/provisioning:latest
+  stage: deploy
+  only:
+    - ci
+  when: manual
+  script:
+    - /cncf/provision.sh ${CLOUD}-deploy ${DEPLOY}
+    - sleep 99999999
+
