@@ -20,13 +20,40 @@ build-provisioning:
     - docker build --pull -t "$CI_REGISTRY_IMAGE/provisioning:latest" ./provisioning
     - docker push "$CI_REGISTRY_IMAGE/provisioning:latest"
 
-cross-cloud:
+deploy_cloud:
   image: registry.gitlab.com/cncf/demo/provisioning:latest
   stage: deploy
   only:
-    - ci
-  when: manual
+    - aws
+    - azure
+    - gce
+    - gke
+    - packet
+  environment:
+    name: $CI_PROJECT_NAME/$CI_COMMIT_REF_NAME
+    url: https://$CI_ENVIRONMENT_SLUG.example.com/
+    on_stop: destroy_cloud
+  artifacts:
+    when: always
+    expire_in: 4 weeks
+    name: "${CI_ENVIRONMENT_SLUG}"
+    paths:
+      ./provisioning/data/
   script:
-    - /cncf/provision.sh ${CLOUD}-deploy ${DEPLOY}
-    - sleep 99999999
+    - ./provisioning/provision.sh ${COMMIT_REF_NAME}-destroy ${CI_ENVIRONMENT_SLUG}
 
+destroy_cloud:
+  image: registry.gitlab.com/cncf/demo/provisioning:latest
+  stage: deploy
+  when: manual
+  environment:
+    name: $CI_PROJECT_NAME/$CI_COMMIT_REF_NAME
+    action: stop
+  artifacts:
+    when: always
+    expire_in: 4 weeks
+    name: "${CI_ENVIRONMENT_SLUG}"
+    paths:
+      ./provisioning/data/
+  script:
+    - ./provisioning/provision.sh ${COMMIT_REF_NAME}-destroy ${CI_ENVIRONMENT_SLUG}
