@@ -40,9 +40,8 @@ deploy_cloud:
     paths:
     - ./provisioning/data/
   script:
-    - echo ./provisioning/provision.sh ${COMMIT_REF_NAME}-deploy ${CI_ENVIRONMENT_SLUG}
-    - sleep 9999999
-    - ./provisioning/provision.sh ${COMMIT_REF_NAME}-deploy ${CI_ENVIRONMENT_SLUG}
+    - echo ./provisioning/provision.sh ${CI_COMMIT_REF_NAME}-deploy ${CI_ENVIRONMENT_SLUG}
+    - ./provisioning/provision.sh ${CI_COMMIT_REF_NAME}-deploy ${CI_ENVIRONMENT_SLUG}
 
 destroy_cloud:
   image: registry.gitlab.com/cncf/demo/provisioning:latest
@@ -58,4 +57,4 @@ destroy_cloud:
     paths:
     - ./provisioning/data/
   script:
-    - ./provisioning/provision.sh ${COMMIT_REF_NAME}-destroy ${CI_ENVIRONMENT_SLUG}
+    - ./provisioning/provision.sh ${CI_COMMIT_REF_NAME}-destroy ${CI_ENVIRONMENT_SLUG}
