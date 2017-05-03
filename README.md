@@ -1,46 +1,45 @@
-
 # CNCF Technologies Demonstration
-The goal of this project is to demonstrate each of the technologies that have been adopted by the [Cloud Native Computing Foundation] (http://cncf.io) (CNCF) in a publicly available repository in order to facilitate their understanding through simple deployment tooling and by providing sample applications as common-ground for conversation. This project will enable replicable deployments and facilitate quantification of performance, latency, throughput, and cost between various deployment models.
+The goal of this project is to demonstrate each of the technologies that have been adopted by the [Cloud Native Computing Foundation](http://cncf.io) (CNCF) in a publicly available repository in order to facilitate their understanding through simple deployment tooling and by providing sample applications as common-ground for conversation. This project will enable replicable deployments and facilitate quantification of performance, latency, throughput, and cost between various deployment models.
 
 ## Beta Preview
 Demo run results are displayed at: [beta.cncfdemo.io](http://beta.cncfdemo.io/).
 
 # Table of Contents <a id="toc"></a>
-- [Project Overview] (#projectoverview)
-  - [Sample Applications] (#sampleapps) 
-  - [Deployment Models] (#deploymentmodels)
-- [Getting Started] (#quickstart)
-  - [Dependencies] (#dependencies)
-  - [Create Cluster] (#cluster)
-  - [Run Demo] (#demo)
-- [Architecture] (#arch)
-  - [Kubernetes Architecture] (#kubearch)
-- [Postmortem & Suggestions] (#postmortem)
+- [Project Overview](#projectoverview)
+  - [Sample Applications](#sampleapps)
+  - [Deployment Models](#deploymentmodels)
+- [Getting Started](#quickstart)
+  - [Dependencies](#dependencies)
+  - [Create Cluster](#cluster)
+  - [Run Demo](#demo)
+- [Architecture](#arch)
+  - [Kubernetes Architecture](#kubearch)
+- [Postmortem & Suggestions](#postmortem)
 
 ---
 
 ## Technologies <a id="techoverview"></a>
-1. Kubernetes - [Project] (http://kubernetes.io), [Source] (https://github.com/kubernetes/kubernetes)
-2. Prometheus - [Project] (https://prometheus.io), [Source] (https://github.com/prometheus)
+1. Kubernetes - [Project](http://kubernetes.io), [Source](https://github.com/kubernetes/kubernetes)
+2. Prometheus - [Project](https://prometheus.io), [Source](https://github.com/prometheus)
 
 ## Summary of Sample Applications <a id="sampleapps"></a>
-1. Count.ly - [Project] (https://count.ly), [Source] (https://github.com/countly/countly-server) 
+1. Count.ly - [Project](https://count.ly), [Source](https://github.com/countly/countly-server)
   * Goals:
     1. demonstrate autoscaling of Countly
     2. illustrate background, lower priority jobs vs foreground, higher priority jobs
-  * [Details of sample application] (#countly)
+  * [Details of sample application](#countly)
 
-2. Boinc - [Project] (http://boinc.berkeley.edu), [Source] (https://github.com/BOINC)
+2. Boinc - [Project](http://boinc.berkeley.edu), [Source](https://github.com/BOINC)
   * Goals:
     1. demonstrate grid computing use case
-    2. contribute cycles to curing [Zika] (https://en.wikipedia.org/wiki/Zika_virus) in IBM [World Community Grid] (https://www.worldcommunitygrid.org)
+    2. contribute cycles to curing [Zika](https://en.wikipedia.org/wiki/Zika_virus) in IBM [World Community Grid](https://www.worldcommunitygrid.org)
   * Details of sample application
 
 ## Supported Deployments <a id="deploymentmodels"></a>
 A variety of deployments models will be supported. Support for each deployment model will be delivered in this order of priority:
 
 1. Local (on your machine)
-2. [CNCF Community Cluster] (#cncf-cluster)
+2. [CNCF Community Cluster](#cncf-cluster)
 3. AWS
 4. Azure
 5. GCP
@@ -49,63 +48,61 @@ A variety of deployments models will be supported. Support for each deployment m
 Given this breadth of supported deployment models using the same sample applications, performance, cost, etc. characteristics between this variety of clusters may be compared.
 
 ### CNCF Community Cluster <a id="cncf-cluster"></a>
-Donated by Intel, a 1,000 node cluster of servers is running in Switch, Las Vegas, to be used by the CNCF community. Visit these links for a description of the cluster [project page] (https://cncf.io/cluster) or to be involved in the [cluster community] (https://github.com/cncf/cluster). 
+Donated by Intel, a 1,000 node cluster of servers is running in Switch, Las Vegas, to be used by the CNCF community. Visit these links for a description of the cluster [project page](https://cncf.io/cluster) or to be involved in the [cluster community](https://github.com/cncf/cluster).
 
 ## An Open Commitment
-The project output will be an open source GitHub repo that will become widely referenced within the CNCF community. All work will occur on a public repo, all externally referenced projects will be open source, and this project itself will be licensed under Apache 2.0. 
+The project output will be an open source GitHub repo that will become widely referenced within the CNCF community. All work will occur on a public repo, all externally referenced projects will be open source, and this project itself will be licensed under Apache 2.0.
 
 ## Disclaimer
-Note that these are explicitly marketing demos, not reference stacks. The CNCF’s [Technical Oversight Committee] (https://github.com/cncf/toc) will over time be adopting additional projects and may eventually publish reference stacks. By contrast, this project is designed to take the shortest possible path to successful multi-cloud deployments of diverse applications.
+Note that these are explicitly marketing demos, not reference stacks. The CNCF’s [Technical Oversight Committee](https://github.com/cncf/toc) will over time be adopting additional projects and may eventually publish reference stacks. By contrast, this project is designed to take the shortest possible path to successful multi-cloud deployments of diverse applications.
 
-# Quick Start Guide <a id="quickstart"></a> <sub><sup>([back to TOC] (#toc))</sup></sub>
+# Quick Start Guide <a id="quickstart"></a> <sub><sup>([back to TOC](#toc))</sup></sub>
 Getting started with the `cncfdemo` is a three-step process:
 
-1. [Install cncfdemo] (#dependencies)
-2. [Create a Kubernetes cluster, running Prometheus] (#cluster)
-3. [Run demo apps & benchmarks] (#demo)
+1. [Install cncfdemo](#dependencies)
+2. [Create a Kubernetes cluster, running Prometheus](#cluster)
+3. [Run demo apps & benchmarks](#demo)
 
 ## 1. Install cncfdemo <a id="dependencies"></a>
 
 1. Run `pip install cncfdemo`
 
-   pip is the python package manager. It is strongly recommended to also use a dedicated python virtualenv. For detailed install instructions for your platform read: [The Hitchhiker's Guide to Python](http://docs.python-guide.org/en/latest/starting/install/osx/#setuptools-pip). 
-  
+   pip is the python package manager. It is strongly recommended to also use a dedicated python virtualenv. For detailed install instructions for your platform read: [The Hitchhiker's Guide to Python](http://docs.python-guide.org/en/latest/starting/install/osx/#setuptools-pip).
+
 ## 2. Create Cluster <a id="cluster"></a>
 
 1. `cncfdemo bootstrap aws`
 
-  AWS is used as an example. Substitute with your provider of choice. 
+  AWS is used as an example. Substitute with your provider of choice.
   <sub>**Note**: Grab a beverage, this step takes several minutes.</sub>
-  
 
 ## 3. Run Demo <a id="demo"></a>
 
 1. Run `cncfdemo start`
 2. Browse to [countly.cncfdemo.io](countly.cncfdemo.io)
 3. Run `cncfdemo benchmark --time 5m --save-html`
- 
-### The `cncfdemo` command _shadows and complements_ the official Kubectl binary. 
+
+### The `cncfdemo` command _shadows and complements_ the official Kubectl binary.
 
 > ❯ cncfdemo create configmap example --from-file=path/to/directory
 
 > ❯ kubectl create configmap example --from-file=path/to/directory
 
-
 cncfdemo is written in Python and like Kubectl interacts with the [remote REST API server](http://kubernetes.io/docs/admin/accessing-the-api/). Unlike Kubectl, it supports HTTP only. Further differing from kubectl it is able to create new clusters on your favorite cloud provider (or even bare metal).
 
-### Complex, Scriptable Kubernetes Deployments & Jinja Templating 
+### Complex, Scriptable Kubernetes Deployments & Jinja Templating
 
 In addition to the ability to quickly spin up new clusters from scratch the `cncfdemo` command comes with a built in demo of a complex multistep multicomponent deployment.
 
 When you run:
 > ❯ cncfdemo start
 
-The following is going on behind the scenes: 
+The following is going on behind the scenes:
 
 - [Prometheus](https://github.com/prometheus) and its Pushgateway are deployed
 - Grafana is deployed with preconfigured dashboards to expose metrics collected by Prometheus
 - ConfigMaps are created from autodetection of configuration files required by the applications being deployed
-- A sharded mongo cluster is provisioned 
+- A sharded mongo cluster is provisioned
 - One Shot Kubernetes Jobs initialize and configure the mongo cluster
 - A mongos service is exposed internally to the cluser
 - Multiple instances of [Countly](https://count.ly/) are spun up against the mongo cluster
@@ -113,24 +110,24 @@ The following is going on behind the scenes:
 - HTTP Benchmarking is performed against the Countly subdomain via [WRK](https://github.com/wg/wrk) jobs
 - Idle cluster capacity to search for a cure to the Zika virus is donated via [Boinc](https://hub.docker.com/r/zilman/boinc/) and [IBM WorldCommunityGrid](https://www.worldcommunitygrid.org/about_us/viewAboutUs.do)
 
-The demo described above is difficult and brittle to put together with regular `kubectl` usage. Editing YAML files by hand is time consuming and error prone. 
+The demo described above is difficult and brittle to put together with regular `kubectl` usage. Editing YAML files by hand is time consuming and error prone.
 
-### Behind the scenes 
+### Behind the scenes
 
 The demo was accomplished with [Jinja](http://jinja.pocoo.org/) templating, several [advanced kubernetes primitives & patterns](Kubernetes/Docs/Advanced.md) that are currently in Alpha, and extending and adding some functionality to the `cncfdemo` wrapper - all in order to greatly simplify and reduce the number of commands required to accomplish a complex deployment.
 
-### Future Plans 
+### Future Plans
 
 - Additional cloud providers support
 - A visualization/UI layer to display the progress of cluster bootstraps, deployments, and benchmarks
 
-# Architecture <a id="arch"></a> <sub><sup>([back to TOC] (#toc))</sup></sub>
+# Architecture <a id="arch"></a> <sub><sup>([back to TOC](#toc))</sup></sub>
 
 ## Image based Kubernetes deployments
 
 The Kubernetes project consists of half a dozen standalone binaries, copied to their appropriate location along with associated Systemd unit files*.
 
-                        | Master | Minion 
+                        | Master | Minion
 -------------- |------- |--------
 kube-apiserver          | ✔      |        |
 kube-controller-manager | ✔      |        |
@@ -143,11 +140,11 @@ kubectl (No service file)|        |        |
 
 The first three belong on master nodes, kube-proxy and kubelet belong on minions, and kubectl is just an optional handy utility to have on the path.
 
-Instead of cutting seperate images for masters and minions we rely on Cloud-init -- the defacto multi-distribution package that handles early initialization of a cloud instance -- and Systemd drop-in files to tag an instance as a master or minion. 
+Instead of cutting seperate images for masters and minions we rely on Cloud-init -- the defacto multi-distribution package that handles early initialization of a cloud instance -- and Systemd drop-in files to tag an instance as a master or minion.
 
 ### Systemd drop-in files
 
-The Kubernetes unit files are written upstream and should work on any distro that supports systemd. There's no need to edit them directly, they are as static as their associated binaries. 
+The Kubernetes unit files are written upstream and should work on any distro that supports systemd. There's no need to edit them directly, they are as static as their associated binaries.
 
 Instead, we want to override only specific directives from these unit files. Systemd has a mechanism that picks up drop-in files and appends or modifies a unit file's directives.
 
@@ -165,11 +162,11 @@ For example on AWS:
 
 `aws ec2 run-instances --image-id ami-424242 --count 3 --user-data 'touch /etc/sysconfig/kubernetes-master'`
 
-#### Other useful settings cloud-init can override 
+#### Other useful settings cloud-init can override
 
 * The clustername - Kubernetes clusters require a unique id
 * The url to pull the addons manager from (so it doesn't have to be baked into the image)
-* The master endpoint 
+* The master endpoint
 	- not recommended but useful for testing; The preferable approach is to provision the cloud environment to route by convention masters.{clustername}.domainame
 * Other endpoints for customized images that include things like fluentd forwarding logs to S3, The cncfdemo backend API, 'etc.
 
@@ -177,12 +174,11 @@ For example on AWS:
 
 This document will walk you through setting up Kubernetes. This guide **_is_** for people looking for a fully automated command to bring up a Kubernetes cluster (In fact, this is the basis for the cncfdemo command utility and you can use that directly or learn how to make your own).
 
-Kubernetes is currently experiencing a cambrian explosion[<sup>1</sup>](https://en.wikipedia.org/wiki/Cambrian_explosion) of deployment methodologies. Described below is an _opinionated_ approach with three guiding principles: 
+Kubernetes is currently experiencing a cambrian explosion[<sup>1</sup>](https://en.wikipedia.org/wiki/Cambrian_explosion) of deployment methodologies. Described below is an _opinionated_ approach with three guiding principles:
 
-- Minimal dependencies 
+- Minimal dependencies
 - Portability between cloud providers, baremetal, and local, with minimal alteration
 - Image based deployments bake all components into one single image
-
 
 If you just want to try it out skip to the [Quick start](#quickstart).
 
@@ -194,15 +190,13 @@ Kubernetes components are neatly split up into three distinct groups*.
 
 <sub>Diagram of a highly available kubernetes cluster</sub>
 
-
 [etcd](https://github.com/coreos/etcd) is a reliable distributed key-value store, its where the cluster state is kept. The [Source of Truth](https://en.wikipedia.org/wiki/Single_source_of_truth). All other parts of Kubernetes are stateless. You could (and should) deploy and manage an etcd cluster completely independently, just as long as Kubernetes masters can connect and use it.
 
 Lets zoom in further on one of those circles representing a Kubernetes minion.
 
-
 <sub><sub>*AWS AutoScalingGroups, GCE "Managed Instance Groups", Azure "Scale Sets"</sub></sub>
 
-## Cluster bootstrap via DNS discovery  
+## Cluster bootstrap via DNS discovery
 
 Later on you will see DNS discovery of services being used extensively **within** Kubernetes clusters as a core feature. But lets continue with the bootstrap, as per the table a minion has only a kubelet and a kube-proxy.
 
@@ -221,16 +215,16 @@ ExecStart=/bin/kubelet \
 
 ```
 
-The precondition ensures the master is reachable and responsive. 
+The precondition ensures the master is reachable and responsive.
 The endpoint is by convention 'masters.cncfdemo.k8s'.
 
-There are **_many other ways to do this_**, however, this approach is **_not provider specific_**. 
+There are **_many other ways to do this_**, however, this approach is **_not provider specific_**.
 
-### Making the bookkeeping orthogonal to the deployment process 
+### Making the bookkeeping orthogonal to the deployment process
 
-For AWS the principles are outlined in _[Building a Dynamic DNS for Route 53 using CloudWatch Events and Lambda](https://aws.amazon.com/blogs/compute/building-a-dynamic-dns-for-route-53-using-cloudwatch-events-and-lambda/)_. 
+For AWS the principles are outlined in _[Building a Dynamic DNS for Route 53 using CloudWatch Events and Lambda](https://aws.amazon.com/blogs/compute/building-a-dynamic-dns-for-route-53-using-cloudwatch-events-and-lambda/)_.
 
-The process is reduced to the following; 
+The process is reduced to the following;
 
 - Configure CloudWatch to trigger a Lambda function on any and all AutoScalingGroup events
 - Lambda function simply sets a DNS record set of the private 'k8s' domain to reflect the list of healthy instances in that group
@@ -238,16 +232,14 @@ The process is reduced to the following;
 As a result, an AutoScalingGroup with Tags:
 ```KubernetesCluster, Role```, will always have membership correctly reflected via '{Role}.{KubernetesCluster}.k8s' DNS lookups.
 
-
 ## Software-defined networking for minions
-
 
 At this point you might be wondering why `minions.{KubernetesCluster}.k8s` is needed. The masters subdomain is useful because the minions need to point at the masters. But who needs to point at minions? The answer is the other minions.
 
 > Kubernetes has a distinctive networking model.
 
-> Kubernetes allocates an IP address to each pod. When creating a cluster, you need to allocate a block of IPs for Kubernetes to use as Pod IPs. 
-<sub>-- [Kubernetes Docs](http://kubernetes.io/docs/getting-started-guides/scratch/#network)</sub> 
+> Kubernetes allocates an IP address to each pod. When creating a cluster, you need to allocate a block of IPs for Kubernetes to use as Pod IPs.
+<sub>-- [Kubernetes Docs](http://kubernetes.io/docs/getting-started-guides/scratch/#network)</sub>
 
 <img src="https://github.com/cncf/demo/blob/master/docs/sdn.png" width="70%">
 
@@ -261,13 +253,12 @@ Required directories for CNI plugin:
 
  - /opt/cni/bin
  - /etc/cni/net.d
- 
- The [default cni plugin](https://github.com/containernetworking/cni/releases) binaries need to be placed in `/opt/cni/bin/`. We have opted to use Weave, its setup script adds weave binaries into this directory as well.
- 
- Finally, we direct the Kubelet to use the above:
- 
-> KUBELET_ARGS="--network-plugin=cni --network-plugin-dir=/etc/cni/net.d --docker-endpoint=unix:///var/run/weave/weave.sock"
 
+ The [default cni plugin](https://github.com/containernetworking/cni/releases) binaries need to be placed in `/opt/cni/bin/`. We have opted to use Weave, its setup script adds weave binaries into this directory as well.
+
+ Finally, we direct the Kubelet to use the above:
+
+> KUBELET_ARGS="--network-plugin=cni --network-plugin-dir=/etc/cni/net.d --docker-endpoint=unix:///var/run/weave/weave.sock"
 
 ### Weave Quorum
 
@@ -288,7 +279,7 @@ You can read further details on [Weave initialization strategies](https://www.we
 
 > If the actual number of peers is less than half the number stated, then they keep waiting for someone else to join in order to reach a quorum.
 
-Once the quorum has been reached you can see how the IP allocation has been divvied up between the members. 
+Once the quorum has been reached you can see how the IP allocation has been divvied up between the members.
 
 > weave status ipam
 >
@@ -298,14 +289,12 @@ Once the quorum has been reached you can see how the IP allocation has been divv
 
 <sub>For a deeper dive on how this mechanism works: [Distributed systems with (almost) no consensus](https://www.youtube.com/watch?v=117gWVShcGU).</sub>
 
-
-
-# Details of Sample Applications 
+# Details of Sample Applications
 ## Countly <a id="countly"></a>
 Countly is an open source web & mobile analytics and marketing platform. It provides insights about user actions.
 
 ## Configuration Files
-Two configuration files used to dictate the behavior of this demo application are [api.js] (configMaps/countly/api.js) and [frontend.js] (configMaps/countly/frontend.js). Each configuration file contains only one change from the default configurationonly line changed from the default config:
+Two configuration files used to dictate the behavior of this demo application are [api.js](configMaps/countly/api.js) and [frontend.js](configMaps/countly/frontend.js). Each configuration file contains only one change from the default configurationonly line changed from the default config:
 
   `Host: "mongos:default"`
 
@@ -313,16 +302,16 @@ By setting `Host` to "mongos.default", the Countly application looks for its Mon
 
 ---
 
-## Deep Dive 
+## Deep Dive
 
 - Patterns and Best Practices
 
   - How to adapt your app to run in Kubernetes (Countly example in detail)
   - Clustered Datastores on top of Kubernetes (Mongo example in detail)
-  - Making use of spare capacity with Background Jobs (Boinc example in detail) 
+  - Making use of spare capacity with Background Jobs (Boinc example in detail)
 
-- Complex, Scriptable Kubernetes Deployments & Jinja Templating 
-  
+- Complex, Scriptable Kubernetes Deployments & Jinja Templating
+
   What actually happens when you 'cncfdemo start'
 # Notes on Containerizing Apps
 
@@ -338,7 +327,7 @@ Take a complex app like Countly for example. To package it up conveniently, so a
 
 ## Single process per container or... not
 
-You can't always run one process per container. What you really might crave in such a situation is a process control system or even a proper init. 
+You can't always run one process per container. What you really might crave in such a situation is a process control system or even a proper init.
 
 > Traditionally a Docker container runs a single process when it is launched, for example an Apache daemon or a SSH server daemon. Often though you want to run more than one process in a container. There are a number of ways you can achieve this ranging from using a simple Bash script as the value of your container’s CMD instruction to installing a process management tool. <sub>- [Docker's documentation on using supervisord](https://docs.docker.com/engine/admin/using_supervisord/)</sub>
 
@@ -346,7 +335,7 @@ There's [several such supervisors](http://centos-vn.blogspot.com/2014/06/daemon-
 
 ##### Resolving the PID 1 problem
 
-There's a subtle problem of [Docker and PID 1 zombie reaping](http://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/) the aforementioned process supervisors alone don't solve. 
+There's a subtle problem of [Docker and PID 1 zombie reaping](http://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/) the aforementioned process supervisors alone don't solve.
 
 The Ubuntu based [phusion baseimage](http://phusion.github.io/baseimage-docker/) works around this with a small (340 line) [my_init](https://github.com/phusion/baseimage-docker/blob/rel-0.9.16/image/bin/my_init) script.
 
@@ -405,12 +394,11 @@ mongodb: {
     }
 ```
 
+#### Separation of concerns
 
-#### Separation of concerns 
+As a result, it is up to us to deploy and scale mongo separately from countly. Even if this particular mongo cluster is dedicated entirely to countly, and it should be, this separation of concerns is good for maintainability and resilience.
 
-As a result, it is up to us to deploy and scale mongo separately from countly. Even if this particular mongo cluster is dedicated entirely to countly, and it should be, this separation of concerns is good for maintainability and resilience. 
-
-This decoupling is healthy. For example, a bug in one of the horizontally scaled countly API servers that causes a crash would not take a mongo pod along with it and thus the impact on overall performance is contained. Instead it will crash and burn on the side, the liveliness tests will fail, and Kubernetes in turn will transparently route away further requests to siblings while simultaneously launching a replacement. 
+This decoupling is healthy. For example, a bug in one of the horizontally scaled countly API servers that causes a crash would not take a mongo pod along with it and thus the impact on overall performance is contained. Instead it will crash and burn on the side, the liveliness tests will fail, and Kubernetes in turn will transparently route away further requests to siblings while simultaneously launching a replacement.
 
 - graph showing how chaos-monkey style killing one of the countlies impacts overall writes, and for how long (fast recovery is cool)
 
@@ -431,7 +419,7 @@ pod:
     - name: init-container2
     Containers:
     - name: regularcontainer
-    
+
 ```
 
 init-container1 can have a simple command along the lines of `nslookup monogos.default | -ge 3`. This will fail as long as the mongo service is not up and running and passing its readyness and liveliness probes. Countly will be blocked from starting until the init container succeeds, exactly the desired behaviour.
@@ -442,10 +430,9 @@ init-container1 can have a simple command along the lines of `nslookup monogos.d
 
 Kubernetes can run on a wide range of Cloud providers and bare-metal environments, and with many base operating systems.
 
-Major releases roll out approximately every 15 weeks with requirements and dependencies still somewhat in flux. Additionally, although there are unit and integration tests that must be passed before a release, in a distributed system it is not uncommon that minor changes may pass all tests, but cause unforeseen changes at the system level. 
+Major releases roll out approximately every 15 weeks with requirements and dependencies still somewhat in flux. Additionally, although there are unit and integration tests that must be passed before a release, in a distributed system it is not uncommon that minor changes may pass all tests, but cause unforeseen changes at the system level.
 
-There's a growing plurality of outdated and conflicting information on how to create a Kubernetes cluster from scratch. Furthermore, and perhaps most painfully, while a release can be assumed to be reasonably stable in the environment it was tested in ("works for me"), not many guarantees can yet be made about how things will work for a custom deployment. 
-
+There's a growing plurality of outdated and conflicting information on how to create a Kubernetes cluster from scratch. Furthermore, and perhaps most painfully, while a release can be assumed to be reasonably stable in the environment it was tested in ("works for me"), not many guarantees can yet be made about how things will work for a custom deployment.
 
 What follows chronologically describes one beaten path to a custom cluster and some of the dos and don'ts accumulated from the false starts.
 
@@ -467,12 +454,11 @@ To avoid ending up with deprecated AMI's and outdated images it is recommended t
 
 Docker is not actually a hard requirement for Kubernetes, but this isn't about recommending alternative container runtimes. This is about the defaults being a hidden minefield.
 
-#### The warning 
+#### The warning
 
 What happens with the common `yum install docker`?
 
 > $ docker info
-
 
 ```
 Containers: 0
@@ -502,7 +488,7 @@ systemctl --failed
 ● network.service              loaded failed failed LSB: Bring up/down networking
 ```
 
-#### What docker-storage-setup is trying (and failing) to do 
+#### What docker-storage-setup is trying (and failing) to do
 
 `docker-storage-setup` looks for free space in the volume group of the root volume and attempts to setup a thin pool. If there is no free space it fails to set up a LVM thin pool and will fall back to using loopback devices. Which we are warned by docker itself is a `strongly discouraged` outcome.
 
@@ -510,12 +496,11 @@ systemctl --failed
 
 This is insidious for several reasons. Depending on how many volumes your instance happens to spin up with (and how they're configured) you might never see this warning or experience any problem at all. For example if you have one hard-drive on bare-metal and no unallocated space this will always happen.
 
-If the disk provisioning changes you might end up in this edge case but the cluster will _still_ initially appear to be working. Only after some activity will xfs corruption in the docker image tree (`/var/lib/docker`) start to sporadically manifest itself and kubernetes nodes will mysteriously fail as a result. 
+If the disk provisioning changes you might end up in this edge case but the cluster will _still_ initially appear to be working. Only after some activity will xfs corruption in the docker image tree (`/var/lib/docker`) start to sporadically manifest itself and kubernetes nodes will mysteriously fail as a result.
 
+Despite this being [known as problematic](https://twitter.com/codinghorror/status/604096348682485760) for some time and [documented](https://access.redhat.com/documentation/en/red-hat-enterprise-linux-atomic-host/7/single/getting-started-with-containers/#overlay_graph_driver), people still frequently [run into this](https://forums.docker.com/t/docker-with-devicemapper-doesnt-start-on-centos-7/9641) problem.
 
-Despite this being [known as problematic](https://twitter.com/codinghorror/status/604096348682485760) for some time and [documented](https://access.redhat.com/documentation/en/red-hat-enterprise-linux-atomic-host/7/single/getting-started-with-containers/#overlay_graph_driver), people still frequently [run into this](https://forums.docker.com/t/docker-with-devicemapper-doesnt-start-on-centos-7/9641) problem.  
-
-Incidentally `yum install docker` can result in slightly different versions of docker installed. 
+Incidentally `yum install docker` can result in slightly different versions of docker installed.
 
 > Each docker release has some known issues running in Kubernetes as a runtime.
 
@@ -524,7 +509,6 @@ Incidentally `yum install docker` can result in slightly different versions of d
 _The problem is a distribution like CentOS 7, officially supported by Kubernetes, by default will arbitrarily work for some but not others, with the full requirements hidden and **underspecified**._
 
 At the very least Docker versions should be pinned together with OS and Kubernetes versions and a recommendation about the storage driver should be made.
-
 
 #### To avoid these pitfalls, carefully select the storage driver
 
@@ -637,7 +621,7 @@ Stay the course, there's nothing else to toggle to make this warning go away, it
 
 ### Consider disabling selinux
 
-With Overlay as the storage backend currently you can only run with selinux on the host, a temporary limitation. 
+With Overlay as the storage backend currently you can only run with selinux on the host, a temporary limitation.
 
 However, elsewhere, kubernetes uses a mechanism that injects special volumes into each container to expose service account tokens and [with selinux turned on secrets simply don't work](http://stackoverflow.com/questions/35338213/kubernetes-serviceaccounts-and-selinux/35347520#35347520).
 
@@ -648,7 +632,6 @@ Otherwise down the line [kubernetes add-ons](https://github.com/kubernetes/kuber
 Since there might be other selinux permissions necessary elsewhere consider turning off selinux entirely until this is properly decided upon and documented.
 
 ### Correct CNI config
-
 
 Kubernetes supports [CNI Network Plugins](http://kubernetes.io/docs/admin/network-plugins/#cni) for interoperability. Setting up a network overlay requires this dependency.
 
@@ -710,14 +693,12 @@ A possible way to improve things is by introducing:
 
 - A set of host OS images with minimal changes baked in as necessary for Kubernetes
 
-	- Continuously (weekly?) rebased on top of the latest official images 
+	- Continuously (weekly?) rebased on top of the latest official images
 
+	- As the basis for a well documented reference implementation of a custom cluster
 
-	- As the basis for a well documented reference implementation of a custom cluster 
-		
-- Long running custom clusters spun up for each permutation of minor version updates (kubernetes version bump, weave, flannel, etcd, and so on) 
+- Long running custom clusters spun up for each permutation of minor version updates (kubernetes version bump, weave, flannel, etcd, and so on)
 
 - A deterministic demo app/deployment as a comprehensive smoketest & benchmark
-
 
 The community need to mix and match the multiple supported components with arbitrary necessary for custom deployments can be benefit from a set of "blessed"  kubernetes-flavored host OS images and a more typical real-world artifact to check their customizations against.
