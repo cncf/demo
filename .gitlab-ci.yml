@@ -40,7 +40,7 @@ deploy_cloud:
     paths:
     - ./provisioning/data/
   script:
-    - ./provisioning/provision.sh ${COMMIT_REF_NAME}-destroy ${CI_ENVIRONMENT_SLUG}
+    - ./provisioning/provision.sh ${COMMIT_REF_NAME}-deploy ${CI_ENVIRONMENT_SLUG}
 
 destroy_cloud:
   image: registry.gitlab.com/cncf/demo/provisioning:latest
