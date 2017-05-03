@@ -38,7 +38,7 @@ deploy_cloud:
     expire_in: 4 weeks
     name: "${CI_ENVIRONMENT_SLUG}"
     paths:
-      ./provisioning/data/
+    - ./provisioning/data/
   script:
     - ./provisioning/provision.sh ${COMMIT_REF_NAME}-destroy ${CI_ENVIRONMENT_SLUG}
 
@@ -54,6 +54,6 @@ destroy_cloud:
     expire_in: 4 weeks
     name: "${CI_ENVIRONMENT_SLUG}"
     paths:
-      ./provisioning/data/
+    - ./provisioning/data/
   script:
     - ./provisioning/provision.sh ${COMMIT_REF_NAME}-destroy ${CI_ENVIRONMENT_SLUG}
