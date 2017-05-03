@@ -40,6 +40,8 @@ deploy_cloud:
     paths:
     - ./provisioning/data/
   script:
+    - echo ./provisioning/provision.sh ${COMMIT_REF_NAME}-deploy ${CI_ENVIRONMENT_SLUG}
+    - sleep 9999999
     - ./provisioning/provision.sh ${COMMIT_REF_NAME}-deploy ${CI_ENVIRONMENT_SLUG}
 
 destroy_cloud:
