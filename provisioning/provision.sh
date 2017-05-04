@@ -57,7 +57,7 @@ elif [ "$1" = "gce-destroy" ] ; then
     time terraform destroy -force ${DIR}/gce
 elif [ "$1" = "gke-deploy" ] ; then
     terraform get ${DIR}/gke && \
-    terraform apply -target module.vpc && \
+    terraform apply -target module.vpc ${DIR}/gke && \
         time terraform apply ${DIR}/gke
 elif [ "$1" = "gke-destroy" ] ; then
     time terraform destroy -force ${DIR}/gke
