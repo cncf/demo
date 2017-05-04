@@ -61,7 +61,8 @@ elif [ "$1" = "gke-deploy" ] ; then
         time terraform apply ${DIR}/gke
 elif [ "$1" = "gke-destroy" ] ; then
     terraform get ${DIR}/gke && \
-    time terraform destroy -force ${DIR}/gke
+    time terraform destroy -force ${DIR}/gke && \
+    terraform destroy -target module.vpc ${DIR}/gke && \
 elif [ "$1" = "cross-cloud-deploy" ] ; then
     terraform get ${DIR}/cross-cloud && \
         terraform apply -target module.aws.null_resource.ssl_gen ${DIR}/cross-cloud && \
