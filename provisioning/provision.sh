@@ -61,8 +61,8 @@ elif [ "$1" = "gke-deploy" ] ; then
         time terraform apply ${DIR}/gke
 elif [ "$1" = "gke-destroy" ] ; then
     terraform get ${DIR}/gke && \
-    terraform destroy -force -target module.cluster.google_container_node_pool.cncf ${DIR}/gke && \
-    terraform destroy -force -target module.cluster.google_container.cncf ${DIR}/gke && \
+    terraform destroy -force -target module.cluster.google_container_node_pool.cncf ${DIR}/gke || true && \
+    terraform destroy -force -target module.cluster.google_container.cncf ${DIR}/gke || true && \
     terraform destroy -force -target module.vpc.google_compute_network.cncf ${DIR}/gke || true && \
     time terraform destroy -force ${DIR}/gke
     
