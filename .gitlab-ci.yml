@@ -48,9 +48,6 @@ destroy_cloud:
   image: registry.gitlab.com/cncf/demo/provisioning:latest
   stage: destroy
   when: manual
-  environment:
-    name: $CI_COMMIT_REF_NAME
-    action: stop
   artifacts:
     when: always
     expire_in: 4 weeks
