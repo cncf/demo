@@ -32,8 +32,8 @@ deploy_cloud:
     - gke
     - packet
   environment:
-    name: $CI_PROJECT_NAME/$CI_COMMIT_REF_NAME
-    url: https://$CI_ENVIRONMENT_SLUG.example.com/
+    name: $CI_COMMIT_REF_NAME
+    url: https://$CI_ENVIRONMENT_SLUG.cncf.ci/
     on_stop: destroy_cloud
   artifacts:
     when: always
@@ -42,7 +42,6 @@ deploy_cloud:
     paths:
     - ./provisioning/data/
   script:
-    - echo ./provisioning/provision.sh ${CI_COMMIT_REF_NAME}-deploy ${CI_ENVIRONMENT_SLUG}
     - ./provisioning/provision.sh ${CI_COMMIT_REF_NAME}-deploy ${CI_ENVIRONMENT_SLUG}
 
 destroy_cloud:
@@ -50,7 +49,7 @@ destroy_cloud:
   stage: destroy
   when: manual
   environment:
-    name: $CI_PROJECT_NAME/$CI_COMMIT_REF_NAME
+    name: $CI_COMMIT_REF_NAME
     action: stop
   artifacts:
     when: always
