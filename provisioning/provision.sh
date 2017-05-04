@@ -63,8 +63,8 @@ elif [ "$1" = "gke-destroy" ] ; then
     terraform get ${DIR}/gke && \
     terraform destroy -force -target module.cluster.google_container_node_pool.cncf ${DIR}/gke && \
     terraform destroy -force -target module.cluster.google_container.cncf ${DIR}/gke && \
+    echo "sleep" && sleep 60 && \
     terraform destroy -force -target module.vpc.google_compute_network.cncf ${DIR}/gke && \
-    echo "sleep" && sleep 20 && \
     time terraform destroy -force ${DIR}/gke
     
 elif [ "$1" = "cross-cloud-deploy" ] ; then
