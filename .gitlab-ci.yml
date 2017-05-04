@@ -11,6 +11,7 @@ services:
 stages:
   - build-provisioning
   - deploy
+  - destroy
 
 build-provisioning:
   stage: build-provisioning
@@ -46,7 +47,7 @@ deploy_cloud:
 
 destroy_cloud:
   image: registry.gitlab.com/cncf/demo/provisioning:latest
-  stage: deploy
+  stage: destroy
   when: manual
   environment:
     name: $CI_PROJECT_NAME/$CI_COMMIT_REF_NAME
