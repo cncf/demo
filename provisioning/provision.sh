@@ -60,6 +60,7 @@ elif [ "$1" = "gke-deploy" ] ; then
     terraform apply -target module.vpc ${DIR}/gke && \
         time terraform apply ${DIR}/gke
 elif [ "$1" = "gke-destroy" ] ; then
+    terraform get ${DIR}/gke && \
     time terraform destroy -force ${DIR}/gke
 elif [ "$1" = "cross-cloud-deploy" ] ; then
     terraform get ${DIR}/cross-cloud && \
