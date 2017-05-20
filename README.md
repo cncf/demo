@@ -136,7 +136,7 @@ kube-proxy              |        | ✔      |
 kubelet                 |        | ✔      |
 kubectl (No service file)|        |        |
 
-<img src="https://raw.githubusercontent.com/cncf/demo/master/docs/k8s-cube.png" width="300px">
+<img src="./docs/k8s-cube.png" width="300px">
 
 The first three belong on master nodes, kube-proxy and kubelet belong on minions, and kubectl is just an optional handy utility to have on the path.
 
@@ -154,7 +154,7 @@ So for example, an _upstream provided_ unit file for kube-apiserver exists at `/
 
 At boot Systemd will essentially merge role.conf into the original unit file, and start the kube-apiserver service based on whether or not a file exists at `/etc/sysconfig/kubernetes-masters` (This is called path based activation).
 
-<img src="https://raw.githubusercontent.com/cncf/demo/master/docs/cloud-init.png" width="300px">
+<img src="./docs/cloud-init.png" width="300px">
 
 With this baked into a server image (by a tool like Packer) all that is left is to specify how many copies we want to run and tell cloud-init to create the file. This functionality is **common to basically any modern distro and cloud provider**, and library (like boto) or provisioning tool (like Terraform).
 
@@ -186,7 +186,7 @@ If you just want to try it out skip to the [Quick start](#quickstart).
 
 Kubernetes components are neatly split up into three distinct groups*.
 
-<img src="https://github.com/cncf/demo/blob/master/docs/arch.png" width="70%">
+<img src="./docs/arch.png" width="70%">
 
 <sub>Diagram of a highly available kubernetes cluster</sub>
 
@@ -241,7 +241,7 @@ At this point you might be wondering why `minions.{KubernetesCluster}.k8s` is ne
 > Kubernetes allocates an IP address to each pod. When creating a cluster, you need to allocate a block of IPs for Kubernetes to use as Pod IPs.
 <sub>-- [Kubernetes Docs](http://kubernetes.io/docs/getting-started-guides/scratch/#network)</sub>
 
-<img src="https://github.com/cncf/demo/blob/master/docs/sdn.png" width="70%">
+<img src="./docs/sdn.png" width="70%">
 
 In order to let Pod A (10.32.0.1) from one minion node (172.20.0.1) communicate with Pod B (10.32.0.3) on another minion node (172.20.0.2) we use an Overlay network. It is possible to achieve this sort of routing without an overlay network (and associated performance penalty) but an overlay is simpler to configure and more importantly it is **_portable_**.
 
