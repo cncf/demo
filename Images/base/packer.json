@@ -3,8 +3,13 @@
 "builders": [{
   "type": "amazon-ebs",
   "region": "us-west-2",
-  "source_ami": "ami-d2c924b2",
-  "instance_type": "t2.micro",
+  "source_ami_filter": { "filters": {
+      "virtualization-type": "hvm",
+      "name": "*CentOS Linux 7 x86_64 HVM EBS*",
+      "root-device-type": "ebs" },
+      "most_recent": true
+  },
+  "instance_type": "c4.2xlarge",
   "ssh_username": "centos",
   "ssh_pty" : false,
   "ami_name": "cncfbase{{timestamp}}",

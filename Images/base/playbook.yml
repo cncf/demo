@@ -4,12 +4,6 @@
 
   tasks:
   - selinux: state=disabled
-  - service: name={{ item }} enabled=no
-    ignore_errors: yes
-    with_items:
-      - firewalld
-      - kdump
-
   - copy: content="overlay" dest=/etc/modules-load.d/overlay.conf
   - copy:
       content: |
@@ -19,8 +13,6 @@
 
   - yum: name={{ item }} state=present update_cache=yes
     with_items:
-     - git
-     - socat
      - bridge-utils
      - conntrack-tools
 
