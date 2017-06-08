@@ -3,7 +3,7 @@
   become: yes
 
   roles:
-   - { role: docker, tags: docker }
+   # - { role: docker, tags: docker }
    - { role: k8s, tags: k8s }
 
   # TODO: yum versionlock dependencies

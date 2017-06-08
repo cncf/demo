@@ -4,19 +4,33 @@
     description: Kubernetes Repository
     baseurl: http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
     gpgcheck: no
-    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg
 
 - yum: name={{ item }} state=latest
   with_items:
+    - docker
     - kubernetes-cni
     - kubectl
     - kubelet
     - kubeadm
 
-- lineinfile:
-    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-    line: 'Environment="KUBELET_EXTRA_ARGS=--cgroup-driver=systemd"'
-    insertbefore: '^ExeStart='
+- name: Use overlay docker storage driver
+  lineinfile:
+    dest: /etc/sysconfig/docker-storage
+    regexp: '^DOCKER_STORAGE_OPTIONS='
+    line: 'DOCKER_STORAGE_OPTIONS="--storage-driver=overlay"'
 
-- service: name=kubelet enabled=yes state=running
+- name: Remove existing kubelet args from drop-in unit
+  lineinfile:
+    dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    regexp: '^Environment="KUBELET_EXTRA_ARGS'
+    state: absent
+
+- name: Use systemd kubelet cgroup driver
+  lineinfile:
+    dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    insertafter: '^Environment=\"KUBELET_AUTHZ_ARGS'
+    line: 'Environment="KUBELET_EXTRA_ARGS=--cgroup-driver=systemd"'
+
+- service: name=docker enabled=yes state=started
+- service: name=kubelet enabled=yes state=started
 

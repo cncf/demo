@@ -7,7 +7,7 @@
     gpgkey: https://yum.dockerproject.org/gpg
 
 - yum: name=docker-engine-1.11.2 state=present enablerepo=docker
-- service: name=docker enabled=yes state=running
+- service: name=docker enabled=yes state=started
 
 - file: path=/etc/systemd/system/docker.service.d/ state=directory
 - copy:
