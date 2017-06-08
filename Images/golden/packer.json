@@ -7,10 +7,11 @@
     "filters": {
       "virtualization-type": "hvm",
       "name": "cncfbase*",
-      "root-device-type": "ebs" },
-      "most_recent": true
-  },
+      "root-device-type": "ebs"
+    },
   "owners": ["750548967590"],
+  "most_recent": true
+  },
   "instance_type": "c4.2xlarge",
   "ssh_username": "centos",
   "ssh_pty" : false,
