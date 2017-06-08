@@ -1,6 +1,6 @@
 ---
 - yum_repository:
-    name: docker
+    name: Kubernetes
     description: Kubernetes Repository
     baseurl: http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
     gpgcheck: no
@@ -13,9 +13,10 @@
     - kubelet
     - kubeadm
 
-- service: name=kubelet enabled=yes state=running
-
 - lineinfile:
     path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
     line: 'Environment="KUBELET_EXTRA_ARGS=--cgroup-driver=systemd"'
     insertbefore: '^ExeStart='
+
+- service: name=kubelet enabled=yes state=running
+
