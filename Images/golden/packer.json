@@ -5,7 +5,7 @@
   "region": "us-west-2",
   "source_ami_filter": { "filters": {
       "virtualization-type": "hvm",
-      "name": "*cncfbase*",
+      "name": "cncfbase*",
       "owners": ["750548967590"],
       "root-device-type": "ebs" },
       "most_recent": true
