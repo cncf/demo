@@ -6,7 +6,7 @@
     gpgcheck: no
     gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg
 
-- yum: name={{item} state=latest
+- yum: name={{ item }} state=latest
   with_items:
     - kubernetes-cni
     - kubectl
