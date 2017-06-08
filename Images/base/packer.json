@@ -3,7 +3,8 @@
 "builders": [{
   "type": "amazon-ebs",
   "region": "us-west-2",
-  "source_ami_filter": { "filters": {
+  "source_ami_filter": {
+    "filters": {
       "virtualization-type": "hvm",
       "name": "*CentOS Linux 7 x86_64 HVM EBS*",
       "root-device-type": "ebs" },
