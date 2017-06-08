@@ -4,6 +4,6 @@
 
   roles:
    - { role: docker, tags: docker }
-   - { role: kubernetes, tags: kubernetes }
+   - { role: k8s, tags: k8s }
 
   # TODO: yum versionlock dependencies
