@@ -4,8 +4,6 @@
 
   roles:
    - { role: docker, tags: docker }
-   - { role: etcd, tags: etcd }
-   - { role: cni, tags: cni }
    - { role: kubernetes, tags: kubernetes }
 
   # TODO: yum versionlock dependencies
