@@ -13,24 +13,23 @@
     - kubelet
     - kubeadm
 
-- name: Use overlay docker storage driver
-  lineinfile:
+- lineinfile:
     dest: /etc/sysconfig/docker-storage
     regexp: '^DOCKER_STORAGE_OPTIONS='
     line: 'DOCKER_STORAGE_OPTIONS="--storage-driver=overlay"'
 
-- name: Remove existing kubelet args from drop-in unit
+- name: Temporary removal of kubelet extra args from drop-in unit - upstream rpm sets incorrectly
   lineinfile:
     dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
     regexp: '^Environment="KUBELET_EXTRA_ARGS'
     state: absent
 
-- name: Use systemd kubelet cgroup driver
+- name: Temporary set systemd kubelet cgroup driver - upstream rpm sets incorrectly
   lineinfile:
     dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
     insertafter: '^Environment=\"KUBELET_AUTHZ_ARGS'
     line: 'Environment="KUBELET_EXTRA_ARGS=--cgroup-driver=systemd"'
 
-- service: name=docker enabled=yes state=started
-- service: name=kubelet enabled=yes state=started
+- service: name=docker enabled=yes
+- service: name=kubelet enabled=yes
 

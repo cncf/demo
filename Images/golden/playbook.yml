@@ -2,8 +2,39 @@
 - hosts: all
   become: yes
 
-  roles:
-   # - { role: docker, tags: docker }
-   - { role: k8s, tags: k8s }
+  tasks:
 
-  # TODO: yum versionlock dependencies
+  - yum_repository:
+      name: Kubernetes
+      description: Kubernetes Repository
+      baseurl: http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+      gpgcheck: no
+
+  - yum: name={{ item }} state=latest
+    with_items:
+      - docker
+      - kubernetes-cni
+      - kubectl
+      - kubelet
+      - kubeadm
+
+  - lineinfile:
+      dest: /etc/sysconfig/docker-storage
+      regexp: '^DOCKER_STORAGE_OPTIONS='
+      line: 'DOCKER_STORAGE_OPTIONS="--storage-driver=overlay"'
+
+  - name: Temporary removal of kubelet extra args from drop-in unit - upstream rpm sets incorrectly
+    lineinfile:
+      dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+      regexp: '^Environment="KUBELET_EXTRA_ARGS'
+      state: absent
+
+  - name: Temporary set systemd kubelet cgroup driver - upstream rpm sets incorrectly
+    lineinfile:
+      dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+      insertafter: '^Environment=\"KUBELET_AUTHZ_ARGS'
+      line: 'Environment="KUBELET_EXTRA_ARGS=--cgroup-driver=systemd"'
+
+  - service: name=docker enabled=yes
+  - service: name=kubelet enabled=yes
+
