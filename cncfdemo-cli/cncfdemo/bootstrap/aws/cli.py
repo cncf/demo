@@ -15,6 +15,30 @@ import click
 import requests
 
 from utils import *
+from dateutil import parser
+
+
+def latest_ami(list_of_images=None):
+  latest = None
+
+  if not list_of_images:
+    client = boto3.client('ec2', region_name='us-west-2')
+    filters = [{ 'Name': 'name', 'Values': ['cncfgold*'] }]
+    images = client.describe_images(Owners=['750548967590'], Filters=filters)
+    list_of_images = images if type(images) == list else [images]
+
+  for image in list_of_images:
+      if not latest:
+          latest = image
+          continue
+
+      if parser.parse(image['CreationDate']) > parser.parse(latest['CreationDate']):
+          latest = image
+
+  latest = latest if type(latest) == list else [latest]
+
+  print "latest ami: {}".format(latest[0]['Images'][0]['ImageId'])
+  return latest[0]['Images'][0]['ImageId']
 
 
 def get_plan(name, dir=os.path.dirname(os.path.realpath(__file__))+'/execution_plans'):
@@ -70,7 +94,7 @@ def cli():
 @click.option('--region', default='us-west-2')
 @click.option('--scale', default=1)
 @click.option('--KeyName', default='cncf-aws')
-@click.option('--ImageId', default='ami-66b81506')
+@click.option('--ImageId', default=latest_ami()) # ami-ff0d0586
 @click.option('--SecurityGroups', default=['cncfdemo'], multiple=True)
 @click.pass_context
 def aws(ctx, region, scale, \
@@ -165,7 +189,6 @@ def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_ru
     config = ctx.obj['default'].copy()
     config.update({'scale': scale, 'kind': 'kubernetes-minion', 'destroy': destroy})
     config.update({'userdata': ctx.obj['userdata'].format('kubernetes-minions', clustername)})
-    #import ipdb; ipdb.set_trace()
     config.update({'instancetype': instancetype,
                    'asgname': name,
                    'rolename': name,
@@ -271,7 +294,6 @@ def create_asg(config, aws):
   context.update({ 'ipe': context['iam'].get_waiter('instance_profile_exists') })
   context.update(**config)
 
-  # import ipdb; ipdb.set_trace()
   asg_plan = eval(get_plan('asg'), context)
   result = execute2(context, asg_plan)
   return result
@@ -288,5 +310,6 @@ aws.add_command(cluster_info)
 
 
 if __name__ == '__main__':
+
   cli()
 

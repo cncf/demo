@@ -1,4 +1,0 @@
-kubernetes_version: 1.4.4
-kubernetes_base_url: "https://storage.googleapis.com/kubernetes-release/release/v{{ kubernetes_version }}/bin/linux/amd64"
-
-

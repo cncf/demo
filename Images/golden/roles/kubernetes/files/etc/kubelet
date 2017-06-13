@@ -1,8 +1,0 @@
-###
-# kubernetes kubelet (minion) config
-
-# pod infrastructure container
-KUBELET_POD_INFRA_CONTAINER="--pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest"
-
-# Additional arguments 
-KUBELET_ARGS="--network-plugin=cni --network-plugin-dir=/etc/cni/net.d --cluster-dns=10.0.0.10 --cluster_domain=cluster.local --allow-privileged=true --non-masquerade-cidr=10.0.0.0/8"
