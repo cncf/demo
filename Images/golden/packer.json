@@ -15,7 +15,7 @@
   "instance_type": "c4.2xlarge",
   "ssh_username": "centos",
   "ssh_pty" : false,
-  "ami_name": "cncf{{timestamp}}",
+  "ami_name": "cncfgolden{{timestamp}}",
   "user_data_file": "disable_tty.sh"
 }],
 
