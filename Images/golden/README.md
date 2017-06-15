@@ -9,7 +9,7 @@ It bakes in everything needed to run Kubernetes master and/or minion nodes into 
 
 
 Simply write a file named `kubernetes-master` _or_ `kubernetes-minion` and specify a `cluster_name` environment variable. That's it.
- 
+
 
 ```
 

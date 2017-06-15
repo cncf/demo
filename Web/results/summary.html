@@ -189,7 +189,7 @@ const pageinate = (data, from, to) => { return data.slice(from, to) }
 const React = e => { 
 
       e.stopPropagation() && e.preventDefault(); 
-      console.log(e.target);
+      //console.log(e.target);
 
       if (e.target.parentElement.classList.contains("table-header")) { 
         
@@ -202,15 +202,21 @@ const React = e => {
       if (e.target.classList.contains("page") && !e.target.classList.contains("current")) { urlParams.set('page', e.target.id); }
       
       State.Render(templates);
-      window.history.replaceState(null, null, window.location.pathname + '?' + urlParams.toString());
+      window.history.replaceState({}, '', `${location.pathname}?${urlParams}`);
+
 
 
       }
 
-const urlParams = new URLSearchParams(window.location.search);
+const urlParams = new URLSearchParams(location.search);
 
 DEFAULTS = { 
+<<<<<<< HEAD
             'url': 'http://stats.cncfdemo.io/summary/summary.json',
+=======
+            //'url': 'summary.json',
+            'url': 'http:///stats.cncfdemo.io/summary/summary.json',
+>>>>>>> CI
             'pageination_size': 5,
             'page': 1,
             'show_pages': 5,
@@ -247,7 +253,7 @@ const Store = _data => {
 
                      
             contexts = this.data(template.className);
-            console.log(contexts);
+            //console.log(contexts);
             rendered = Render(template, contexts);
             template.parentElement.innerHTML = rendered + template.outerHTML;
 

@@ -158,7 +158,7 @@ main {
     /* padding: 0em 3rem; */
     flex-flow: row wrap;
     width: 100vw;
-    /* min-height: 90vh; */
+    min-height: 90vh;
 }
 
 .event-message {text-align: center;display: inherit;}
@@ -378,6 +378,10 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
     overflow: scroll;
 }
 
+.tty li {
+    min-height: 1.5em;
+}
+
 .tty ol {
   list-style-type: none;
   margin: 0;
@@ -401,3 +405,6 @@ div {}
     margin-left: 2em;
 }
 
+    padding-bottom;
+    padding: 0 1em 1em 1em;
+    
