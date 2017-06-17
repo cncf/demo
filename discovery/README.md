@@ -1,6 +1,7 @@
 # Hosted discovery service for Kubeadm cluster bootstrap
 
 This is fashioned after the ideas described in [running your own etc discovery service](https://coreos.com/os/docs/latest/cluster-discovery.html#running-your-own-discovery-service).
+You may be familiar with the `discovery.etcd.io` endpoint for bootstraping generic etcd clusters, this is the same idea but specifically for Kubernetes clusters with Kubeadm.
 
 
 ### Before starting the cluster - get a new token
