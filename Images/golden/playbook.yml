@@ -49,7 +49,7 @@
       remote_src: True
   - copy:
       src: "/tmp/helm/linux-amd64/helm"
-      dest: /usr/local/bin/helm2
+      dest: /usr/local/bin/helm
       owner: root
       group: root
       mode: 0700
