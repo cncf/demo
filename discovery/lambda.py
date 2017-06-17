@@ -42,7 +42,7 @@ def generate(prefix='cncfci', size=1):
 
 def respond(err, res=None):
     return {
-        'statusCode': '400' if err else '200',
+        'statusCode': err if err else '200',
         'body': '' if err else res,
         'headers': {
             'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ def lambda_handler(event, context):
     valid = validate(token)
     print("{} token requested and it is {} valid.".format(token, '' if valid else 'not'))
     if not valid:
-        return respond(not(valid), 'invalid token')
+        return respond(422, 'invalid token')
 
     IP, Port = qParams.get('ip'), qParams.get('port', '6443')
     if IP:
@@ -83,6 +83,8 @@ def lambda_handler(event, context):
         Item = resp.get('Item', {})
         ClusterId, IP, Port = Item.get('ClusterId'), Item.get('IP'), Item.get('Port', '6443')
 
-    body = "{0}:{1}".format(IP, Port) if IP else ''
-    return respond(ClusterId is None, body)
+    status = None if all([ClusterId, IP]) else (102 if ClusterId else 404)
+
+    body = "{0}:{1}".format(IP, Port)
+    return respond(status, body)
 
