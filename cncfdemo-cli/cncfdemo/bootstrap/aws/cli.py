@@ -128,6 +128,7 @@ def aws(ctx, region, scale, \
 
   default = { 'ctx': ctx,
               'clustername': clustername,
+              'clustertoken': 'cncfci.geneisbatman4242',
               'keyname': keyname,
               'imageid': imageid,
               #'securitygroups': securitygroups,
@@ -146,12 +147,9 @@ def aws(ctx, region, scale, \
   ctx.obj['userdata'] = '\n'.join(('#!/bin/bash',
                                    'set -ex',
                                    '\n'
-                                   'HOSTNAME_OVERRIDE=$(curl -s http://169.254.169.254/2007-01-19/meta-data/local-hostname | cut -d" " -f1)',
-                                   '\n'
-                                   'cat << EOF > /etc/sysconfig/{}',
-                                   'CLOUD_PROVIDER=--cloud-provider=aws',
+                                   'cat << EOF > /etc/{}',
                                    'CLUSTER_NAME={}',
-                                   'KUBELET_HOSTNAME=--hostname-override=$HOSTNAME_OVERRIDE',
+                                   'CLUSTER_TOKEN={}',
                                    'EOF'
                                    ''))
 
@@ -188,7 +186,7 @@ def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_ru
     click.echo('\n'.join(('', name, '='*70)))
     config = ctx.obj['default'].copy()
     config.update({'scale': scale, 'kind': 'kubernetes-minion', 'destroy': destroy})
-    config.update({'userdata': ctx.obj['userdata'].format('kubernetes-minions', clustername)})
+    config.update({'userdata': ctx.obj['userdata'].format('kubernetes-minions', clustername, clustertoken)})
     config.update({'instancetype': instancetype,
                    'asgname': name,
                    'rolename': name,
@@ -199,7 +197,7 @@ def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_ru
 
     if name == _default_names[0]:
       config.update({'scale': 1, 'kind': 'kubernetes-master', 'instancetype': 'm3.medium', 'policyarn': 'arn:aws:iam::aws:policy/AmazonEC2FullAccess' })
-      config.update({'userdata': ctx.obj['userdata'].format('kubernetes-masters', clustername)})
+      config.update({'userdata': ctx.obj['userdata'].format('kubernetes-masters', clustername, clustertoken)})
 
     config.update({'securitygroups': [sg.id for sg in ec2resource.security_groups.filter(Filters=[{'Name':'tag:Role', 'Values':[config['kind']]}])]})
     create_asg(config, aws)
