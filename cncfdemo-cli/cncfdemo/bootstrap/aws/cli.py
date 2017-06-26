@@ -23,11 +23,11 @@ def latest_ami(list_of_images=None):
 
   if not list_of_images:
     client = boto3.client('ec2', region_name='us-west-2')
-    filters = [{ 'Name': 'name', 'Values': ['cncfgold*'] }]
-    images = client.describe_images(Owners=['750548967590'], Filters=filters)
-    list_of_images = images if type(images) == list else [images]
+    filters = [{ 'Name': 'name', 'Values': ['cncfgolden*'] }]
+    images = client.describe_images(Owners=['750548967590'], Filters=filters).get('Images', [])
+    # list_of_images = images if type(images) == list else [images]
 
-  for image in list_of_images:
+  for image in images:
       if not latest:
           latest = image
           continue
@@ -37,8 +37,8 @@ def latest_ami(list_of_images=None):
 
   latest = latest if type(latest) == list else [latest]
 
-  print "latest ami: {}".format(latest[0]['Images'][0]['ImageId'])
-  return latest[0]['Images'][0]['ImageId']
+  print "latest ami: {}".format(latest[0]['ImageId'])
+  return latest[0]['ImageId']
 
 
 def get_plan(name, dir=os.path.dirname(os.path.realpath(__file__))+'/execution_plans'):
