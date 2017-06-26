@@ -1,5 +1,6 @@
 ---
 - hosts: all
+  gather_facts: False
   become: yes
 
   tasks:
@@ -36,10 +37,30 @@
 
   - copy:
       content: |
-        [Service]
-        Environment="KUBELET_EXTRA_ARGS=--cloud-provider=aws"
-      dest: /etc/systemd/system/kubelet.service.d/20-cloud-provider.conf
+        kind: MasterConfiguration
+        apiVersion: kubeadm.k8s.io/v1alpha1
+        cloudProvider: aws
+      dest: /etc/kubernetes/kubeadm.conf
 
-  - service: name=docker enabled=yes
-  - service: name=kubelet enabled=yes
+  - file: path=/tmp/helm state=directory
+  - unarchive:
+      src: "https://storage.googleapis.com/kubernetes-helm/helm-v2.4.2-linux-amd64.tar.gz"
+      dest: /tmp/helm
+      remote_src: True
+  - copy:
+      src: "/tmp/helm/linux-amd64/helm"
+      dest: /usr/local/bin/helm
+      owner: root
+      group: root
+      mode: 0700
+      remote_src: True
+
+  - copy: src=services/ dest=/etc/systemd/system/ mode=0644
+  - service: name={{ item }} enabled=true
+    with_items:
+      - docker
+      - kubelet
+      - setup-network-environment
+      - setup-kubernetes-masters
+      - setup-kubernetes-minions
 

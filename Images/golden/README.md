@@ -1,3 +1,13 @@
+## Run on specific host
+Provide a hosts inventory to the i flag, note the trailing comma
+
+```ansible-playbook playbook.yml -i 42.867.53.09, --step```
+
+## Useful ansible tips
+
+ansible-playbook playbook.yml --list-tasks
+--step, --start-at-task="foo"
+
 ## Centos7 based golden Kubernetes image
 
 This image builds on the [base image](https://github.com/cncf/demo/tree/master/Images/base),

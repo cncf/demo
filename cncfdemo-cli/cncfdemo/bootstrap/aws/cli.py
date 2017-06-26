@@ -75,6 +75,7 @@ def create_vpc(ctx, clustername, region, cidr):
 _default_names = ('k-masters', 'k-minions')
 _common_options = [
   click.option('--ClusterName', default='cncfdemo'),
+  click.option('--ClusterToken', default='cncfci.geneisbatman4242'),
   click.option('-v', '--verbose', count=True),
   click.option('--dry-run', is_flag=True),
   click.option('--destroy', is_flag=True, default=False),
@@ -98,7 +99,7 @@ def cli():
 @click.option('--SecurityGroups', default=['cncfdemo'], multiple=True)
 @click.pass_context
 def aws(ctx, region, scale, \
-        clustername, keyname, imageid, securitygroups, \
+        clustername, clustertoken, keyname, imageid, securitygroups, \
         destroy, dry_run, verbose):
 
   ctx.obj = ctx.obj or {}
@@ -128,6 +129,7 @@ def aws(ctx, region, scale, \
 
   default = { 'ctx': ctx,
               'clustername': clustername,
+              'clustertoken': 'cncfci.geneisbatman4242',
               'keyname': keyname,
               'imageid': imageid,
               #'securitygroups': securitygroups,
@@ -146,12 +148,9 @@ def aws(ctx, region, scale, \
   ctx.obj['userdata'] = '\n'.join(('#!/bin/bash',
                                    'set -ex',
                                    '\n'
-                                   'HOSTNAME_OVERRIDE=$(curl -s http://169.254.169.254/2007-01-19/meta-data/local-hostname | cut -d" " -f1)',
-                                   '\n'
-                                   'cat << EOF > /etc/sysconfig/{}',
-                                   'CLOUD_PROVIDER=--cloud-provider=aws',
+                                   'cat << EOF > /etc/{}',
                                    'CLUSTER_NAME={}',
-                                   'KUBELET_HOSTNAME=--hostname-override=$HOSTNAME_OVERRIDE',
+                                   'TOKEN={}',
                                    'EOF'
                                    ''))
 
@@ -162,7 +161,7 @@ def aws(ctx, region, scale, \
 @click.option('--region', default='us-west-2')
 @click.option('--cidr', default='172.20.0.0/16')
 @click.pass_context
-def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_run, verbose):
+def cluster(ctx, clustername, clustertoken, scale, instancetype, region, cidr, destroy, dry_run, verbose):
 
   if not ctx.obj['default']['vpc']:
     click.echo('no vpc found, creating..')
@@ -188,7 +187,7 @@ def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_ru
     click.echo('\n'.join(('', name, '='*70)))
     config = ctx.obj['default'].copy()
     config.update({'scale': scale, 'kind': 'kubernetes-minion', 'destroy': destroy})
-    config.update({'userdata': ctx.obj['userdata'].format('kubernetes-minions', clustername)})
+    config.update({'userdata': ctx.obj['userdata'].format('kubernetes-minions', clustername, clustertoken)})
     config.update({'instancetype': instancetype,
                    'asgname': name,
                    'rolename': name,
@@ -199,7 +198,7 @@ def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_ru
 
     if name == _default_names[0]:
       config.update({'scale': 1, 'kind': 'kubernetes-master', 'instancetype': 'm3.medium', 'policyarn': 'arn:aws:iam::aws:policy/AmazonEC2FullAccess' })
-      config.update({'userdata': ctx.obj['userdata'].format('kubernetes-masters', clustername)})
+      config.update({'userdata': ctx.obj['userdata'].format('kubernetes-masters', clustername, clustertoken)})
 
     config.update({'securitygroups': [sg.id for sg in ec2resource.security_groups.filter(Filters=[{'Name':'tag:Role', 'Values':[config['kind']]}])]})
     create_asg(config, aws)
