@@ -75,6 +75,7 @@ def create_vpc(ctx, clustername, region, cidr):
 _default_names = ('k-masters', 'k-minions')
 _common_options = [
   click.option('--ClusterName', default='cncfdemo'),
+  click.option('--ClusterToken', default='cncfci.geneisbatman4242'),
   click.option('-v', '--verbose', count=True),
   click.option('--dry-run', is_flag=True),
   click.option('--destroy', is_flag=True, default=False),
@@ -98,7 +99,7 @@ def cli():
 @click.option('--SecurityGroups', default=['cncfdemo'], multiple=True)
 @click.pass_context
 def aws(ctx, region, scale, \
-        clustername, keyname, imageid, securitygroups, \
+        clustername, clustertoken, keyname, imageid, securitygroups, \
         destroy, dry_run, verbose):
 
   ctx.obj = ctx.obj or {}
@@ -149,7 +150,7 @@ def aws(ctx, region, scale, \
                                    '\n'
                                    'cat << EOF > /etc/{}',
                                    'CLUSTER_NAME={}',
-                                   'CLUSTER_TOKEN={}',
+                                   'TOKEN={}',
                                    'EOF'
                                    ''))
 
@@ -160,7 +161,7 @@ def aws(ctx, region, scale, \
 @click.option('--region', default='us-west-2')
 @click.option('--cidr', default='172.20.0.0/16')
 @click.pass_context
-def cluster(ctx, clustername, scale, instancetype, region, cidr, destroy, dry_run, verbose):
+def cluster(ctx, clustername, clustertoken, scale, instancetype, region, cidr, destroy, dry_run, verbose):
 
   if not ctx.obj['default']['vpc']:
     click.echo('no vpc found, creating..')
