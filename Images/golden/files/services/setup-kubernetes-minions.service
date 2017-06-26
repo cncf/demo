@@ -1,0 +1,26 @@
+[Unit]
+Description=Kubernetes Nodes Bootstrap
+Documentation=https://github.com/cncf/demo/
+
+ConditionPathExists=!/etc/kubernetes-bootstrap.lock
+ConditionPathExists=!/etc/kubernetes-masters
+ConditionPathExists=/etc/kubernetes-minions
+
+After=cloud-final.service
+After=docker.service
+Requires=docker.service
+
+[Service]
+
+EnvironmentFile=/etc/kubernetes-minions
+
+ExecStartPre=/usr/bin/kubeadm version
+ExecStartPre=/bin/bash -c "until curl -fs https://discovery.cncfdemo.io/${TOKEN} -m 3 --retry-delay 6 --retry 999; do echo \"waiting for masters...\"; done"
+
+ExecStart=/usr/bin/bash -c "/usr/bin/kubeadm join --token $TOKEN $(curl -fs https://discovery.cncfdemo.io/$TOKEN)"
+
+ExecStartPost=/usr/bin/touch /etc/kubernetes-bootstrap.lock
+
+StandardOutput=journal
+RemainAfterExit=yes
+Type=oneshot

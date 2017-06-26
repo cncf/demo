@@ -1,0 +1,29 @@
+[Unit]
+Description=Kubernetes Master Bootstrap
+Documentation=https://github.com/cncf/demo/
+
+ConditionPathExists=!/etc/kubernetes/admin.conf
+ConditionPathExists=/etc/network-environment
+ConditionPathExists=/etc/kubernetes-masters
+
+After=cloud-final.service
+After=setup-network-environment.service
+After=docker.service
+Requires=docker.service
+Requires=setup-network-environment.service
+
+[Service]
+
+Environment="KUBECONFIG=/etc/kubernetes/admin.conf"
+EnvironmentFile=/etc/network-environment
+EnvironmentFile=/etc/kubernetes-masters
+
+ExecStartPre=/usr/bin/kubeadm version
+ExecStartPre=/usr/bin/kubeadm init --config=${KUBECONFIG} --token ${TOKEN}
+ExecStartPre=/bin/bash -c "until kubectl get nodes; do echo \"waiting for API server...\"; sleep 5; done"
+
+ExecStart=/usr/bin/curl -s "https://discovery.cncfdemo.io/${TOKEN}?ip=${DEFAULT_IPV4}"
+
+StandardOutput=journal
+RemainAfterExit=yes
+Type=oneshot
