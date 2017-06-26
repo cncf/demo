@@ -55,6 +55,12 @@
       mode: 0700
       remote_src: True
 
-  - service: name=docker enabled=yes
-  - service: name=kubelet enabled=yes
+  - copy: src=services/ dest=/etc/systemd/system/ mode=0644
+  - service: name={{ item }} enabled=true
+    with_items:
+      - docker
+      - kubelet
+      - setup-network-environment
+      - setup-kubernetes-masters
+      - setup-kubernetes-minions
 
