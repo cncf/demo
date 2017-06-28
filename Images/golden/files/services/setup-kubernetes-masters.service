@@ -27,3 +27,7 @@ ExecStart=/usr/bin/curl -s "https://discovery.cncfdemo.io/${TOKEN}?ip=${DEFAULT_
 StandardOutput=journal
 RemainAfterExit=yes
 Type=oneshot
+
+[Install]
+WantedBy=default.target
+

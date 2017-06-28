@@ -24,3 +24,7 @@ ExecStartPost=/usr/bin/touch /etc/kubernetes-bootstrap.lock
 StandardOutput=journal
 RemainAfterExit=yes
 Type=oneshot
+
+[Install]
+WantedBy=default.target
+

@@ -142,7 +142,6 @@ def aws(ctx, region, scale, \
   ctx.obj['ASG'] = boto3.client('autoscaling', region_name=region)
   ctx.obj['IAM'] = boto3.client('iam', region_name=region)
   ctx.obj['EC2'] = boto3.client('ec2', region_name=region)
-  ctx.obj['r53'] = boto3.client('route53', region_name=region)
   ctx.obj['ec2resource'] = boto3.resource('ec2', region_name=region)
 
   ctx.obj['userdata'] = '\n'.join(('#!/bin/bash',
@@ -167,16 +166,6 @@ def cluster(ctx, clustername, clustertoken, scale, instancetype, region, cidr, d
     click.echo('no vpc found, creating..')
     ctx.obj['default']['vpc'] = create_vpc(ctx, clustername, region, cidr)
     click.echo('created vpc {}'.format(ctx.obj['default']['vpc']))
-
-  if not destroy:
-
-    r53 = ctx.obj['r53']
-    HostedZones = r53.list_hosted_zones_by_name(DNSName='k8s')['HostedZones']
-    HostedZoneId = HostedZones.pop()['Id'].split('/')[2] if HostedZones else None
-    try:
-      r53.associate_vpc_with_hosted_zone(HostedZoneId=HostedZoneId, VPC={'VPCRegion': region, 'VPCId': ctx.obj['default']['vpc'] })
-    except botocore.exceptions.ClientError as e:
-      click.echo(e)
 
   aws = ctx.obj['AWS']
   ec2resource = ctx.obj['ec2resource']
