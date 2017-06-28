@@ -70,5 +70,5 @@ def execute2(context, actions):
 
 def DhcpConfigurations(region):
   domain_name = 'ec2.internal' if region == 'us-east-1' else '{}.compute.internal'.format(region)
-  return [{'Key': 'domain-name-servers', 'Values': ['AmazonProvidedDNS']}, {'Key': 'domain-name', 'Values': ['{} k8s'.format(domain_name)]}]
+  return [{'Key': 'domain-name-servers', 'Values': ['AmazonProvidedDNS']}, {'Key': 'domain-name', 'Values': ['{}'.format(domain_name)]}]
 

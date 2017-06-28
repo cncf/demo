@@ -14,12 +14,13 @@ Requires=setup-network-environment.service
 
 [Service]
 
-Environment="KUBECONFIG=/etc/kubernetes/kubeadm.conf"
+Environment="KUBECONFIG=/etc/kubernetes/admin.conf"
 EnvironmentFile=/etc/network-environment
 EnvironmentFile=/etc/kubernetes-masters
 
 ExecStartPre=/usr/bin/kubeadm version
-ExecStartPre=/usr/bin/kubeadm init --config=${KUBECONFIG} --token ${TOKEN}
+ExecStartPre=/usr/bin/echo ${TOKEN}
+ExecStartPre=/usr/bin/kubeadm init --config=/etc/kubernetes/kubeadm.conf --token=${TOKEN}
 ExecStartPre=/bin/bash -c "until kubectl get nodes; do echo \"waiting for API server...\"; sleep 5; done"
 
 ExecStart=/usr/bin/curl -s "https://discovery.cncfdemo.io/${TOKEN}?ip=${DEFAULT_IPV4}"
