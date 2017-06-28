@@ -60,7 +60,6 @@
     with_items:
       - docker
       - kubelet
-      - setup-network-environment
       - setup-kubernetes-masters
       - setup-kubernetes-minions
 
