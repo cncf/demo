@@ -12,3 +12,16 @@
       dest: /usr/lib/sysctl.d/90-system.conf
 
   - yum: name=* state=latest
+  - yum: name=NetworkManager state=latest
+
+  - file: path=/opt/bin state=directory
+  - get_url:
+      url: https://github.com/kelseyhightower/setup-network-environment/releases/download/1.0.1/setup-network-environment
+      dest: /opt/bin
+      mode: 0755
+  - copy: src=services/ dest=/etc/systemd/system/ mode=0644
+  - service: name={{ item }} enabled=true
+    with_items:
+      - NetworkManager-wait-online
+      - setup-network-environment
+

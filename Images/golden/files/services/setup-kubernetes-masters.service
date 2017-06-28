@@ -14,7 +14,7 @@ Requires=setup-network-environment.service
 
 [Service]
 
-Environment="KUBECONFIG=/etc/kubernetes/admin.conf"
+Environment="KUBECONFIG=/etc/kubernetes/kubeadm.conf"
 EnvironmentFile=/etc/network-environment
 EnvironmentFile=/etc/kubernetes-masters
 

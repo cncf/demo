@@ -1,0 +1,13 @@
+[Unit]
+Description=Setup Network Environment
+Documentation=https://github.com/kelseyhightower/setup-network-environment
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+ExecStart=/opt/bin/setup-network-environment
+RemainAfterExit=yes
+Type=oneshot
+
+[Install]
+WantedBy=default.target
