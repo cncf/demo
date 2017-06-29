@@ -19,11 +19,11 @@ EnvironmentFile=/etc/network-environment
 EnvironmentFile=/etc/kubernetes-masters
 
 ExecStartPre=/usr/bin/kubeadm version
-ExecStartPre=/usr/bin/echo ${TOKEN}
-ExecStartPre=/usr/bin/kubeadm init --config=/etc/kubernetes/kubeadm.conf --token=${TOKEN}
+ExecStartPre=/bin/bash -c "echo token: ${TOKEN} | tee -a /etc/kubernetes/kubeadm.conf"
+ExecStartPre=/usr/bin/kubeadm init --config=/etc/kubernetes/kubeadm.conf
 ExecStartPre=/bin/bash -c "until kubectl get nodes; do echo \"waiting for API server...\"; sleep 5; done"
 
-ExecStart=/usr/bin/curl -s "https://discovery.cncfdemo.io/${TOKEN}?ip=${DEFAULT_IPV4}"
+ExecStart=/bin/bash -c "curl -s \"https://discovery.cncfdemo.io/$(kubeadm token list | grep 'bootstrap token' | awk {'print $1'})?ip=${DEFAULT_IPV4}\""
 
 StandardOutput=journal
 RemainAfterExit=yes
