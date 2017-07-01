@@ -17,7 +17,7 @@ EnvironmentFile=/etc/kubernetes-minions
 ExecStartPre=/usr/bin/kubeadm version
 ExecStartPre=/bin/bash -c "until curl -fs https://discovery.cncfdemo.io/${TOKEN} -m 3 --retry-delay 6 --retry 999; do echo \"waiting for masters...\"; done"
 
-ExecStart=/usr/bin/bash -c "/usr/bin/kubeadm join --token $(curl -fs https://discovery.cncfdemo.io/$TOKEN)"
+ExecStart=/usr/bin/bash -c "/usr/bin/kubeadm join --token ${TOKEN} $(curl -fs https://discovery.cncfdemo.io/$TOKEN)"
 
 ExecStartPost=/usr/bin/touch /etc/kubernetes-bootstrap.lock
 

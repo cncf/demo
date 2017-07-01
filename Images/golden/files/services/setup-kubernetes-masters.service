@@ -22,6 +22,7 @@ ExecStartPre=/usr/bin/kubeadm version
 ExecStartPre=/bin/bash -c "echo token: ${TOKEN} | tee -a /etc/kubernetes/kubeadm.conf"
 ExecStartPre=/usr/bin/kubeadm init --config=/etc/kubernetes/kubeadm.conf
 ExecStartPre=/bin/bash -c "until kubectl get nodes; do echo \"waiting for API server...\"; sleep 5; done"
+ExecStartPre=/bin/bash -c "kubectl apply -f https://git.io/weave-kube-1.6; sleep 5;"
 
 ExecStart=/bin/bash -c "curl -s \"https://discovery.cncfdemo.io/$(kubeadm token list | grep 'bootstrap token' | awk {'print $1'})?ip=${DEFAULT_IPV4}\""
 
