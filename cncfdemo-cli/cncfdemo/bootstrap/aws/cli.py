@@ -150,6 +150,7 @@ def aws(ctx, region, scale, \
                                    'cat << EOF > /etc/{}',
                                    'CLUSTER_NAME={}',
                                    'TOKEN={}',
+                                   'kubernetesVersion=v1.6.6',
                                    'EOF'
                                    ''))
 
