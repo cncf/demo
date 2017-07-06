@@ -1,0 +1,19 @@
+#!/usr/bin/env python3
+
+import sys
+import boto3
+
+cloudformation = boto3.client('cloudformation')
+
+DEBUG = True
+StackName = sys.argv[1] if sys.argv[1:] else 'cncfdemo'
+
+response = cloudformation.create_stack(
+    StackName=StackName,
+    TemplateURL='https://s3-us-west-2.amazonaws.com/aws.cncfdemo.io/cloudformation/all.yaml',
+    Capabilities=[ 'CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM' ],
+    )
+
+if DEBUG:
+  print(response)
+

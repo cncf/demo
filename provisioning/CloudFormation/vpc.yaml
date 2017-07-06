@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Standard VPC
+Outputs:
+  VPC:
+    Description: The VPC
+    Value: !Ref VPC
+    Export:
+      Name: !Sub [ "${BaseStackName}-VPC", { BaseStackName: !Select [0, !Split ["-", !Sub "${AWS::StackName}" ]] } ]
+Resources:
+  InternetGateway: { 'Type': 'AWS::EC2::InternetGateway' }
+  DHCPOptions:
+    Type: AWS::EC2::DHCPOptions
+    Properties:
+      DomainName: !Sub ${AWS::Region}.compute.internal
+      DomainNameServers:
+        - AmazonProvidedDNS
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      CidrBlock: 172.20.0.0/16
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+    DependsOn: ["VPC", "InternetGateway"]
+  VPCDHCPOptionsAssociation:
+    Type: AWS::EC2::VPCDHCPOptionsAssociation
+    Properties:
+      DhcpOptionsId: !Ref DHCPOptions
+      VpcId: !Ref VPC
+    DependsOn: ["VPC", "DHCPOptions"]
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+    DependsOn: ["VPC"]
+  Route:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref RouteTable
+    DependsOn: ["InternetGateway", "RouteTable"]
+  Subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 172.20.0.0/24
+    DependsOn: ["VPC"]
+  SubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref Subnet
+    DependsOn: ["RouteTable", "Subnet"]

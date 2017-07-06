@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Two security groups with cross referenced ingress
+Parameters:
+  VPC:
+    Type: AWS::EC2::VPC::Id
+    Default: ''
+    Type: String
+  CLUSTERNAME:
+    Default: 'cncfdemo2'
+    Type: String
+Conditions:
+  NoVPC: !Equals [!Ref VPC, ""]
+Resources:
+  SecurityGroupMasters:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !If [NoVPC,
+        'Fn::ImportValue': !Sub [ "${StackName}-VPC", { StackName: !Select [0, !Split ["-", !Sub "${AWS::StackName}" ]] } ],
+        !Ref VPC]
+      GroupDescription: k8s security group applied to masters
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: "Name"
+          Value: !Ref CLUSTERNAME
+        - Key: "Role"
+          Value: "Masters"
+  SecurityGroupNodes:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !If [NoVPC,
+        'Fn::ImportValue': !Sub [ "${StackName}-VPC", { StackName: !Select [0, !Split ["-", !Sub "${AWS::StackName}" ]] } ],
+        !Ref VPC]
+      GroupDescription: k8s security group applied to nodes
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: "Name"
+          Value: !Ref CLUSTERNAME
+        - Key: "Role"
+          Value: "Nodes"
+        - Key: "KubernetesCluster"
+          Value: !Ref CLUSTERNAME
+  SecurityGroupIngressMasters:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: -1
+      SourceSecurityGroupId: !GetAtt SecurityGroupMasters.GroupId
+      GroupId: !GetAtt SecurityGroupNodes.GroupId
+  SecurityGroupIngressNodes:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: -1
+      SourceSecurityGroupId: !GetAtt SecurityGroupNodes.GroupId
+      GroupId: !GetAtt SecurityGroupMasters.GroupId
+  SecurityGroupIngressMastersSelf:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: -1
+      SourceSecurityGroupId: !GetAtt SecurityGroupMasters.GroupId
+      GroupId: !GetAtt SecurityGroupMasters.GroupId
+  SecurityGroupIngressNodesSelf:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: -1
+      SourceSecurityGroupId: !GetAtt SecurityGroupNodes.GroupId
+      GroupId: !GetAtt SecurityGroupNodes.GroupId
+

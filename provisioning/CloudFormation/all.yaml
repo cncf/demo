@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  CLUSTERNAME:
+    Default: "${AWS::StackName}"
+    Type: String
+Resources:
+  VPC:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3-us-west-2.amazonaws.com/aws.cncfdemo.io/cloudformation/vpc.yaml
+      Tags:
+        - Key: Name
+          Value: !Ref AWS::StackName
+        - Key: KubernetesCluster
+          Value: !Ref AWS::StackName
+  SecurityGroups:
+    DependsOn: ["VPC"]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3-us-west-2.amazonaws.com/aws.cncfdemo.io/cloudformation/sg.yaml
+      Parameters:
+        VPC: !GetAtt VPC.Outputs.VPC
+        CLUSTERNAME: !Ref AWS::StackName
+  InstanceRoles:
+    DependsOn: ["VPC"]
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3-us-west-2.amazonaws.com/aws.cncfdemo.io/cloudformation/roles.yaml
