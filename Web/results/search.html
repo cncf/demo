@@ -5,6 +5,7 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.js"></script>
+<script src="js/ansi_up.js"></script>
 <style>
 
 
@@ -47,8 +48,8 @@ footer { background-color: #333; color: #ccc; padding: 1em; }
 .hr div:nth-of-type(2) {     align-self: center; margin-top: -1.5em; background: #f9f9f9; padding: 0.5em;}
 
 .tty { background: #212121; color: #edede3; margin: 0em; padding: 1em; overflow: scroll; max-height: 35vh; }
-.tty ol { list-style-type: none; margin: 0; padding: 0; }
-.tty li { min-height: 1.5em; }
+.tty ol, .tty ul { list-style-type: none; margin: 0; padding: 0; }
+.tty li { min-height: 1.5em; list-style-type: none; }
 </style>
 </head>
 
@@ -61,7 +62,7 @@ footer { background-color: #333; color: #ccc; padding: 1em; }
     <div>${ Masters['size'] } Masters</div>
     <div>${ Minions['size'] } Nodes</div>
     <div style="margin-left:1.5em;">This demo was run with the command:</div>
-    <div id="command"><span>cncfdemo bootstrap aws cluster --scale ${ Minions['size'] }</span></div>
+    <div id="command"><span>helm install cncfdemo/simplest --name cncfdemo</span></div>
     <div>${ vcpu } vCPU Cores</div>
     <div>${ RAM } Memory</div>
     <div>${ Storage } Storage</div>
@@ -87,6 +88,17 @@ footer { background-color: #333; color: #ccc; padding: 1em; }
   <footer><span>Copyright © 2017 The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our Trademark Usage page. Linux is a registered trademark of Linus Torvalds. Privacy Policy and Terms of Use</span></footer>
 
 <script>
+
+let ansi_up = new AnsiUp;
+let stdout;
+
+async function get_stdout (url) {
+
+  let url2 = 'https://s3-us-west-2.amazonaws.com/data.cncfdemo.io/ab5jvRW/01-Provisioning-Cloud-Resources.stdout'
+  let data = await (await fetch(url)).text();
+  return data;
+
+}
 
 function formatRelativeTime(absolute) {
 
@@ -121,6 +133,7 @@ function formatRelativeTime(absolute) {
       console.log(e.currentTarget, e.target, e);
       extra = e.currentTarget.querySelector('.content-extra');
       if (extra) {
+
         e.currentTarget.querySelector('.card-arrow').classList.toggle('rotate90');
         extra.hidden = !extra.hidden;
       }
@@ -129,16 +142,22 @@ function formatRelativeTime(absolute) {
     Render(template, contexts, g, rendered = '') {
       [].concat(contexts).forEach( (context, _index) => {
 
-        with (context) {
 
           timestart = g['events'][_index]['timestart'];
           timeend = g['events'][_index]['timeend'];
-          if (typeof context['content'] === 'undefined') { context['content'] = '' }
-
           g['events'][_index]['time'] = Math.max(0, (timeend ? timeend : cncfdemo.now) - timestart);
-          rendered += context['raw'] ? raw : eval('`'+template.innerHTML+'`');
+
+          if (typeof context['content'] === 'undefined') { context['content'] = '' }
+          if (typeof context['stdout_url'] !== 'undefined') {
+            url = context['stdout_url'];
+            get_stdout(url).then(txt => { context['content'] = ansi_up.ansi_to_html(txt);
+            })
 
           }
+
+
+
+        with (context) { rendered += context['raw'] ? raw : eval('`'+template.innerHTML+'`'); }
 
       })
 

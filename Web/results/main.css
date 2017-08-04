@@ -378,7 +378,7 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
     overflow: scroll;
 }
 
-.tty ol {
+.tty ol, .tty ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -386,6 +386,7 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 .tty li {
     min-height: 1.5em;
+    list-style: none;
 }
 
 .content-extra {
