@@ -7,4 +7,9 @@
 *.zip
 *.pyc
 *.dist-info/
-api/_tes*
+data/
+terraform.tfstate
+terraform.tfstate.backup
+tmp/
+*.env
+.terraform/

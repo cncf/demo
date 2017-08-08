@@ -158,7 +158,7 @@ main {
     /* padding: 0em 3rem; */
     flex-flow: row wrap;
     width: 100vw;
-    /* min-height: 90vh; */
+    min-height: 90vh;
 }
 
 .event-message {text-align: center;display: inherit;}
@@ -378,7 +378,15 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
     overflow: scroll;
 }
 
+<<<<<<< HEAD
 .tty ol, .tty ul {
+=======
+.tty li {
+    min-height: 1.5em;
+}
+
+.tty ol {
+>>>>>>> e584002dc2ac1512138bc7d5ec34ad329f3c29ef
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -402,3 +410,6 @@ div {}
     margin-left: 2em;
 }
 
+    padding-bottom;
+    padding: 0 1em 1em 1em;
+    
