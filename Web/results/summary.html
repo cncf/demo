@@ -15,7 +15,7 @@
 
    <article id="resultscentercolumn">
     
-      <div id="filter_toggle"> <a href="#filters" onClick="document.querySelector('.filters').classList.toggle('hidden')">filters</a> </div>
+      <!-- <div id="filter_toggle"> <a href="#filters" onClick="document.querySelector('.filters').classList.toggle('hidden')">filters</a> </div> -->
 
       <div class="table-row table-header filters hidden">
       
@@ -211,12 +211,8 @@ const React = e => {
 const urlParams = new URLSearchParams(location.search);
 
 DEFAULTS = { 
-<<<<<<< HEAD
             'url': 'http://stats.cncfdemo.io/summary/summary.json',
-=======
-            //'url': 'summary.json',
             'url': 'http:///stats.cncfdemo.io/summary/summary.json',
->>>>>>> CI
             'pageination_size': 5,
             'page': 1,
             'show_pages': 5,
