@@ -12,6 +12,9 @@ export MOZCONFIG=/root/mozconfig
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH=/usr/lib/icecc/bin:$PATH
 
+service icecc-scheduler start
+service iceccd start # both on same box are fine, need at least one d
+
 ./mach configure
 ./mach build
 
