@@ -1,5 +1,5 @@
 FROM zilman/falcon
-MAINTAINER Eugene Zilman <ezilman@gmail.com>
+LABEL maintainer "Eugene Zilman <ezilman@gmail.com>"
 
 COPY echo.py /app.py
 

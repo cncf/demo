@@ -1,5 +1,5 @@
 FROM debian:stable
-MAINTAINER Eugene Zilman <ezilman@gmail.com>
+LABEL maintainer "Eugene Zilman <ezilman@gmail.com>"
 
 RUN apt-get clean && apt update && apt install -y
 
@@ -11,4 +11,3 @@ COPY config /etc/default/distcc
 COPY runner.sh /runner.sh
 
 ENTRYPOINT ["/runner.sh"]
-
