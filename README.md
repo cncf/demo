@@ -48,7 +48,9 @@ A variety of deployments models will be supported. Support for each deployment m
 Given this breadth of supported deployment models using the same sample applications, performance, cost, etc. characteristics between this variety of clusters may be compared.
 
 ### CNCF Community Cluster <a id="cncf-cluster"></a>
-Donated by Intel, a 1,000 node cluster of servers is running in Switch, Las Vegas, to be used by the CNCF community. Visit these links for a description of the cluster [project page](https://cncf.io/cluster) or to be involved in the [cluster community](https://github.com/cncf/cluster).
+The [CNCF Community Infrastructure Lab (CIL)](https://www.cncf.io/community/infrastructure-lab/) provides free access to state-of-the-art computing resources for open source developers working to advance cloud native computing. We currently offer access to both x86 and ARMv8 bare metal servers for software builds, continuous integration, scale testing, and demonstrations. 
+
+The on-demand infrastructure resource is generously contributed and managed by New York City-based [Packet](https://www.packet.net/), a leading bare metal cloud, as part of its commitment to the cloud native and open source communities. The resources are available from 15 locations across the globe; including New York City, Silicon Valley, Amsterdam, and Tokyo. It allows developers extended testing or the ability to build out continuous integrated infrastructure with the automation and consistency of big public clouds without being required to use virtualization.
 
 ## An Open Commitment
 The project output will be an open source GitHub repo that will become widely referenced within the CNCF community. All work will occur on a public repo, all externally referenced projects will be open source, and this project itself will be licensed under Apache 2.0.
