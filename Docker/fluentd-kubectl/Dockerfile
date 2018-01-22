@@ -1,5 +1,5 @@
 FROM fluent/fluentd:latest-onbuild
-MAINTAINER Eugene Zilman <ezilman@gmail.com>
+LABEL maintainer "Eugene Zilman <ezilman@gmail.com>"
 WORKDIR /home/fluent
 ENV PATH /home/fluent/.gem/ruby/2.3.0/bin:$PATH
 ENV KUBE_LATEST_VERSION="v1.4.4"
@@ -20,4 +20,3 @@ RUN apk --no-cache add sudo build-base ruby-dev && \
 
 USER fluent
 CMD exec fluentd -c /fluentd/etc/$FLUENTD_CONF -p /fluentd/plugins $FLUENTD_OPT
-

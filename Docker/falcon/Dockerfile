@@ -1,5 +1,5 @@
 FROM zilman/gunicorn
-MAINTAINER Eugene Zilman <ezilman@gmail.com>
+LABEL maintainer "Eugene Zilman <ezilman@gmail.com>"
 
 RUN pip install meinheld falcon
 

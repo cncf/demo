@@ -1,5 +1,5 @@
 FROM golang:alpine
-MAINTAINER "Denver Williams <denver@ii.coop>"
+LABEL maintainer "Denver Williams <denver@ii.coop>"
 ENV KUBECTL_VERSION=v1.5.2
 ENV HELM_VERSION=v2.4.1
 ENV GCLOUD_VERSION=150.0.0
@@ -39,7 +39,7 @@ tar xvzf helm-${HELM_VERSION}-linux-amd64.tar.gz && \
 mv linux-amd64/helm /usr/local/bin && \
 rm -rf helm-*gz linux-amd64
 
-# Install Terraform 
+# Install Terraform
 RUN wget https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_"${TERRAFORM_VERSION}"_linux_$ARC.zip
 RUN unzip terraform*.zip -d /usr/bin
 

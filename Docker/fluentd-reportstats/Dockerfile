@@ -1,5 +1,5 @@
 FROM fluent/fluentd:latest-onbuild
-MAINTAINER Eugene Zilman <ezilman@gmail.com>
+LABEL maintainer "Eugene Zilman <ezilman@gmail.com>"
 WORKDIR /home/fluent
 ENV PATH /home/fluent/.gem/ruby/2.3.0/bin:$PATH
 
