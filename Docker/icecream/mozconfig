@@ -1,0 +1,8 @@
+mk_add_options MOZ_MAKE_FLAGS="-j24”
+
+ac_add_options --enable-application=browser
+ac_add_options --disable-tests
+
+# ICE
+CC="/usr/lib/icecc/bin/cc"
+CXX="/usr/lib/icecc/bin/c++"

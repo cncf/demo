@@ -1,10 +1,10 @@
 <head>
 <title>cncfdemo</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<!-- <link rel="stylesheet" type="text/css" href="main.css"> -->
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.js"></script>
+<script src="js/ansi_up.js"></script>
 <style>
 
 
@@ -23,8 +23,12 @@ header > div:nth-child(-n+5) { font-size: 2em; font-weight: 400; line-height: 4r
 main { flex: 1 }
 footer { background-color: #333; color: #ccc; padding: 1em; }
 
-#aws { margin-left: 42px; }
+#azure, #aws { margin-left: 42px; }
 #aws:before { background-image: url(img/aws.png); background-size: 50px 40px; content: ''; position: absolute; margin-left: -50px; width: 50px; height: 40px; margin-top: 10px; }
+
+#azure, #packet { text-transform: lowercase; }
+#packet:first-letter, #azure:first-letter { text-transform: uppercase; }
+#azure:before { background-image: url(img/azure.png); background-size: 50px 40px; content: ''; position: absolute; margin-left: -58px; width: 50px; height: 40px; margin-top: 13px; }
 
 #command { display: inline-block; height: 32px; font-size: 13px; font-weight: 500; color: rgba(0,0,0,0.6); line-height: 32px; padding: 0 12px; border-radius: 16px; background-color: #e4e4e4; }
 
@@ -47,8 +51,10 @@ footer { background-color: #333; color: #ccc; padding: 1em; }
 .hr div:nth-of-type(2) {     align-self: center; margin-top: -1.5em; background: #f9f9f9; padding: 0.5em;}
 
 .tty { background: #212121; color: #edede3; margin: 0em; padding: 1em; overflow: scroll; max-height: 35vh; }
-.tty ol { list-style-type: none; margin: 0; padding: 0; }
-.tty li { min-height: 1.5em; }
+.tty ol, .tty ul { list-style-type: none; margin: 0; padding: 0; }
+.tty li { min-height: 1.5em; list-style-type: none; }
+
+<!-- .content-extra > * { display: block; white-space: pre-line;overflow-wrap: break-word; } -->
 </style>
 </head>
 
@@ -57,11 +63,11 @@ footer { background-color: #333; color: #ccc; padding: 1em; }
     <template class="Metadata">
     <div> <a href="/"><img src="img/logo_cncf.png" style="width:235px; margin-top: -0.5em;"></a> </div>
     <div>Demo ／ ${ id }</div>
-    <div id="aws">${ Provider }</div>
+    <div id="${ Provider}">${ Provider }</div>
     <div>${ Masters['size'] } Masters</div>
     <div>${ Minions['size'] } Nodes</div>
     <div style="margin-left:1.5em;">This demo was run with the command:</div>
-    <div id="command"><span>cncfdemo bootstrap aws cluster --scale ${ Minions['size'] }</span></div>
+    <div id="command"><span>helm install cncfdemo/simplest --name cncfdemo</span></div>
     <div>${ vcpu } vCPU Cores</div>
     <div>${ RAM } Memory</div>
     <div>${ Storage } Storage</div>
@@ -72,13 +78,15 @@ footer { background-color: #333; color: #ccc; padding: 1em; }
     <div id="graphs" style="background: white;" ><div style='height:16em;'> <svg id="chart1"></svg> </div> </div>
     <div id="events">
       <template class="events">
-      <div class="card ${ timeend ? 'ended' : 'running' }" id="stat${ _index }">
+      <div class="card ${ timeend ? 'ended' : 'running' }" >
         <div class="card-content">
-         <div class="card-arrow">❯</div>
+          <div class="card-arrow">${ typeof(content) === 'undefined' ? '' : '❯' }
+                                  ${ typeof(stdout_url) === 'undefined' ? '' : '❯' } </div>
          <div class="card-title">${ title }</div>
-         <div class="card-times">${ cncfdemo.humanize(g['events'][_index]['time']) }</div>
+         <div class="card-times">${ cncfdemo.humanize((timeend || cncfdemo.now) - timestart) }</div>
         </div>
-        ${ content }
+        ${ (typeof content !== 'undefined') ? content : '' }
+        ${    (typeof(stdout_url) !== 'undefined') ? `<div class="content-extra" content_from="${stdout_url}" hidden><pre class="tty">loading..</pre></div>` : '' }
       </div>
       </template>
     </div>
@@ -88,16 +96,26 @@ footer { background-color: #333; color: #ccc; padding: 1em; }
 
 <script>
 
+let ansi_up = new AnsiUp;
+async function get_stdout (url) { return await (await fetch(url)).text(); }
+
 function formatRelativeTime(absolute) {
 
   var delta = (absolute - cncfdemo.state.results.timestart) * 1000;
-  console.log('abs', absolute);
-  console.log('delta', delta);
   if (!delta) return " ";
   var milliseconds = Math.abs(delta);
-  return "T" + (delta < 0 ? "-" : "+")
+  return "" + (delta < 0 ? "-" : "")
       + Math.floor(milliseconds / 6e4) + ":"
       + d3.format("02d")(Math.floor(milliseconds % 6e4 / 1e3));
+}
+
+function evil_template(template_literal, context) {
+
+  let keys = Object.keys(context);
+  let vals = keys.map(key => context[key]);
+
+  let f = Function(...keys, "return `" + template_literal + "`");
+  return f(...vals);
 }
 
 
@@ -115,31 +133,39 @@ function formatRelativeTime(absolute) {
     templates() { return document.getElementsByTagName('template') },
 
     now: Math.floor(Date.now() / 1000),
-    humanize(t) { m = Math.floor(t / 60); return `${ (m > 0) ? m+' minutes,' : '' } ${ Math.floor(t % 60) } seconds` },
+    humanize(t) { t = Math.max(0, t); m = Math.floor(t / 60); return `${ (m > 0) ? m+' minutes,' : '' } ${ Math.floor(t % 60) } seconds` },
 
     toggle(e) {
       e.stopPropagation();
       console.log(e.currentTarget, e.target, e);
       extra = e.currentTarget.querySelector('.content-extra');
       if (extra) {
+
         e.currentTarget.querySelector('.card-arrow').classList.toggle('rotate90');
         extra.hidden = !extra.hidden;
+
+        content_from = extra.getAttribute('content_from');
+        fetched = extra.getAttribute('fetched');
+        if (content_from && !fetched) {
+
+          get_stdout(content_from).then(stdout => {
+             extra.setAttribute('fetched', 'true');
+             stdout = ansi_up.ansi_to_html(stdout);
+             extra.firstChild.innerHTML = stdout;
+          } );
+
+        }
+
+
+
       }
+
     },
 
     Render(template, contexts, g, rendered = '') {
       [].concat(contexts).forEach( (context, _index) => {
 
-        with (context) {
-
-          timestart = g['events'][_index]['timestart'];
-          timeend = g['events'][_index]['timeend'];
-          if (typeof context['content'] === 'undefined') { context['content'] = '' }
-
-          g['events'][_index]['time'] = Math.max(0, (timeend ? timeend : cncfdemo.now) - timestart);
-          rendered += context['raw'] ? raw : eval('`'+template.innerHTML+'`');
-
-          }
+        rendered += context['raw'] ? context['raw'] : evil_template(template.innerHTML, context);
 
       })
 
@@ -170,18 +196,18 @@ function formatRelativeTime(absolute) {
                 var colors = d3.scale.category20();
                 var chart;
                 nv.addGraph(function() {
-                    chart = nv.models.stackedAreaChart()
+                    chart = nv.models.multiBarChart()
                         .useInteractiveGuideline(true)
                         .x(function(d) { return d[0] })
-                        .y(function(d) { return d[1] })
+                        .y(function(d) { return Math.trunc(d[1]) })
                         .duration(300);
 
-                    chart.showControls(false)
-                    chart.style("expand");
-                    //chart.xAxis.tickFormat(function(d) { return d3.time.format('%H:%M')(new Date(d*1000)) });
-                    chart.xAxis.tickFormat(formatRelativeTime);
+                    chart.showControls(false);
+                    chart.stacked('true');
 
-                    chart.yAxis.tickFormat(d3.format(',.4f'));
+                    chart.color(['#389B3C', '#E46D70', '#F89B27', 'transparent'])
+                    chart.xAxis.tickFormat(formatRelativeTime);
+                    chart.yAxis.tickFormat(d3.format(','));
                     chart.interactiveLayer.tooltip.headerFormatter(function (d) { return d;    });
                     chart.legend.vers('furious');
                     d3.select('#chart1')

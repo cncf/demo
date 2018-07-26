@@ -378,11 +378,15 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
     overflow: scroll;
 }
 
+<<<<<<< HEAD
+.tty ol, .tty ul {
+=======
 .tty li {
     min-height: 1.5em;
 }
 
 .tty ol {
+>>>>>>> e584002dc2ac1512138bc7d5ec34ad329f3c29ef
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -390,6 +394,7 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 
 .tty li {
     min-height: 1.5em;
+    list-style: none;
 }
 
 .content-extra {
